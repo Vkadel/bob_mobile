@@ -15,7 +15,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(Constants().select_your_role_page_title),
+        title: Text(Constants().user_dashboard_title),
       ),
       body: Container(
         child: Text("User Dashboard"),

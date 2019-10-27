@@ -83,7 +83,30 @@ class MBobFireBase implements BoBFireBase {
                     Firestore.instance.document('$documentPath/personality');*/
                 User freshUser = User.fromJson(freshSnapShot.data);
                 freshUser.personality = user.personality;
-                freshUser.name = 'Changed Name ';
+                await transaction.update(
+                    freshSnapShot.reference, freshUser.toJson());
+              }
+            }));
+    print('I wrote');
+  }
+
+  @override
+  Future<void> setUpHero(FirebaseUser firebaseuser, User user) async {
+    String uid = firebaseuser.uid;
+
+    await _firestore
+        .collection('users')
+        .where('id', isEqualTo: '$uid')
+        .snapshots()
+        .listen((data) => _firestore.runTransaction((transaction) async {
+              DocumentSnapshot freshSnapShot =
+                  await transaction.get(data.documents.elementAt(0).reference);
+              if (freshSnapShot.exists) {
+                /*String documentPath = freshSnapShot.reference.path.toString();
+                final DocumentReference postRef =
+                    Firestore.instance.document('$documentPath/personality');*/
+                User freshUser = User.fromJson(freshSnapShot.data);
+                freshUser.role = user.role;
                 await transaction.update(
                     freshSnapShot.reference, freshUser.toJson());
               }

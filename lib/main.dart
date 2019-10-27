@@ -8,14 +8,18 @@ import 'package:bob_mobile/validators.dart';
 import 'package:bob_mobile/widgets/google_signin_button.dart';
 import 'package:bob_mobile/widgets/loading_indicator_full_screen.dart';
 import 'package:bob_mobile/widgets/rounded_edge_button.dart';
+import 'package:bob_mobile/widgets/rounded_edge_button_hero.dart';
 import 'package:bob_mobile/widgets/rounded_edge_button_survey.dart';
 import 'package:bob_mobile/widgets/scrollable_widget_window.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'dashboard_page.dart';
+import 'data_type/text_formatted_body.dart';
 import 'login_page.dart';
 import 'personality_test_page.dart';
 import 'data_type/question.dart';
@@ -337,13 +341,82 @@ class SelectRolePage extends StatefulWidget {
 class _SelectRoleState extends State<SelectRolePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(Constants().select_your_role_page_title),
+    return DefaultTabController(
+      length: 3,
+      child: Builder(
+        builder: (BuildContext context) {
+          child:
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(Constants().select_your_role_page_title),
+              bottom: TabBar(
+                tabs: <Widget>[
+                  new SvgPicture.asset(
+                    Constants.myAvatars.elementAt(0).small_icon,
+                    width: 50,
+                    color: Constants.icon_Colors,
+                  ),
+                  new SvgPicture.asset(
+                    Constants.myAvatars.elementAt(1).small_icon,
+                    width: 50,
+                    color: Constants.icon_Colors,
+                  ),
+                  new SvgPicture.asset(
+                    Constants.myAvatars.elementAt(2).small_icon,
+                    width: 50,
+                    color: Constants.icon_Colors,
+                  ),
+                ],
+              ),
+            ),
+            body: TabBarView(
+              children: <Widget>[
+                myScrollableWindow(context, heroTab(0, context)),
+                myScrollableWindow(context, heroTab(1, context)),
+                myScrollableWindow(context, heroTab(2, context))
+              ],
+            ),
+          );
+        },
       ),
-      body: Container(
-        child: Text("User needs to pick a hero"),
-      ),
+    );
+  }
+
+  /*select_hero(int hero_id) {
+    Quanda.of(context).myUser.role = hero_id;
+    Provider.of(context).fireBase.setUpHero(
+        Provider.of(context).auth.getLastUserLoged(),
+        Quanda.of(context).myUser);
+  }*/
+
+  Widget heroTab(int location, BuildContext context) {
+    final String contractText =
+        Constants.myAvatars.elementAt(location).contract_button;
+    final item_pressed = location + 1;
+    return Column(
+      children: <Widget>[
+        Image(
+          width: 300,
+          image:
+              AssetImage(Constants.myAvatars.elementAt(location).asset_Large),
+        ),
+        FlatButton(
+          onPressed: () {
+            /*   select_hero(DefaultTabController.of(context).index + 1);*/
+            Quanda.of(context).myUser.role =
+                DefaultTabController.of(context).index + 1;
+            Provider.of(context).fireBase.setUpHero(
+                Provider.of(context).auth.getLastUserLoged(),
+                Quanda.of(context).myUser);
+            print(
+                'This is the index ${DefaultTabController.of(context).index}');
+          },
+          child: Row(
+            children: <Widget>[Text('$contractText')],
+          ),
+        ),
+        TextFormattedBody(Constants.myAvatars.elementAt(location).story),
+      ],
     );
   }
 }
