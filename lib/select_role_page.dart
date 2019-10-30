@@ -58,13 +58,6 @@ class _SelectRoleState extends State<SelectRolePage> {
     );
   }
 
-  /*select_hero(int hero_id) {
-    Quanda.of(context).myUser.role = hero_id;
-    Provider.of(context).fireBase.setUpHero(
-        Provider.of(context).auth.getLastUserLoged(),
-        Quanda.of(context).myUser);
-  }*/
-
   Widget heroTab(int location, BuildContext context) {
     final String contractText =
         Constants.myAvatars.elementAt(location).contract_button;

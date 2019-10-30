@@ -1,3 +1,4 @@
+import 'package:bob_mobile/data_type/player_points.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/qanda.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +12,8 @@ abstract class BoBFireBase {
       String uid, String email, BuildContext context);
   Stream<QuerySnapshot> getQuestions();
   Future<void> setUpUserPersonality(FirebaseUser Firebaseuser, User user);
+  Stream<QuerySnapshot> getPlayerRankings();
+  Stream<QuerySnapshot> getTeamRankings();
 }
 
 class MBobFireBase implements BoBFireBase {
@@ -112,5 +115,24 @@ class MBobFireBase implements BoBFireBase {
               }
             }));
     print('I wrote');
+  }
+
+  @override
+  Stream<QuerySnapshot> getPlayerRankings() {
+    print('Queried lists of rankings single user....');
+    return (_firestore
+        .collection('player_rankings')
+        .orderBy('player_points', descending: true)
+        .snapshots());
+  }
+
+  @override
+  Stream<QuerySnapshot> getTeamRankings() {
+    // TODO: implement getTeamRankings
+    print('Queried lists of rankings teams....');
+    return (_firestore
+        .collection('team_ratings')
+        .orderBy('team_points', descending: true)
+        .snapshots());
   }
 }

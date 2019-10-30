@@ -10,6 +10,7 @@ class Avatar {
   String asset_Body_Small;
   String small_icon;
   String contract_button;
+  String header_dashboard;
   Avatar(
     this.story,
     this.color,
@@ -18,5 +19,6 @@ class Avatar {
     this.asset_Large,
     this.small_icon,
     this.contract_button,
+    this.header_dashboard,
   ) {}
 }

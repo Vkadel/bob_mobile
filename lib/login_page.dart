@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_formtype == FormType.login) {
       return [
         //TODO: String
-        FormattedRoundedButton('Login with email', submit),
+        FormattedRoundedButton('Login with email', submit, context),
         //TODO: String
         GoogleSingInButton('Log in with Google', Provider.of(context).auth),
         FlatButton(
@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
       //Register
       return [
         //TODO: String
-        FormattedRoundedButton('Create Account with email', submit),
+        FormattedRoundedButton('Create Account with email', submit, context),
         //TODO: String
         GoogleSingInButton(
             'Register with your Google Account', Provider.of(context).auth),
