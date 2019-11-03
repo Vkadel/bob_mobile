@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class Constants {
   static final String hero_stats_label = "Hero Stats";
+  static final String items_list_label = "Items";
   static final String hero_room_title = 'Hero Room';
   static final String team_hall_title = 'Team Hall';
   static final String unit_points = 'Points';

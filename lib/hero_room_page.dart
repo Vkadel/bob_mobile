@@ -1,6 +1,7 @@
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_role.dart';
+import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:bob_mobile/widgets/text_formatted_room_label.dart';
 import 'package:bob_mobile/widgets/text_formatted_room_label_body.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,17 +22,19 @@ class _HeroPageState extends State<HeroRoomPage> {
   Stream<DocumentSnapshot> stream;
   @override
   Widget build(BuildContext context) {
+    initistream(stream, context);
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
               pinned: true,
+              floating: true,
               backgroundColor: ColorLogicbyRole(context),
-              expandedHeight: 180.0,
+              expandedHeight: 150.0,
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
                 title: Text(Constants.hero_room_title),
-                titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 collapseMode: CollapseMode.parallax,
                 background: Image(
                     image: AssetImage(Constants.myAvatars
@@ -39,29 +42,39 @@ class _HeroPageState extends State<HeroRoomPage> {
                         .asset_Large)),
               ),
               actions: <Widget>[]),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Center(
-                  child: TextFormattedRoomLabel(
-                      Constants.hero_stats_label, context),
-                ),
-              ],
+          SliverToBoxAdapter(
+            child: Center(
+              child:
+                  TextFormattedRoomLabel(Constants.hero_stats_label, context),
             ),
           ),
           _buildStats(context, stream),
-          mytest(),
-          mytest(),
+          SliverToBoxAdapter(
+            child: Center(
+              child:
+                  TextFormattedRoomLabel(Constants.items_list_label, context),
+            ),
+          ),
           mytest(),
         ],
       ),
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+}
+
+void initistream(Stream<DocumentSnapshot> stream, BuildContext context) {
+  stream = Provider.of(context).fireBase.getClassStats(context);
 }
 
 Widget _buildStats(BuildContext context, Stream<DocumentSnapshot> stream) {
+  stream = Provider.of(context).fireBase.getClassStats(context);
   return StreamBuilder(
-    stream: Provider.of(context).fireBase.getClassStats(context),
+    stream: stream,
     builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
       if (!snapshot.hasError &&
           snapshot.connectionState == ConnectionState.active &&
@@ -71,48 +84,58 @@ Widget _buildStats(BuildContext context, Stream<DocumentSnapshot> stream) {
             AvatarStats.fromJson(snapshot.data.data);
         return SliverGrid.count(
           crossAxisCount: 2,
+          childAspectRatio: 2,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 40,
           children: <Widget>[
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: Quanda.of(context).myAvatarStats.additions.length,
-                itemBuilder: (context, index) => _buildListofAdditions(context,
-                    Quanda.of(context).myAvatarStats.additions, index)),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: Quanda.of(context).myAvatarStats.additions.length,
-                itemBuilder: (context, index) => _buildListofAdditions(context,
-                    Quanda.of(context).myAvatarStats.additions, index)),
+            Container(
+              color: Colors.green,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: Quanda.of(context).myAvatarStats.additions.length,
+                  itemBuilder: (context, index) => _buildAdditionsTile(context,
+                      Quanda.of(context).myAvatarStats.additions, index)),
+            ),
+            Container(
+              color: Colors.red,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: Quanda.of(context).myAvatarStats.additions.length,
+                  itemBuilder: (context, index) => _buildSubstractionsTile(
+                      context,
+                      Quanda.of(context).myAvatarStats.substractions,
+                      index)),
+            ),
           ],
         );
       } else {
-        return new SliverList(
-          delegate: SliverChildListDelegate(
-            [],
-          ),
+        return SliverFillRemaining(
+          child: Text('Loading'),
         );
       }
     },
   );
 }
 
-_buildListofAdditions(
+_buildAdditionsTile(
     BuildContext context, Map<dynamic, dynamic> additions, int index) {
-  String item = additions[0];
-  return ListTile(
-    title: TextFormattedRoomLabelBody(
+  return Center(
+    child: TextFormattedLabelTwo(
         '+ ${additions.values.toList().elementAt(index)} to '
         '${Quanda.of(context).bookTypes.elementAt(int.parse(additions.keys.toList().elementAt(index))).type}',
-        context),
+        20,
+        Colors.white),
   );
 }
 
-_buildListofSubstractions(
+_buildSubstractionsTile(
     BuildContext context, Map<dynamic, dynamic> subtractions, int index) {
-  return ListTile(
-    title: TextFormattedRoomLabelBody(
-        'Plus ${subtractions.values.toList().elementAt(index)} to '
+  return Center(
+    child: TextFormattedLabelTwo(
+        '- ${subtractions.values.toList().elementAt(index)} to '
         '${Quanda.of(context).bookTypes.elementAt(int.parse(subtractions.keys.toList().elementAt(index))).type}',
-        context),
+        20,
+        Colors.white),
   );
 }
 
@@ -138,11 +161,11 @@ SliverGrid mytest() {
       ),
       Container(
         height: 20,
-        color: Colors.yellow,
+        color: Colors.red,
       ),
       Container(
         height: 20,
-        color: Colors.red,
+        color: Colors.yellow,
       )
     ],
   );
