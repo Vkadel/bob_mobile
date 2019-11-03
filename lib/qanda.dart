@@ -1,3 +1,5 @@
+import 'package:bob_mobile/data_type/avatar_stats.dart';
+import 'package:bob_mobile/data_type/book_types.dart';
 import 'package:flutter/material.dart';
 import 'data_type/question.dart';
 import 'data_type/user.dart';
@@ -12,6 +14,8 @@ class Quanda extends InheritedWidget {
   bool d_pressed = false;
   String my_text = '';
   User myUser;
+  AvatarStats myAvatarStats;
+  List<BookTypes> bookTypes;
 
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) {
@@ -29,7 +33,9 @@ class Quanda extends InheritedWidget {
       this.my_text,
       this.c_pressed,
       this.d_pressed,
-      this.myUser})
+      this.myUser,
+      this.myAvatarStats,
+      this.bookTypes})
       : /*assert(a_pressed != null),*/
         super(
           key: key,

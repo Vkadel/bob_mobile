@@ -1,17 +1,10 @@
 import 'package:bob_mobile/auth.dart';
-import 'package:bob_mobile/constants.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/firestore.dart';
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
 import 'package:bob_mobile/select_role_page.dart';
-import 'package:bob_mobile/validators.dart';
-import 'package:bob_mobile/widgets/google_signin_button.dart';
 import 'package:bob_mobile/widgets/loading_indicator_full_screen.dart';
-import 'package:bob_mobile/widgets/rounded_edge_button.dart';
-import 'package:bob_mobile/widgets/rounded_edge_button_hero.dart';
-import 'package:bob_mobile/widgets/rounded_edge_button_survey.dart';
-import 'package:bob_mobile/widgets/scrollable_widget_window.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'dashboard_page.dart';
-import 'data_type/text_formatted_body.dart';
 import 'login_page.dart';
 import 'personality_test_page.dart';
 import 'data_type/question.dart';

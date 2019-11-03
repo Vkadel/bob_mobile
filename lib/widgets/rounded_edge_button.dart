@@ -1,5 +1,3 @@
-import 'package:bob_mobile/constants.dart';
-import 'package:bob_mobile/qanda.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +7,7 @@ Widget FormattedRoundedButton(
     String label, Function myFunction, BuildContext context) {
   final String _label = label;
   final Function _myFunction = myFunction;
+  final BuildContext myContext = context;
   return Container(
     margin: const EdgeInsets.fromLTRB(10, 20, 10, 10),
     child: RaisedButton(
@@ -19,7 +18,9 @@ Widget FormattedRoundedButton(
         borderRadius: BorderRadius.circular(40),
       ),
       highlightElevation: 2,
-      onPressed: _myFunction,
+      onPressed: () {
+        _myFunction(context);
+      },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
         child: Row(

@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Constants {
+  static final String hero_stats_label = "Hero Stats";
+  static final String hero_room_title = 'Hero Room';
+  static final String team_hall_title = 'Team Hall';
   static final String unit_points = 'Points';
   final int number_of_questions_personality_test = 20;
   final String select_your_role_page_title = "Select your Hero Type";

@@ -1,5 +1,4 @@
 import 'package:bob_mobile/constants.dart';
-import 'package:bob_mobile/data_type/avatar.dart';
 import 'package:flutter/material.dart';
 
 import '../qanda.dart';

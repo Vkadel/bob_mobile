@@ -1,5 +1,6 @@
-import 'package:bob_mobile/data_type/player_points.dart';
+import 'package:bob_mobile/data_type/book_types.dart';
 import 'package:bob_mobile/data_type/user.dart';
+import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +15,8 @@ abstract class BoBFireBase {
   Future<void> setUpUserPersonality(FirebaseUser Firebaseuser, User user);
   Stream<QuerySnapshot> getPlayerRankings();
   Stream<QuerySnapshot> getTeamRankings();
+  Stream<DocumentSnapshot> getClassStats(BuildContext context);
+  Future<void> getBookTypes(BuildContext context);
 }
 
 class MBobFireBase implements BoBFireBase {
@@ -128,11 +131,38 @@ class MBobFireBase implements BoBFireBase {
 
   @override
   Stream<QuerySnapshot> getTeamRankings() {
-    // TODO: implement getTeamRankings
     print('Queried lists of rankings teams....');
     return (_firestore
         .collection('team_ratings')
         .orderBy('team_points', descending: true)
         .snapshots());
+  }
+
+  @override
+  Stream<DocumentSnapshot> getClassStats(BuildContext context) {
+    int roleId = Quanda.of(context).myUser.role;
+    return _firestore
+        .collection('avatar_type_stats')
+        .document(roleId.toString())
+        .snapshots();
+  }
+
+  @override
+  Future<void> getBookTypes(BuildContext context) {
+    //Save book types on Quanda to share them with the application once they are needed.
+    List<BookTypes> bookTypesList = new List();
+    _firestore
+        .collection('book_type')
+        .snapshots()
+        .listen((QuerySnapshot snapshot) {
+      if (snapshot.documents != null) {
+        snapshot.documents.toList().forEach((DocumentSnapshot d) {
+          bookTypesList.add(BookTypes.fromJson(d.data));
+          bookTypesList.elementAt(int.parse(d.documentID)).id =
+              int.parse(d.documentID);
+        });
+        Quanda.of(context).bookTypes = bookTypesList;
+      }
+    });
   }
 }

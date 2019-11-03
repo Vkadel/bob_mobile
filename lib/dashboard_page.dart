@@ -1,9 +1,10 @@
 import 'package:bob_mobile/data_type/player_points.dart';
 import 'package:bob_mobile/data_type/team_points.dart';
-import 'package:bob_mobile/data_type/text_formated_raking_label_2.dart';
-import 'package:bob_mobile/data_type/text_formated_raking_label_3.dart';
+import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
+import 'package:bob_mobile/widgets/text_formated_raking_label_3.dart';
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
+import 'package:bob_mobile/team_hall_page.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_role.dart';
 import 'package:bob_mobile/widgets/rounded_edge_button.dart';
@@ -13,7 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:bob_mobile/widgets/scrollable_widget_window.dart';
 
 import 'constants.dart';
-import 'data_type/text_formated_raking_label_1.dart';
+import 'widgets/text_formated_raking_label_1.dart';
+import 'hero_room_page.dart';
 
 class DashBoardPage extends StatefulWidget {
   @override
@@ -120,6 +122,7 @@ Widget TeamRankings(BuildContext context) {
     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
       if (snapshot.connectionState == ConnectionState.active) {
         if (!snapshot.hasError && snapshot.hasData) {
+          Provider.of(context).fireBase.getBookTypes(context);
           return _listofTeamRankings(context, snapshot);
         }
       } else {
@@ -129,12 +132,20 @@ Widget TeamRankings(BuildContext context) {
   );
 }
 
-gotoHeroRoom() {
+gotoHeroRoom(BuildContext context) {
   print('Debug: I will go to the hero room');
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => HeroRoomPage()),
+  );
 }
 
-gotoTeamHall() {
+gotoTeamHall(BuildContext context) {
   print('Debug: I will go to the team halls');
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => TeamHallPage()),
+  );
 }
 
 _listofIndividualRankings(
@@ -160,15 +171,13 @@ _buildListItem(BuildContext context, DocumentSnapshot item, int index) {
         Row(
           children: <Widget>[
             TextFormattedLabelOne('${index + 1}. '),
-            TextFormattedLabelTwo(
-              '$player_name',
-            ),
+            TextFormattedLabelTwo('$player_name', 0),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            TextFormattedLabelTwo('${playerPoint.player_points} '),
+            TextFormattedLabelTwo('${playerPoint.player_points} ', 0),
             TextFormattedLabelThree('${Constants.unit_points}'),
           ],
         ),
@@ -203,15 +212,13 @@ _buildListTeamItem(BuildContext context, DocumentSnapshot item, int index) {
         Row(
           children: <Widget>[
             TextFormattedLabelOne('${index + 1}. '),
-            TextFormattedLabelTwo(
-              '$team_name',
-            ),
+            TextFormattedLabelTwo('$team_name', 0),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            TextFormattedLabelTwo('${teamPoint.team_points} '),
+            TextFormattedLabelTwo('${teamPoint.team_points} ', 0),
             TextFormattedLabelThree('${Constants.unit_points}'),
           ],
         ),

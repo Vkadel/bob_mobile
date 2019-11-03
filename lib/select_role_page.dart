@@ -1,11 +1,11 @@
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
+import 'package:bob_mobile/widgets/text_formatted_body.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'constants.dart';
-import 'data_type/text_formatted_body.dart';
 
 class SelectRolePage extends StatefulWidget {
   @override
