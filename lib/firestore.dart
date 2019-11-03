@@ -120,6 +120,14 @@ class MBobFireBase implements BoBFireBase {
     print('I wrote');
   }
 
+  void _setUpUserListOfProposedQuestion() {}
+
+  void _setUpUserListOfProposedBooks() {}
+
+  void _setUpListOfAnsweredQuestion() {}
+
+  void _setUpListOfItems() {}
+
   @override
   Stream<QuerySnapshot> getPlayerRankings() {
     print('Queried lists of rankings single user....');

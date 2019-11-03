@@ -7,6 +7,7 @@ import 'package:bob_mobile/widgets/text_formatted_room_label_body.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:random_color/random_color.dart';
 
 import 'constants.dart';
 import 'data_type/avatar_stats.dart';
@@ -23,49 +24,72 @@ class _HeroPageState extends State<HeroRoomPage> {
   @override
   Widget build(BuildContext context) {
     initistream(stream, context);
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-              pinned: true,
-              floating: true,
-              backgroundColor: ColorLogicbyRole(context),
-              expandedHeight: 150.0,
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text(Constants.hero_room_title),
-                titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                collapseMode: CollapseMode.parallax,
-                background: Image(
-                    image: AssetImage(Constants.myAvatars
-                        .elementAt(Quanda.of(context).myUser.role - 1)
-                        .asset_Large)),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+                pinned: true,
+                floating: true,
+                backgroundColor: ColorLogicbyRole(context),
+                expandedHeight: 150.0,
+                flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  title: Text(Constants.hero_room_title),
+                  titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  collapseMode: CollapseMode.parallax,
+                  background: Image(
+                      image: AssetImage(Constants.myAvatars
+                          .elementAt(Quanda.of(context).myUser.role - 1)
+                          .asset_Large)),
+                ),
+                actions: <Widget>[]),
+            SliverToBoxAdapter(
+              child: Center(
+                child:
+                    TextFormattedRoomLabel(Constants.hero_stats_label, context),
               ),
-              actions: <Widget>[]),
-          SliverToBoxAdapter(
-            child: Center(
-              child:
-                  TextFormattedRoomLabel(Constants.hero_stats_label, context),
             ),
-          ),
-          _buildStats(context, stream),
-          SliverToBoxAdapter(
-            child: Center(
-              child:
-                  TextFormattedRoomLabel(Constants.items_list_label, context),
+            _buildStats(context, stream),
+            SliverToBoxAdapter(
+              child: Center(
+                child:
+                    TextFormattedRoomLabel(Constants.items_list_label, context),
+              ),
             ),
-          ),
-          mytest(),
-        ],
+            mytest(),
+            SliverToBoxAdapter(
+              child: TabBar(
+                tabs: <Widget>[
+                  Tab(icon: Icon(Icons.directions_car)),
+                  Tab(icon: Icon(Icons.directions_transit)),
+                  Tab(icon: Icon(Icons.directions_bike)),
+                ],
+              ),
+            ),
+            SliverFillRemaining(
+              child: TabBarView(
+                children: [
+                  Icon(Icons.directions_car),
+                  Icon(Icons.directions_transit),
+                  Icon(Icons.directions_bike),
+                ],
+              ),
+            ),
+            SliverFillRemaining(
+              child: Container(
+                color: Colors.green,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
-
-  @override
-  void initState() {
-    super.initState();
-  }
 }
+
+Widget _buildListofItems(BuildContext context) {}
 
 void initistream(Stream<DocumentSnapshot> stream, BuildContext context) {
   stream = Provider.of(context).fireBase.getClassStats(context);
@@ -140,33 +164,55 @@ _buildSubstractionsTile(
 }
 
 SliverGrid mytest() {
+  Color random = RandomColor().randomColor();
   return new SliverGrid.count(
     crossAxisCount: 3,
     children: <Widget>[
       Container(
         height: 20,
-        color: Colors.orange,
+        color: RandomColor().randomColor(),
       ),
       Container(
         height: 20,
-        color: Colors.blue,
+        color: RandomColor().randomColor(),
       ),
       Container(
         height: 20,
-        color: Colors.green,
+        color: RandomColor().randomColor(),
       ),
       Container(
         height: 20,
-        color: Colors.purple,
+        color: RandomColor().randomColor(),
       ),
       Container(
         height: 20,
-        color: Colors.red,
+        color: RandomColor().randomColor(),
       ),
       Container(
         height: 20,
-        color: Colors.yellow,
+        color: RandomColor().randomColor(),
       )
     ],
   );
+}
+
+class Delegate extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(
+          BuildContext context, double shrinkOffset, bool overlapsContent) =>
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Container(
+          color: Colors.yellow,
+        ),
+      );
+
+  @override
+  double get maxExtent => 60;
+
+  @override
+  double get minExtent => 30;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 }
