@@ -1,6 +1,8 @@
 import 'package:bob_mobile/data_type/question.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/widgets/rounded_edge_button_survey.dart';
+import 'package:bob_mobile/widgets/text_formated_raking_label_1.dart';
+import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,57 +67,63 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
   }
 
   Widget BuildSurveyQuestion() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          Container(
-            alignment: Alignment.topCenter,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-            child: Text(
-              _list_of_questions
-                  .elementAt(Quanda.of(this.context).progress)
-                  .question,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200),
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Container(
+              alignment: Alignment.topCenter,
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+              child: TextFormattedLabelTwo(
+                _list_of_questions
+                    .elementAt(Quanda.of(this.context).progress)
+                    .question,
+                35,
+                Colors.deepOrange,
+              ),
             ),
-          ),
-          MyRoundedButton(
-            press_a,
-            Quanda.of(context).a_pressed,
-            _list_of_questions.elementAt(Quanda.of(context).progress).option_a,
-          ),
-          MyRoundedButton(
-            press_b,
-            Quanda.of(context).b_pressed,
-            _list_of_questions.elementAt(Quanda.of(context).progress).option_b,
-          ),
-          Container(
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.bottomRight,
-                  child: FlatButton(
-                    child: Text('Previous'),
+            MyRoundedButton(
+              press_a,
+              Quanda.of(context).a_pressed,
+              _list_of_questions
+                  .elementAt(Quanda.of(context).progress)
+                  .option_a,
+            ),
+            MyRoundedButton(
+              press_b,
+              Quanda.of(context).b_pressed,
+              _list_of_questions
+                  .elementAt(Quanda.of(context).progress)
+                  .option_b,
+            ),
+            Container(
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.bottomRight,
+                    child: FlatButton(
+                      child: Text('Previous'),
+                      onPressed: () {
+                        Go_prev();
+                      },
+                    ),
+                  ),
+                  Text('$_mytext'),
+                  FlatButton(
+                    child: Text('Next'),
                     onPressed: () {
-                      Go_prev();
+                      Go_next();
                     },
                   ),
-                ),
-                Text('$_mytext'),
-                FlatButton(
-                  child: Text('Next'),
-                  onPressed: () {
-                    Go_next();
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -130,7 +138,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
         Quanda.of(context).progress = 0;
         //TODO: Make sure only one check if done and only happens when
         //When permanent is size 20. Then it pops back into the dashboard.
-        return;
+        return CircularProgressIndicator();
       } else {
         if (Quanda.of(context).progress ==
             Constants().number_of_questions_personality_test - 1) {
@@ -345,5 +353,6 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     Provider.of(context).fireBase.setUpUserPersonality(
         Provider.of(context).auth.getLastUserLoged(),
         Quanda.of(context).myUser);
+    setState(() {});
   }
 }

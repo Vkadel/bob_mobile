@@ -32,12 +32,12 @@ class MyApp extends StatelessWidget {
         auth: Auth(),
         fireBase: MBobFireBase(),
         child: MaterialApp(
-          title: 'Flutter Demo',
-          theme: ThemeData(
+          title: 'Battle of the books',
+          theme: new ThemeData(
             secondaryHeaderColor: Colors.blueAccent,
             accentColor: Colors.blueAccent,
             primaryColor: Colors.deepOrange,
-            scaffoldBackgroundColor: Colors.deepOrange[50],
+            scaffoldBackgroundColor: Colors.deepOrangeAccent[50],
           ),
           home: EntryPage(title: 'Battle of the Books'),
           routes: <String, WidgetBuilder>{

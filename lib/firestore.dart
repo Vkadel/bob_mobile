@@ -1,6 +1,6 @@
 import 'package:bob_mobile/data_type/book_types.dart';
+import 'package:bob_mobile/data_type/proposed_questions.dart';
 import 'package:bob_mobile/data_type/user.dart';
-import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,6 +61,32 @@ class MBobFireBase implements BoBFireBase {
           'value_p': 0,
         },
         0);
+
+    ProposedQuestions question = new ProposedQuestions(
+        'question',
+        'wronganswerone',
+        'answertwo',
+        'answerthree',
+        'correctanswer',
+        0,
+        DateTime.now().millisecondsSinceEpoch,
+        '48MJq4Ty2zyQP0xXd0hE');
+    question.userId = uid;
+    List<ProposedQuestions> myquestionlist = new List<ProposedQuestions>();
+
+    myquestionlist.add(question);
+    myquestionlist.add(question);
+    myquestionlist.add(question);
+
+    myquestionlist.forEach((propQ) => _firestore
+        .collection('proposed_questions_user')
+        .document('$uid')
+        .collection('list_of_proposed_questions')
+        .document()
+        .setData(propQ.toJson()));
+
+    //Todo: Check the query for documents works
+
     Quanda.of(context).myUser = user;
     _firestore.collection('users').document().setData(user.toJson());
   }
@@ -99,7 +125,6 @@ class MBobFireBase implements BoBFireBase {
   @override
   Future<void> setUpHero(FirebaseUser firebaseuser, User user) async {
     String uid = firebaseuser.uid;
-
     await _firestore
         .collection('users')
         .where('id', isEqualTo: '$uid')
@@ -108,25 +133,37 @@ class MBobFireBase implements BoBFireBase {
               DocumentSnapshot freshSnapShot =
                   await transaction.get(data.documents.elementAt(0).reference);
               if (freshSnapShot.exists) {
-                /*String documentPath = freshSnapShot.reference.path.toString();
-                final DocumentReference postRef =
-                    Firestore.instance.document('$documentPath/personality');*/
                 User freshUser = User.fromJson(freshSnapShot.data);
                 freshUser.role = user.role;
                 await transaction.update(
                     freshSnapShot.reference, freshUser.toJson());
+                _setUpUserListOfProposedQuestion(firebaseuser);
               }
             }));
     print('I wrote');
   }
 
-  void _setUpUserListOfProposedQuestion() {}
-
-  void _setUpUserListOfProposedBooks() {}
-
-  void _setUpListOfAnsweredQuestion() {}
-
-  void _setUpListOfItems() {}
+  void _setUpUserListOfProposedQuestion(FirebaseUser firebaseuser) {
+    String uid = firebaseuser.uid;
+    _firestore
+        .collection('proposed_questions_user')
+        .where('id', isEqualTo: '$uid')
+        .snapshots()
+        .listen((data) => _firestore.runTransaction((transaction) async {
+              DocumentSnapshot freshSnapShot =
+                  await transaction.get(data.documents.elementAt(0).reference);
+              if (freshSnapShot.exists) {
+                return;
+              } else {
+                _firestore
+                    .collection('proposed_questions_user')
+                    .document('$uid')
+                    .setData({
+                  'id': '$uid',
+                });
+              }
+            }));
+  }
 
   @override
   Stream<QuerySnapshot> getPlayerRankings() {

@@ -3,14 +3,25 @@ part 'proposed_questions.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ProposedQuestions {
-  ProposedQuestions(this.question, this.answerone, this.answertwo,
-      this.answerthree, this.correctanswer);
+  ProposedQuestions(
+      this.question,
+      this.answerone,
+      this.answertwo,
+      this.answerthree,
+      this.correctanswer,
+      this.status,
+      this.datesubmitted,
+      this.bookid);
 
   String question;
   String answerone;
   String answertwo;
   String answerthree;
   String correctanswer;
+  String bookid;
+  String userId;
+  int status; //0:submitted 1:reviewedButnotAccepted 2:
+  int datesubmitted;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

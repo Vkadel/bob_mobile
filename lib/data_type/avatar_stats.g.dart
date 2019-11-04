@@ -8,9 +8,9 @@ part of 'avatar_stats.dart';
 
 AvatarStats _$AvatarStatsFromJson(Map<String, dynamic> json) {
   return AvatarStats(
-      json['additions'] as Map<dynamic, dynamic>,
-      json['substractions'] as Map<dynamic, dynamic>,
-      json['multipliers'] as Map<dynamic, dynamic>);
+      json['additions'] as Map<String, dynamic>,
+      json['substractions'] as Map<String, dynamic>,
+      json['multipliers'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$AvatarStatsToJson(AvatarStats instance) =>

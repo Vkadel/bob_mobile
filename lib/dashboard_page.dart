@@ -47,20 +47,32 @@ build_body(BuildContext context) {
       Column(
         children: <Widget>[
           HeaderDashboard(context),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormattedLabelTwo(
+                '${Constants.individual_rankings_label}',
+                20,
+                colorLogicbyPersonality(context)),
+          ),
           Container(
             color: colorLogicbyPersonality(context),
             margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
             alignment: Alignment.center,
             padding: EdgeInsets.fromLTRB(16, 10, 16, 15),
-            height: 200,
+            height: Constants.height_extended_bars,
             child: PlayerRankings(context),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormattedLabelTwo('${Constants.team_rankings_label}', 20,
+                colorLogicbyPersonality(context)),
           ),
           Container(
             color: colorLogicbyPersonality(context),
             margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
             alignment: Alignment.center,
             padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
-            height: 200,
+            height: Constants.height_extended_bars,
             child: TeamRankings(context),
           ),
           Container(
@@ -151,7 +163,7 @@ gotoTeamHall(BuildContext context) {
 _listofIndividualRankings(
     BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
   return ListView.builder(
-      itemExtent: 90,
+      itemExtent: Constants.height_raking_items,
       shrinkWrap: true,
       padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
       itemCount: snapshot.data.documents.length,
@@ -171,13 +183,14 @@ _buildListItem(BuildContext context, DocumentSnapshot item, int index) {
         Row(
           children: <Widget>[
             TextFormattedLabelOne('${index + 1}. '),
-            TextFormattedLabelTwo('$player_name', 0),
+            TextFormattedLabelTwo('$player_name', 0, Colors.white),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            TextFormattedLabelTwo('${playerPoint.player_points} ', 0),
+            TextFormattedLabelTwo(
+                '${playerPoint.player_points} ', 0, Colors.white),
             TextFormattedLabelThree('${Constants.unit_points}'),
           ],
         ),
@@ -192,7 +205,7 @@ _buildListItem(BuildContext context, DocumentSnapshot item, int index) {
 _listofTeamRankings(
     BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
   return ListView.builder(
-      itemExtent: 90,
+      itemExtent: Constants.height_raking_items,
       shrinkWrap: true,
       padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
       itemCount: snapshot.data.documents.length,
@@ -212,13 +225,13 @@ _buildListTeamItem(BuildContext context, DocumentSnapshot item, int index) {
         Row(
           children: <Widget>[
             TextFormattedLabelOne('${index + 1}. '),
-            TextFormattedLabelTwo('$team_name', 0),
+            TextFormattedLabelTwo('$team_name', 00, Colors.white),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            TextFormattedLabelTwo('${teamPoint.team_points} ', 0),
+            TextFormattedLabelTwo('${teamPoint.team_points} ', 0, Colors.white),
             TextFormattedLabelThree('${Constants.unit_points}'),
           ],
         ),

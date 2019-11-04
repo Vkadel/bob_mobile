@@ -3,7 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Constants {
+  static final double height_extended_bars = 150;
+  static final double height_raking_items = 80;
   static final String hero_stats_label = "Hero Stats";
+  static final String individual_rankings_label = "Hero Rankings";
+  static final String team_rankings_label = "Team Rankings";
   static final String items_list_label = "Items";
   static final String hero_room_title = 'Hero Room';
   static final String team_hall_title = 'Team Hall';
@@ -18,7 +22,7 @@ class Constants {
   final String mage_2_story =
       "Master warned during training that the dark was coming, and then the world became total darkness. The mage then goes off to understand how this dark started and to seek knowledge to bring back the light.";
   final String archer_3_story =
-      "Archers struggle to survive in the forest.  Within their lands the darkness spread stealing away those that cannot defend themselves. Some are leaving their homes and looking for better hunt elsewhere. Others have no choice but to face the darkness head-on if they want to protect their land and keep the darkness at bay.";
+      "Archers struggle to survive in the forest.  Within their lands the darkness spread stealing away those that cannot defend themselves. Some are leaving their homes and looking for better hunt elsewhere. The ones that stay must face the darkness head-on to protect their land and loved ones.";
   static List<Avatar> myAvatars;
 
 /*  static Color icon_Colors = Colors.yellow[50];
@@ -34,12 +38,12 @@ class Constants {
   static Color color_extro = Colors.redAccent[400];
 
   //Button Labels hero screen
-  static final String i_want_to_be_knight = 'I want to be a Knight';
-  static final String i_want_to_be_mage = 'I want to be a Mage';
-  static final String i_want_to_be_archer = 'I want to be an Archer';
-  static final String contract_knight = 'I want to be a Knight';
-  static final String contract_mage = 'I want to be a Mage';
-  static final String contract_archer = 'I want to be an Archer';
+  static final String i_want_to_be_knight = 'Tap if you want to be a Knight';
+  static final String i_want_to_be_mage = 'Tap if you want to be a Mage';
+  static final String i_want_to_be_archer = 'Tap if you want to be an Archer';
+  static final String contract_knight = 'Tap if you want to a Knight';
+  static final String contract_mage = 'Tap if you want to be a Mage';
+  static final String contract_archer = 'Tap if you want to an Archer';
 
   static final int role_avatar_knight = 1;
   static final int role_avatar_mage = 2;

@@ -1,5 +1,6 @@
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
+import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_role.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:bob_mobile/widgets/text_formatted_room_label.dart';
@@ -30,21 +31,21 @@ class _HeroPageState extends State<HeroRoomPage> {
         body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
-                pinned: true,
-                floating: true,
-                backgroundColor: ColorLogicbyRole(context),
-                expandedHeight: 150.0,
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: Text(Constants.hero_room_title),
-                  titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  collapseMode: CollapseMode.parallax,
-                  background: Image(
-                      image: AssetImage(Constants.myAvatars
-                          .elementAt(Quanda.of(context).myUser.role - 1)
-                          .asset_Large)),
-                ),
-                actions: <Widget>[]),
+              pinned: true,
+              floating: true,
+              backgroundColor: ColorLogicbyRole(context),
+              expandedHeight: 150.0,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text(Constants.hero_room_title),
+                titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                collapseMode: CollapseMode.parallax,
+                background: Image(
+                    image: AssetImage(Constants.myAvatars
+                        .elementAt(Quanda.of(context).myUser.role - 1)
+                        .asset_Large)),
+              ),
+            ),
             SliverToBoxAdapter(
               child: Center(
                 child:
@@ -61,17 +62,27 @@ class _HeroPageState extends State<HeroRoomPage> {
             mytest(),
             SliverToBoxAdapter(
               child: TabBar(
+                labelColor: colorLogicbyPersonality(context),
+                unselectedLabelColor: ColorLogicbyRole(context),
+                indicatorColor: colorLogicbyPersonality(context),
                 tabs: <Widget>[
-                  Tab(icon: Icon(Icons.directions_car)),
-                  Tab(icon: Icon(Icons.directions_transit)),
-                  Tab(icon: Icon(Icons.directions_bike)),
+                  Tab(
+                    icon: Icon(Icons.settings_input_composite),
+                    child: Text('Items'),
+                  ),
+                  Tab(icon: Icon(Icons.view_week), child: Text('library')),
+                  Tab(
+                      icon: Icon(Icons.question_answer),
+                      child: TextFormattedLabelTwo('Add Questions')),
                 ],
               ),
             ),
             SliverFillRemaining(
               child: TabBarView(
                 children: [
-                  Icon(Icons.directions_car),
+                  Container(
+                    color: Colors.blueAccent,
+                  ),
                   Icon(Icons.directions_transit),
                   Icon(Icons.directions_bike),
                 ],
@@ -89,7 +100,9 @@ class _HeroPageState extends State<HeroRoomPage> {
   }
 }
 
-Widget _buildListofItems(BuildContext context) {}
+Widget _buildListofItems(BuildContext context) {
+  return StreamBuilder();
+}
 
 void initistream(Stream<DocumentSnapshot> stream, BuildContext context) {
   stream = Provider.of(context).fireBase.getClassStats(context);
@@ -165,34 +178,16 @@ _buildSubstractionsTile(
 
 SliverGrid mytest() {
   Color random = RandomColor().randomColor();
-  return new SliverGrid.count(
-    crossAxisCount: 3,
-    children: <Widget>[
-      Container(
-        height: 20,
+  int item_count = 20;
+  return new SliverGrid(
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: (item_count / 2).round(), childAspectRatio: 1),
+    delegate: SliverChildBuilderDelegate((context, index) {
+      return Container(
+        height: 10,
         color: RandomColor().randomColor(),
-      ),
-      Container(
-        height: 20,
-        color: RandomColor().randomColor(),
-      ),
-      Container(
-        height: 20,
-        color: RandomColor().randomColor(),
-      ),
-      Container(
-        height: 20,
-        color: RandomColor().randomColor(),
-      ),
-      Container(
-        height: 20,
-        color: RandomColor().randomColor(),
-      ),
-      Container(
-        height: 20,
-        color: RandomColor().randomColor(),
-      )
-    ],
+      );
+    }, childCount: item_count),
   );
 }
 
