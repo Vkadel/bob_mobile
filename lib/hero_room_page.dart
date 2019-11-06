@@ -11,7 +11,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 import 'package:intl/intl.dart';
-
 import 'constants.dart';
 import 'data_type/avatar_stats.dart';
 import 'data_type/items.dart';

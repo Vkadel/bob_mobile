@@ -338,47 +338,6 @@ class MBobFireBase implements BoBFireBase {
   Future<void> useItem(
       BuildContext context, Items itemType, int duration_per_days) async {
     int number_togrow;
-    /*await _firestore
-        .collection('user_data')
-        .document(Quanda
-        .of(context)
-        .myUser
-        .id)
-        .collection('list_of_items')
-        .where('item', isEqualTo: itemType.item)
-        .snapshots()
-        .listen((data) =>
-        _firestore.runTransaction((transaction) async {
-          DocumentSnapshot freshSnapShot =
-          await transaction.get(data.documents
-              .elementAt(0)
-              .reference);
-          if (freshSnapShot.exists &&
-              Items
-                  .fromJson(data.documents
-                  .elementAt(0)
-                  .data)
-                  .status !=
-                  Items
-                      .fromJson(freshSnapShot.data)
-                      .status) {
-            Items freshItem = Items.fromJson(freshSnapShot.data);
-            freshItem.status = Constants.item_used;
-            number_togrow = 1 * (3600000 * 24);
-            freshItem.endDate =
-                number_togrow + DateTime
-                    .now()
-                    .millisecondsSinceEpoch;
-            */ /*await transaction.set(
-                    freshSnapShot.reference, freshItem.toJson());*/ /*
-            print('Im updating the item');
-            freshSnapShot.reference.setData(freshItem.toJson());
-          } else {
-            return;
-          }
-        }));*/
-    print('I wrote the item');
-
     QuerySnapshot querySnapshot = await _firestore
         .collection('user_data')
         .document(Quanda.of(context).myUser.id)
@@ -400,6 +359,7 @@ class MBobFireBase implements BoBFireBase {
         freshItem.endDate =
             number_togrow + DateTime.now().millisecondsSinceEpoch;
         await transaction.update(freshSnapshot.reference, freshItem.toJson());
+        print('I wrote on itemID: ${freshSnapshot.reference}');
       });
     });
   }
