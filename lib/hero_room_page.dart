@@ -110,20 +110,55 @@ Widget _buildListofItems(BuildContext context) {
   return StreamBuilder(
       stream: Provider.of(context).fireBase.getMyItems(context),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+        if (!snapshot.hasError &&
+            snapshot.connectionState == ConnectionState.active &&
+            snapshot.hasData &&
+            snapshot.data != null &&
+            snapshot.data.documentChanges != null) {
+          print('I have document changes and will rebuild');
+          if (Quanda.of(context).masterListOfItems != null &&
+              Quanda.of(context).masterListOfItems.length > 0) {
+            return _refreshList(snapshot, context);
+          }
+        }
         if (!snapshot.hasError &&
             snapshot.connectionState == ConnectionState.active &&
             snapshot.hasData &&
             snapshot.data != null) {
-          List<Items> myItemsBuild = new List();
-          snapshot.data.documents
-              .toList()
-              .forEach((f) => myItemsBuild.add(Items.fromJson(f.data)));
-          Quanda.of(context).myItems = myItemsBuild;
-          return _buildListofMarterItems(context);
+          print('Rebuilding List for the first time');
+          return _buildListForFirstTime(snapshot, context);
         } else {
           return youDontHaveItems(context);
         }
       });
+}
+
+Widget _refreshList(
+    AsyncSnapshot<QuerySnapshot> snapshot, BuildContext context) {
+  List<Items> myItemsBuild = new List();
+  snapshot.data.documents
+      .toList()
+      .forEach((f) => myItemsBuild.add(Items.fromJson(f.data)));
+  myItemsBuild.forEach((f) => {
+        Quanda.of(context).myItems.removeAt(
+            Quanda.of(context).myItems.indexWhere((test) => test.id == f.id))
+      });
+  Quanda.of(context).myItems.insertAll(0, myItemsBuild);
+  Quanda.of(context).myItems = myItemsBuild;
+  return _createFinalListOfItems(context);
+}
+
+Widget _buildListForFirstTime(
+    AsyncSnapshot<QuerySnapshot> snapshot, BuildContext context) {
+  List<Items> myItemsBuild = new List();
+  snapshot.data.documents
+      .toList()
+      .forEach((f) => myItemsBuild.add(Items.fromJson(f.data)));
+  Quanda.of(context).myItems = myItemsBuild;
+  return _buildListofMarterItems(context);
 }
 
 Widget _buildListofMarterItems(BuildContext context) {
@@ -138,18 +173,21 @@ Widget _buildListofMarterItems(BuildContext context) {
           snapshot.data.documents
               .forEach((f) => items.add(ItemsMaster.fromJson(f.data)));
           Quanda.of(context).masterListOfItems = items;
-          return Container(
-            color: ColorLogicbyPersonality(context),
-            child: ListView.builder(
-              itemBuilder: (context, index) =>
-                  _creatTileForItem(index, context),
-              itemCount: Quanda.of(context).myItems.length,
-            ),
-          );
+          return _createFinalListOfItems(context);
         } else {
           return youDontHaveItems(context);
         }
       });
+}
+
+Widget _createFinalListOfItems(BuildContext context) {
+  return Container(
+    color: ColorLogicbyPersonality(context),
+    child: ListView.builder(
+      itemBuilder: (context, index) => _creatTileForItem(index, context),
+      itemCount: Quanda.of(context).myItems.length,
+    ),
+  );
 }
 
 Widget _creatTileForItem(int index, BuildContext context) {
@@ -241,6 +279,7 @@ Widget _cardForItemCanBeUsed(int index, BuildContext context) {
                   .masterListOfItems
                   .elementAt(index)
                   .duration_days);
+          return CircularProgressIndicator();
         },
         child: TextFormattedLabelTwo('use', 15, Colors.white),
       ),

@@ -303,6 +303,7 @@ class MBobFireBase implements BoBFireBase {
         .collection('user_data')
         .document(Quanda.of(context).myUser.id)
         .collection('list_of_items')
+        .where('id', isEqualTo: Quanda.of(context).myUser.id)
         .where('status', isGreaterThanOrEqualTo: 1)
         .snapshots();
   }
@@ -342,7 +343,9 @@ class MBobFireBase implements BoBFireBase {
         .collection('user_data')
         .document(Quanda.of(context).myUser.id)
         .collection('list_of_items')
+        .where('id', isEqualTo: Quanda.of(context).myUser.id)
         .where('item', isEqualTo: itemType.item)
+        .where('status', isEqualTo: Constants.item_availble)
         .snapshots()
         .first
         .then((data) {
@@ -359,7 +362,7 @@ class MBobFireBase implements BoBFireBase {
         freshItem.endDate =
             number_togrow + DateTime.now().millisecondsSinceEpoch;
         await transaction.update(freshSnapshot.reference, freshItem.toJson());
-        print('I wrote on itemID: ${freshSnapshot.reference}');
+        print('I wrote on itemID: ${freshSnapshot.reference.path}');
       });
     });
   }
