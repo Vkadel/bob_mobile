@@ -1,10 +1,17 @@
+import 'package:bob_mobile/constants.dart';
 import 'package:bob_mobile/data_type/book_types.dart';
+import 'package:bob_mobile/data_type/items.dart';
+import 'package:bob_mobile/data_type/items_master.dart';
+import 'package:bob_mobile/data_type/proposed_books.dart';
 import 'package:bob_mobile/data_type/proposed_questions.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/qanda.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'data_type/answered_questions.dart';
+import 'data_type/books.dart';
 
 abstract class BoBFireBase {
   Stream<QuerySnapshot> get_userprofile(String uid);
@@ -17,6 +24,13 @@ abstract class BoBFireBase {
   Stream<QuerySnapshot> getTeamRankings();
   Stream<DocumentSnapshot> getClassStats(BuildContext context);
   Future<void> getBookTypes(BuildContext context);
+  Stream<QuerySnapshot> getMyItems(BuildContext context);
+  Stream<QuerySnapshot> getMyProposedQuestions(BuildContext context);
+  Stream<QuerySnapshot> getMyProposedBooks(BuildContext context);
+  Stream<QuerySnapshot> getMyReadBooks(BuildContext context);
+  Stream<QuerySnapshot> getMyAnsweredQuestions(BuildContext context);
+  Stream<QuerySnapshot> getMasterListOfItems(BuildContext context);
+  Future<void> useItem(BuildContext context, Items itemType, int duration);
 }
 
 class MBobFireBase implements BoBFireBase {
@@ -62,6 +76,24 @@ class MBobFireBase implements BoBFireBase {
         },
         0);
 
+    //Proposed_questions_Test_creation
+    _proposed_question_test_creationg(uid);
+
+    //Items_test_creation
+    _items_list_test_generation(uid);
+
+    //Proposed_books_test_creation(uid);
+    _proposed_books_test_creation(uid);
+
+    _read_books_test_creation(uid);
+    _answered_questions_check(uid);
+    //Todo: Check the query for documents works
+
+    Quanda.of(context).myUser = user;
+    _firestore.collection('users').document().setData(user.toJson());
+  }
+
+  void _proposed_question_test_creationg(String uid) {
     ProposedQuestions question = new ProposedQuestions(
         'question',
         'wronganswerone',
@@ -71,24 +103,70 @@ class MBobFireBase implements BoBFireBase {
         0,
         DateTime.now().millisecondsSinceEpoch,
         '48MJq4Ty2zyQP0xXd0hE');
-    question.userId = uid;
+    question.id = uid;
     List<ProposedQuestions> myquestionlist = new List<ProposedQuestions>();
-
     myquestionlist.add(question);
-    myquestionlist.add(question);
-    myquestionlist.add(question);
-
     myquestionlist.forEach((propQ) => _firestore
-        .collection('proposed_questions_user')
+        .collection('user_data')
         .document('$uid')
         .collection('list_of_proposed_questions')
         .document()
         .setData(propQ.toJson()));
+  }
 
-    //Todo: Check the query for documents works
+  void _items_list_test_generation(String uid) {
+    Items item =
+        new Items(0, 0, uid, Timestamp.now().millisecondsSinceEpoch + 5000000);
+    Items item2 =
+        new Items(1, 0, uid, Timestamp.now().millisecondsSinceEpoch + 5000000);
+    List<Items> items = new List<Items>();
 
-    Quanda.of(context).myUser = user;
-    _firestore.collection('users').document().setData(user.toJson());
+    items.add(item);
+    items.add(item2);
+    items.forEach((propQ) => _firestore
+        .collection('user_data')
+        .document('$uid')
+        .collection('list_of_items')
+        .document()
+        .setData(propQ.toJson()));
+  }
+
+  void _proposed_books_test_creation(uid) {
+    ProposedBooks proposedBooks =
+        new ProposedBooks('name', 'author_name', true, uid);
+    List<ProposedBooks> myProposedBooksList = new List<ProposedBooks>();
+    myProposedBooksList.add(proposedBooks);
+    myProposedBooksList.forEach((propQ) => _firestore
+        .collection('user_data')
+        .document('$uid')
+        .collection('list_of_proposed_books')
+        .document()
+        .setData(propQ.toJson()));
+  }
+
+  void _read_books_test_creation(uid) {
+    Books book1 = new Books(uid, 1, '0');
+    List<Books> myProposedBooksList = new List<Books>();
+    myProposedBooksList.add(book1);
+    myProposedBooksList.forEach((propQ) => _firestore
+        .collection('user_data')
+        .document('$uid')
+        .collection('list_of_read_books')
+        .document()
+        .setData(propQ.toJson()));
+  }
+
+  void _answered_questions_check(uid) {
+    AnsweredQuestions question = new AnsweredQuestions('0', 1, uid);
+    question.id = uid;
+    List<AnsweredQuestions> myquestionlist = new List<AnsweredQuestions>();
+    myquestionlist.add(question);
+    myquestionlist.forEach((propQ) => _firestore
+        .collection('user_data')
+        .document('$uid')
+        .collection('list_of_answered_questions')
+        .document()
+        .setData(propQ.toJson()));
   }
 
   @override
@@ -208,6 +286,121 @@ class MBobFireBase implements BoBFireBase {
         });
         Quanda.of(context).bookTypes = bookTypesList;
       }
+    });
+  }
+
+  @override
+  Stream<QuerySnapshot> getMyAnsweredQuestions(BuildContext context) {
+    // TODO: implement getMyAnsweredQuestions
+    return null;
+  }
+
+  @override
+  Stream<QuerySnapshot> getMyItems(BuildContext context) {
+    // Get items that are active and
+    print('getting my items');
+    return _firestore
+        .collection('user_data')
+        .document(Quanda.of(context).myUser.id)
+        .collection('list_of_items')
+        .where('status', isGreaterThanOrEqualTo: 1)
+        .snapshots();
+  }
+
+  @override
+  Stream<QuerySnapshot> getMasterListOfItems(context) {
+    print('Fetching master list of items');
+    return _firestore
+        .collection('items_master')
+        .where('status', isGreaterThanOrEqualTo: 1)
+        .snapshots();
+  }
+
+  @override
+  Stream<QuerySnapshot> getMyProposedBooks(BuildContext context) {
+    // TODO: implement getMyProposedBooks
+    return null;
+  }
+
+  @override
+  Stream<QuerySnapshot> getMyProposedQuestions(BuildContext context) {
+    // TODO: implement getMyProposedQuestions
+    return null;
+  }
+
+  @override
+  Stream<QuerySnapshot> getMyReadBooks(BuildContext context) {
+    // TODO: implement getMyReadBooks
+    return null;
+  }
+
+  @override
+  Future<void> useItem(
+      BuildContext context, Items itemType, int duration_per_days) async {
+    int number_togrow;
+    /*await _firestore
+        .collection('user_data')
+        .document(Quanda
+        .of(context)
+        .myUser
+        .id)
+        .collection('list_of_items')
+        .where('item', isEqualTo: itemType.item)
+        .snapshots()
+        .listen((data) =>
+        _firestore.runTransaction((transaction) async {
+          DocumentSnapshot freshSnapShot =
+          await transaction.get(data.documents
+              .elementAt(0)
+              .reference);
+          if (freshSnapShot.exists &&
+              Items
+                  .fromJson(data.documents
+                  .elementAt(0)
+                  .data)
+                  .status !=
+                  Items
+                      .fromJson(freshSnapShot.data)
+                      .status) {
+            Items freshItem = Items.fromJson(freshSnapShot.data);
+            freshItem.status = Constants.item_used;
+            number_togrow = 1 * (3600000 * 24);
+            freshItem.endDate =
+                number_togrow + DateTime
+                    .now()
+                    .millisecondsSinceEpoch;
+            */ /*await transaction.set(
+                    freshSnapShot.reference, freshItem.toJson());*/ /*
+            print('Im updating the item');
+            freshSnapShot.reference.setData(freshItem.toJson());
+          } else {
+            return;
+          }
+        }));*/
+    print('I wrote the item');
+
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('user_data')
+        .document(Quanda.of(context).myUser.id)
+        .collection('list_of_items')
+        .where('item', isEqualTo: itemType.item)
+        .snapshots()
+        .first
+        .then((data) {
+      _firestore.runTransaction((transaction) async {
+        DocumentSnapshot freshSnapshot =
+            await transaction.get(data.documents.first.reference);
+        Items freshItem = new Items(
+            Items.fromJson(freshSnapshot.data).item,
+            Items.fromJson(freshSnapshot.data).status,
+            Items.fromJson(freshSnapshot.data).id,
+            Items.fromJson(freshSnapshot.data).endDate);
+        freshItem.status = Constants.item_used;
+        number_togrow = 1 * (3600000 * 24);
+        freshItem.endDate =
+            number_togrow + DateTime.now().millisecondsSinceEpoch;
+        await transaction.update(freshSnapshot.reference, freshItem.toJson());
+      });
     });
   }
 }

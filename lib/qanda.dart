@@ -1,5 +1,7 @@
 import 'package:bob_mobile/data_type/avatar_stats.dart';
 import 'package:bob_mobile/data_type/book_types.dart';
+import 'package:bob_mobile/data_type/items.dart';
+import 'package:bob_mobile/data_type/items_master.dart';
 import 'package:flutter/material.dart';
 import 'data_type/question.dart';
 import 'data_type/user.dart';
@@ -16,6 +18,8 @@ class Quanda extends InheritedWidget {
   User myUser;
   AvatarStats myAvatarStats;
   List<BookTypes> bookTypes;
+  List<Items> myItems;
+  List<ItemsMaster> masterListOfItems;
 
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) {

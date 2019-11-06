@@ -19,7 +19,7 @@ class ProposedQuestions {
   String answerthree;
   String correctanswer;
   String bookid;
-  String userId;
+  String id; //owner id
   int status; //0:submitted 1:reviewedButnotAccepted 2:
   int datesubmitted;
 

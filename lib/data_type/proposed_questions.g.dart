@@ -16,7 +16,7 @@ ProposedQuestions _$ProposedQuestionsFromJson(Map<String, dynamic> json) {
       json['status'] as int,
       json['datesubmitted'] as int,
       json['bookid'] as String)
-    ..userId = json['userId'] as String;
+    ..id = json['id'] as String;
 }
 
 Map<String, dynamic> _$ProposedQuestionsToJson(ProposedQuestions instance) =>
@@ -27,7 +27,7 @@ Map<String, dynamic> _$ProposedQuestionsToJson(ProposedQuestions instance) =>
       'answerthree': instance.answerthree,
       'correctanswer': instance.correctanswer,
       'bookid': instance.bookid,
-      'userId': instance.userId,
+      'id': instance.id,
       'status': instance.status,
       'datesubmitted': instance.datesubmitted
     };

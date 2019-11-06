@@ -13,7 +13,7 @@ Widget FormattedRoundedButton(
     child: RaisedButton(
       elevation: 8,
       splashColor: Colors.orangeAccent,
-      color: colorLogicbyPersonality(context),
+      color: ColorLogicbyPersonality(context),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(40),
       ),

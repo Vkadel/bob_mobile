@@ -5,11 +5,14 @@ part 'items.g.dart';
 class Items {
   Items(
     this.item, //Item id
-    this.status, //0: open 1-oo: used
+    this.status, //0: used 1-oo:available 2:inUse
+    this.id,
+    this.endDate, //make null until activated
   );
-
-  String item;
+  String id; //This is the owners id
+  int item;
   int status;
+  int endDate;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

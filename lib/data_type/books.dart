@@ -4,12 +4,15 @@ part 'books.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Books {
   Books(
-    this.id, //book id
-    this.status, //0: not read  -  1:read 1/3 -  2:read 2/3    -  3: read all
+    this.id, //owner id
+    this.status,
+    this.bookId, //book id see booksMaster
+    //0: not read  -  1:read 1/3 -  2:read 2/3    -  3: read all
   );
 
   String id;
   int status;
+  String bookId;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

@@ -88,10 +88,7 @@ class _EntryPageState extends State<EntryPage> {
                   )
                 : LoginPage();
           } else {
-            return new Container(
-              width: 0.0,
-              height: 0.0,
-            );
+            return LoginPage();
           }
         } else {
           return mLoadingIndicatorFullScreen(context, snapshot.connectionState);

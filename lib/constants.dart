@@ -3,8 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Constants {
+  static final int item_used = 2;
+  static final int item_availble = 1;
+  static final int item_unavailable = 0;
   static final double height_extended_bars = 150;
-  static final double height_raking_items = 80;
+  static final double height_lists_hero_page = 230;
+  static final double height_raking_items = 76;
+  static final double card_elevation = 8;
+  static final String you_dont_have_items =
+      "You currently do not have items. Buy some at the store";
   static final String hero_stats_label = "Hero Stats";
   static final String individual_rankings_label = "Hero Rankings";
   static final String team_rankings_label = "Team Rankings";

@@ -52,10 +52,10 @@ build_body(BuildContext context) {
             child: TextFormattedLabelTwo(
                 '${Constants.individual_rankings_label}',
                 20,
-                colorLogicbyPersonality(context)),
+                ColorLogicbyPersonality(context)),
           ),
           Container(
-            color: colorLogicbyPersonality(context),
+            color: ColorLogicbyPersonality(context),
             margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
             alignment: Alignment.center,
             padding: EdgeInsets.fromLTRB(16, 10, 16, 15),
@@ -65,10 +65,10 @@ build_body(BuildContext context) {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormattedLabelTwo('${Constants.team_rankings_label}', 20,
-                colorLogicbyPersonality(context)),
+                ColorLogicbyPersonality(context)),
           ),
           Container(
-            color: colorLogicbyPersonality(context),
+            color: ColorLogicbyPersonality(context),
             margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
             alignment: Alignment.center,
             padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
@@ -165,7 +165,7 @@ _listofIndividualRankings(
   return ListView.builder(
       itemExtent: Constants.height_raking_items,
       shrinkWrap: true,
-      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       itemCount: snapshot.data.documents.length,
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) =>
@@ -177,20 +177,21 @@ _buildListItem(BuildContext context, DocumentSnapshot item, int index) {
   String player_name = playerPoint.player_name;
   return Container(
     alignment: Alignment.center,
-    color: colorLogicbyPersonality(context),
+    color: ColorLogicbyPersonality(context),
     child: Column(
       children: <Widget>[
         Row(
           children: <Widget>[
             TextFormattedLabelOne('${index + 1}. '),
-            TextFormattedLabelTwo('$player_name', 0, Colors.white),
+            TextFormattedLabelTwo('$player_name',
+                MediaQuery.of(context).size.height / 35, Colors.white),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            TextFormattedLabelTwo(
-                '${playerPoint.player_points} ', 0, Colors.white),
+            TextFormattedLabelTwo('${playerPoint.player_points} ',
+                MediaQuery.of(context).size.height / 35, Colors.white),
             TextFormattedLabelThree('${Constants.unit_points}'),
           ],
         ),
@@ -207,7 +208,7 @@ _listofTeamRankings(
   return ListView.builder(
       itemExtent: Constants.height_raking_items,
       shrinkWrap: true,
-      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       itemCount: snapshot.data.documents.length,
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) =>
@@ -219,19 +220,21 @@ _buildListTeamItem(BuildContext context, DocumentSnapshot item, int index) {
   String team_name = teamPoint.team_name;
   return Container(
     alignment: Alignment.center,
-    color: colorLogicbyPersonality(context),
+    color: ColorLogicbyPersonality(context),
     child: Column(
       children: <Widget>[
         Row(
           children: <Widget>[
             TextFormattedLabelOne('${index + 1}. '),
-            TextFormattedLabelTwo('$team_name', 00, Colors.white),
+            TextFormattedLabelTwo('$team_name',
+                MediaQuery.of(context).size.height / 35, Colors.white),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            TextFormattedLabelTwo('${teamPoint.team_points} ', 0, Colors.white),
+            TextFormattedLabelTwo('${teamPoint.team_points} ',
+                MediaQuery.of(context).size.height / 35, Colors.white),
             TextFormattedLabelThree('${Constants.unit_points}'),
           ],
         ),
