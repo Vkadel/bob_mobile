@@ -115,10 +115,10 @@ class MBobFireBase implements BoBFireBase {
   }
 
   void _items_list_test_generation(String uid) {
-    Items item =
-        new Items(0, 0, uid, Timestamp.now().millisecondsSinceEpoch + 5000000);
-    Items item2 =
-        new Items(1, 0, uid, Timestamp.now().millisecondsSinceEpoch + 5000000);
+    Items item = new Items(
+        0, 0, uid, Timestamp.now().millisecondsSinceEpoch + 5000000, false);
+    Items item2 = new Items(
+        1, 0, uid, Timestamp.now().millisecondsSinceEpoch + 5000000, false);
     List<Items> items = new List<Items>();
 
     items.add(item);
@@ -303,9 +303,51 @@ class MBobFireBase implements BoBFireBase {
         .collection('user_data')
         .document(Quanda.of(context).myUser.id)
         .collection('list_of_items')
+        //leave the userID here because is the only way for firestore to
+        //allow the read through rules
         .where('id', isEqualTo: Quanda.of(context).myUser.id)
-        .where('status', isGreaterThanOrEqualTo: 1)
+        .where('endDate',
+            isGreaterThanOrEqualTo: Timestamp.now().millisecondsSinceEpoch)
+        .orderBy('endDate', descending: false)
         .snapshots();
+  }
+
+  @override
+  Future<void> useItem(
+      BuildContext context, Items itemType, int duration_per_days) async {
+    int days_buff_last;
+    BuildContext Main_context = context;
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('user_data')
+        .document(Quanda.of(context).myUser.id)
+        .collection('list_of_items')
+        .where('id', isEqualTo: Quanda.of(context).myUser.id)
+        .where('item', isEqualTo: itemType.item)
+        .where('inuse', isEqualTo: false)
+        .snapshots()
+        .first
+        .then((data) {
+      _firestore.runTransaction((transaction) async {
+        DocumentSnapshot freshSnapshot =
+            await transaction.get(data.documents.first.reference);
+        Items freshItem = new Items(
+            Items.fromJson(freshSnapshot.data).item,
+            Items.fromJson(freshSnapshot.data).status,
+            Items.fromJson(freshSnapshot.data).id,
+            Items.fromJson(freshSnapshot.data).endDate,
+            Items.fromJson(freshSnapshot.data).inuse);
+        freshItem.status = Constants.item_used;
+        freshItem.inuse = true;
+        days_buff_last = Quanda.of(Main_context)
+            .masterListOfItems
+            .elementAt((freshItem.item))
+            .duration_days;
+        freshItem.endDate = days_buff_last * (24 * 3600000) +
+            Timestamp.now().millisecondsSinceEpoch;
+        await transaction.update(freshSnapshot.reference, freshItem.toJson());
+        print('I wrote on itemID: ${freshSnapshot.reference.path}');
+      });
+    });
   }
 
   @override
@@ -333,37 +375,5 @@ class MBobFireBase implements BoBFireBase {
   Stream<QuerySnapshot> getMyReadBooks(BuildContext context) {
     // TODO: implement getMyReadBooks
     return null;
-  }
-
-  @override
-  Future<void> useItem(
-      BuildContext context, Items itemType, int duration_per_days) async {
-    int number_togrow;
-    QuerySnapshot querySnapshot = await _firestore
-        .collection('user_data')
-        .document(Quanda.of(context).myUser.id)
-        .collection('list_of_items')
-        .where('id', isEqualTo: Quanda.of(context).myUser.id)
-        .where('item', isEqualTo: itemType.item)
-        .where('status', isEqualTo: Constants.item_availble)
-        .snapshots()
-        .first
-        .then((data) {
-      _firestore.runTransaction((transaction) async {
-        DocumentSnapshot freshSnapshot =
-            await transaction.get(data.documents.first.reference);
-        Items freshItem = new Items(
-            Items.fromJson(freshSnapshot.data).item,
-            Items.fromJson(freshSnapshot.data).status,
-            Items.fromJson(freshSnapshot.data).id,
-            Items.fromJson(freshSnapshot.data).endDate);
-        freshItem.status = Constants.item_used;
-        number_togrow = 1 * (3600000 * 24);
-        freshItem.endDate =
-            number_togrow + DateTime.now().millisecondsSinceEpoch;
-        await transaction.update(freshSnapshot.reference, freshItem.toJson());
-        print('I wrote on itemID: ${freshSnapshot.reference.path}');
-      });
-    });
   }
 }

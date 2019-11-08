@@ -94,9 +94,20 @@ class _HeroPageState extends State<HeroRoomPage> {
                 ),
               ),
             ),
+            mytest(),
             SliverFillRemaining(
               child: Container(
                 color: Colors.green,
+                child: Stack(
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text('button1'),
+                    ),
+                    FlatButton(
+                      child: Text('button2'),
+                    )
+                  ],
+                ),
               ),
             )
           ],
@@ -106,6 +117,8 @@ class _HeroPageState extends State<HeroRoomPage> {
   }
 }
 
+Widget _buildBattleButtons() {}
+
 Widget _buildListofItems(BuildContext context) {
   return StreamBuilder(
       stream: Provider.of(context).fireBase.getMyItems(context),
@@ -113,6 +126,7 @@ Widget _buildListofItems(BuildContext context) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
+        //Refresh Items if this list has already been loaded
         if (!snapshot.hasError &&
             snapshot.connectionState == ConnectionState.active &&
             snapshot.hasData &&
@@ -124,6 +138,7 @@ Widget _buildListofItems(BuildContext context) {
             return _refreshList(snapshot, context);
           }
         }
+        //Load items the first time and initialize masters
         if (!snapshot.hasError &&
             snapshot.connectionState == ConnectionState.active &&
             snapshot.hasData &&
@@ -131,7 +146,7 @@ Widget _buildListofItems(BuildContext context) {
           print('Rebuilding List for the first time');
           return _buildListForFirstTime(snapshot, context);
         } else {
-          return youDontHaveItems(context);
+          return _youDontHaveItems(context, snapshot);
         }
       });
 }
@@ -142,13 +157,19 @@ Widget _refreshList(
   snapshot.data.documents
       .toList()
       .forEach((f) => myItemsBuild.add(Items.fromJson(f.data)));
-  myItemsBuild.forEach((f) => {
-        Quanda.of(context).myItems.removeAt(
-            Quanda.of(context).myItems.indexWhere((test) => test.id == f.id))
-      });
+  try {
+    myItemsBuild.forEach((f) => {
+          Quanda.of(context).myItems.removeAt(
+              Quanda.of(context).myItems.indexWhere((test) => test.id == f.id))
+        });
+  } catch (e) {
+    print(e);
+  }
   Quanda.of(context).myItems.insertAll(0, myItemsBuild);
   Quanda.of(context).myItems = myItemsBuild;
-  return _createFinalListOfItems(context);
+  if (Quanda.of(context).myItems != null) {
+    return _createFinalListOfItems(context);
+  }
 }
 
 Widget _buildListForFirstTime(
@@ -175,7 +196,7 @@ Widget _buildListofMarterItems(BuildContext context) {
           Quanda.of(context).masterListOfItems = items;
           return _createFinalListOfItems(context);
         } else {
-          return youDontHaveItems(context);
+          return _youDontHaveItems(context, snapshot);
         }
       });
 }
@@ -193,16 +214,16 @@ Widget _createFinalListOfItems(BuildContext context) {
 Widget _creatTileForItem(int index, BuildContext context) {
   //TODO: Remove Expired Items, don't Trust the system
 
-  if (Quanda.of(context).myItems.elementAt(index).status == 1) {
+  if (!Quanda.of(context).myItems.elementAt(index).inuse) {
     return _cardForItemCanBeUsed(index, context);
-  } else if (Quanda.of(context).myItems.elementAt(index).status == 2) {
+  } else if (Quanda.of(context).myItems.elementAt(index).inuse) {
     return _cardForItemInUse(index, context);
   }
 }
 
 //TOdo: Move to Widgets
 Widget _cardForItemInUse(int index, BuildContext context) {
-  var formatter = new DateFormat('dd-MM-yyyy');
+  var formatter = new DateFormat('MM-dd-yyyy');
   DateTime date = DateTime.fromMillisecondsSinceEpoch(
       Quanda.of(context).myItems.elementAt(index).endDate);
   print('${DateTime.now().millisecondsSinceEpoch}');
@@ -288,17 +309,21 @@ Widget _cardForItemCanBeUsed(int index, BuildContext context) {
 }
 
 //Todo: Move to Widgets
-Widget youDontHaveItems(context) {
-  return Container(
-      color: Colors.green,
-      child: Center(
-        child: Column(
-          children: <Widget>[
-            TextFormattedLabelTwo(Constants.you_dont_have_items,
-                MediaQuery.of(context).size.width / 19, Colors.white),
-          ],
-        ),
-      ));
+Widget _youDontHaveItems(context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  if (snapshot.connectionState == ConnectionState.waiting) {
+    return CircularProgressIndicator();
+  } else {
+    return Container(
+        color: Colors.green,
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              TextFormattedLabelTwo(Constants.you_dont_have_items,
+                  MediaQuery.of(context).size.width / 19, Colors.white),
+            ],
+          ),
+        ));
+  }
 }
 
 void _initStream(Stream<DocumentSnapshot> stream, BuildContext context) {

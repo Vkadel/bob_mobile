@@ -29,13 +29,15 @@ class _DashBoardPageState extends State<DashBoardPage> {
   int _location_at_team_rankings;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(Constants().user_dashboard_title),
-        backgroundColor: ColorLogicbyRole(context),
-      ),
-      body: Container(
-        child: build_body(context),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(Constants().user_dashboard_title),
+          backgroundColor: ColorLogicbyRole(context),
+        ),
+        body: Container(
+          child: build_body(context),
+        ),
       ),
     );
   }
