@@ -9,7 +9,7 @@ class AnsweredQuestions {
     this.id, //if of the user
   );
 
-  String question;
+  int question;
   int status;
   String id;
 

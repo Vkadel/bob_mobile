@@ -12,7 +12,7 @@ part 'book_question.g.dart';
 @JsonSerializable(explicitToJson: true)
 class BookQuestion {
   BookQuestion(this.question, this.option_a, this.option_b, this.option_c,
-      this.correct_answer, this.id);
+      this.correct_answer, this.id, this.book_section);
 
   String question;
   String option_a;
@@ -20,6 +20,7 @@ class BookQuestion {
   String option_c;
   String correct_answer;
   int selection_a;
+  int book_section;
   int id; //The id of the Book it belongs to
 
   /// A necessary factory constructor for creating a new User instance

@@ -7,8 +7,12 @@ part of 'proposed_books.dart';
 // **************************************************************************
 
 ProposedBooks _$ProposedBooksFromJson(Map<String, dynamic> json) {
-  return ProposedBooks(json['bookname'] as String, json['author'] as String,
-      json['status'] as bool, json['id'] as String);
+  return ProposedBooks(
+    json['bookname'] as String,
+    json['author'] as String,
+    json['status'] as bool,
+    json['id'] as String,
+  );
 }
 
 Map<String, dynamic> _$ProposedBooksToJson(ProposedBooks instance) =>
@@ -16,5 +20,5 @@ Map<String, dynamic> _$ProposedBooksToJson(ProposedBooks instance) =>
       'bookname': instance.bookname,
       'author': instance.author,
       'status': instance.status,
-      'id': instance.id
+      'id': instance.id,
     };

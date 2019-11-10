@@ -1,3 +1,4 @@
+import 'package:bob_mobile/data_type/answered_questions.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'user_data.g.dart';
 
@@ -29,7 +30,7 @@ class UserData {
   );
 
   List<int> list_of_read_books;
-
+  Map<dynamic, dynamic> list_of_answered_questions;
   String id;
 
   /// A necessary factory constructor for creating a new User instance

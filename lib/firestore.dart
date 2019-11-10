@@ -37,7 +37,7 @@ abstract class BoBFireBase {
 }
 
 class MBobFireBase implements BoBFireBase {
-  final Firestore _firestore = Firestore.instance;
+  final Firestore firestore = Firestore.instance;
   User currentAppUser;
 
   @override
@@ -51,7 +51,7 @@ class MBobFireBase implements BoBFireBase {
   // ignore: non_constant_identifier_names
   Stream<QuerySnapshot> get_userprofile(String uid) {
     print('SNAPSHOT Connection: looking for $uid');
-    return (_firestore
+    return (firestore
         .collection('users')
         .where('id', isEqualTo: uid)
         .snapshots());
@@ -93,7 +93,7 @@ class MBobFireBase implements BoBFireBase {
     //Todo: Check the query for documents works
 
     Quanda.of(context).myUser = user;
-    _firestore.collection('users').document().setData(user.toJson());
+    firestore.collection('users').document().setData(user.toJson());
   }
 
   void _proposed_question_test_creationg(String uid) {
@@ -109,7 +109,7 @@ class MBobFireBase implements BoBFireBase {
     question.id = uid;
     List<ProposedQuestions> myquestionlist = new List<ProposedQuestions>();
     myquestionlist.add(question);
-    myquestionlist.forEach((propQ) => _firestore
+    myquestionlist.forEach((propQ) => firestore
         .collection('user_data')
         .document('$uid')
         .collection('list_of_proposed_questions')
@@ -126,7 +126,7 @@ class MBobFireBase implements BoBFireBase {
 
     items.add(item);
     items.add(item2);
-    items.forEach((propQ) => _firestore
+    items.forEach((propQ) => firestore
         .collection('user_data')
         .document('$uid')
         .collection('list_of_items')
@@ -139,7 +139,7 @@ class MBobFireBase implements BoBFireBase {
         new ProposedBooks('name', 'author_name', true, uid);
     List<ProposedBooks> myProposedBooksList = new List<ProposedBooks>();
     myProposedBooksList.add(proposedBooks);
-    myProposedBooksList.forEach((propQ) => _firestore
+    myProposedBooksList.forEach((propQ) => firestore
         .collection('user_data')
         .document('$uid')
         .collection('list_of_proposed_books')
@@ -151,7 +151,7 @@ class MBobFireBase implements BoBFireBase {
     Books book1 = new Books(uid, 1, '0');
     List<Books> myProposedBooksList = new List<Books>();
     myProposedBooksList.add(book1);
-    myProposedBooksList.forEach((propQ) => _firestore
+    myProposedBooksList.forEach((propQ) => firestore
         .collection('user_data')
         .document('$uid')
         .collection('list_of_read_books')
@@ -160,11 +160,11 @@ class MBobFireBase implements BoBFireBase {
   }
 
   void _answered_questions_check(uid) {
-    AnsweredQuestions question = new AnsweredQuestions('0', 1, uid);
+    AnsweredQuestions question = new AnsweredQuestions(0, 1, uid);
     question.id = uid;
     List<AnsweredQuestions> myquestionlist = new List<AnsweredQuestions>();
     myquestionlist.add(question);
-    myquestionlist.forEach((propQ) => _firestore
+    myquestionlist.forEach((propQ) => firestore
         .collection('user_data')
         .document('$uid')
         .collection('list_of_answered_questions')
@@ -175,7 +175,7 @@ class MBobFireBase implements BoBFireBase {
   @override
   Stream<QuerySnapshot> getQuestions() {
     // TODO: String
-    return _firestore.collection('personality_survey_q').snapshots();
+    return firestore.collection('personality_survey_q').snapshots();
   }
 
   @override
@@ -183,11 +183,11 @@ class MBobFireBase implements BoBFireBase {
       FirebaseUser firebaseuser, User user) async {
     String uid = firebaseuser.uid;
 
-    await _firestore
+    await firestore
         .collection('users')
         .where('id', isEqualTo: '$uid')
         .snapshots()
-        .listen((data) => _firestore.runTransaction((transaction) async {
+        .listen((data) => firestore.runTransaction((transaction) async {
               DocumentSnapshot freshSnapShot =
                   await transaction.get(data.documents.elementAt(0).reference);
               if (freshSnapShot.exists) {
@@ -206,11 +206,11 @@ class MBobFireBase implements BoBFireBase {
   @override
   Future<void> setUpHero(FirebaseUser firebaseuser, User user) async {
     String uid = firebaseuser.uid;
-    await _firestore
+    await firestore
         .collection('users')
         .where('id', isEqualTo: '$uid')
         .snapshots()
-        .listen((data) => _firestore.runTransaction((transaction) async {
+        .listen((data) => firestore.runTransaction((transaction) async {
               DocumentSnapshot freshSnapShot =
                   await transaction.get(data.documents.elementAt(0).reference);
               if (freshSnapShot.exists) {
@@ -226,17 +226,17 @@ class MBobFireBase implements BoBFireBase {
 
   void _setUpUserListOfProposedQuestion(FirebaseUser firebaseuser) {
     String uid = firebaseuser.uid;
-    _firestore
+    firestore
         .collection('proposed_questions_user')
         .where('id', isEqualTo: '$uid')
         .snapshots()
-        .listen((data) => _firestore.runTransaction((transaction) async {
+        .listen((data) => firestore.runTransaction((transaction) async {
               DocumentSnapshot freshSnapShot =
                   await transaction.get(data.documents.elementAt(0).reference);
               if (freshSnapShot.exists) {
                 return;
               } else {
-                _firestore
+                firestore
                     .collection('proposed_questions_user')
                     .document('$uid')
                     .setData({
@@ -249,7 +249,7 @@ class MBobFireBase implements BoBFireBase {
   @override
   Stream<QuerySnapshot> getPlayerRankings() {
     print('Queried lists of rankings single user....');
-    return (_firestore
+    return (firestore
         .collection('player_rankings')
         .orderBy('player_points', descending: true)
         .snapshots());
@@ -258,7 +258,7 @@ class MBobFireBase implements BoBFireBase {
   @override
   Stream<QuerySnapshot> getTeamRankings() {
     print('Queried lists of rankings teams....');
-    return (_firestore
+    return (firestore
         .collection('team_ratings')
         .orderBy('team_points', descending: true)
         .snapshots());
@@ -267,7 +267,7 @@ class MBobFireBase implements BoBFireBase {
   @override
   Stream<DocumentSnapshot> getClassStats(BuildContext context) {
     int roleId = Quanda.of(context).myUser.role;
-    return _firestore
+    return firestore
         .collection('avatar_type_stats')
         .document(roleId.toString())
         .snapshots();
@@ -277,7 +277,7 @@ class MBobFireBase implements BoBFireBase {
   Future<void> getBookTypes(BuildContext context) {
     //Save book types on Quanda to share them with the application once they are needed.
     List<BookTypes> bookTypesList = new List();
-    _firestore
+    firestore
         .collection('book_type')
         .snapshots()
         .listen((QuerySnapshot snapshot) {
@@ -302,7 +302,7 @@ class MBobFireBase implements BoBFireBase {
   Stream<QuerySnapshot> getMyItems(BuildContext context) {
     // Get items that are active and
     print('getting my items');
-    return _firestore
+    return firestore
         .collection('user_data')
         .document(Quanda.of(context).myUser.id)
         .collection('list_of_items')
@@ -320,7 +320,7 @@ class MBobFireBase implements BoBFireBase {
       BuildContext context, Items itemType, int duration_per_days) async {
     int days_buff_last;
     BuildContext Main_context = context;
-    QuerySnapshot querySnapshot = await _firestore
+    QuerySnapshot querySnapshot = await firestore
         .collection('user_data')
         .document(Quanda.of(context).myUser.id)
         .collection('list_of_items')
@@ -330,7 +330,7 @@ class MBobFireBase implements BoBFireBase {
         .snapshots()
         .first
         .then((data) {
-      _firestore.runTransaction((transaction) async {
+      firestore.runTransaction((transaction) async {
         DocumentSnapshot freshSnapshot =
             await transaction.get(data.documents.first.reference);
         Items freshItem = new Items(
@@ -356,7 +356,7 @@ class MBobFireBase implements BoBFireBase {
   @override
   Stream<QuerySnapshot> getMasterListOfItems(context) {
     print('Fetching master list of items');
-    return _firestore
+    return firestore
         .collection('items_master')
         .where('status', isGreaterThanOrEqualTo: 1)
         .snapshots();
@@ -382,15 +382,12 @@ class MBobFireBase implements BoBFireBase {
 
   @override
   Stream<DocumentSnapshot> getUserReadListOfBooks(User user) {
-    return _firestore
-        .collection('user_data')
-        .document('${user.id}')
-        .snapshots();
+    return firestore.collection('user_data').document('${user.id}').snapshots();
   }
 
   @override
   Stream<DocumentSnapshot> getMasterBookInfo(int bookid) {
-    return _firestore
+    return firestore
         .collection('book_master')
         .document('${bookid}')
         .snapshots();
@@ -398,7 +395,7 @@ class MBobFireBase implements BoBFireBase {
 
   @override
   Stream<QuerySnapshot> getQuestionsForMasterBook(int bookid) {
-    return _firestore
+    return firestore
         .collection('question')
         .where('id', isEqualTo: bookid)
         .snapshots();
