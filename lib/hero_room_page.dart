@@ -1,3 +1,4 @@
+import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/data_type/items_master.dart';
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
@@ -9,6 +10,8 @@ import 'package:bob_mobile/widgets/text_formatted_room_label_body.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:random_color/random_color.dart';
 import 'package:intl/intl.dart';
 import 'constants.dart';
@@ -55,13 +58,7 @@ class _HeroPageState extends State<HeroRoomPage> {
               ),
             ),
             _buildStats(context, stream),
-            SliverToBoxAdapter(
-              child: Center(
-                child:
-                    TextFormattedRoomLabel(Constants.items_list_label, context),
-              ),
-            ),
-            mytest(),
+            _buildSpacerBox(context),
             SliverToBoxAdapter(
               child: TabBar(
                 labelColor: ColorLogicbyPersonality(context),
@@ -85,7 +82,7 @@ class _HeroPageState extends State<HeroRoomPage> {
                 child: TabBarView(
                   children: [
                     Container(
-                      color: Colors.blueAccent,
+                      height: MediaQuery.of(context).size.width * 2,
                       child: _buildListofItems(context),
                     ),
                     Icon(Icons.directions_transit),
@@ -94,22 +91,9 @@ class _HeroPageState extends State<HeroRoomPage> {
                 ),
               ),
             ),
-            mytest(),
-            SliverFillRemaining(
-              child: Container(
-                color: Colors.green,
-                child: Stack(
-                  children: <Widget>[
-                    FlatButton(
-                      child: Text('button1'),
-                    ),
-                    FlatButton(
-                      child: Text('button2'),
-                    )
-                  ],
-                ),
-              ),
-            )
+            _buildSpacerBox(context),
+            _buildButtonsForBattle(context),
+            _buildSpacerBox(context)
           ],
         ),
       ),
@@ -117,14 +101,100 @@ class _HeroPageState extends State<HeroRoomPage> {
   }
 }
 
-Widget _buildBattleButtons() {}
+Widget _buildButtonsForBattle(BuildContext context) {
+  return SliverGrid.count(
+    crossAxisCount: 2,
+    children: <Widget>[
+      CreateLargeButtonWithSVGOverlap(
+          'Fight for Yourself',
+          'assets/fight_for_yourself.svg',
+          context,
+          Radius.circular(20),
+          Radius.circular(0),
+          Radius.circular(20),
+          Radius.circular(0),
+          startFightForYourself),
+      CreateLargeButtonWithSVGOverlap(
+          'Fight for the Team',
+          'assets/fight_for_your_team.svg',
+          context,
+          Radius.circular(0),
+          Radius.circular(20),
+          Radius.circular(0),
+          Radius.circular(20),
+          startFightForTheTeam)
+    ],
+  );
+}
+
+void startFightForYourself(BuildContext context) {
+  print('The fight starts for yourself');
+  Quanda.of(context).personal = true;
+  Navigator.pushNamed(
+    context,
+    '/fight',
+  );
+}
+
+void startFightForTheTeam(BuildContext context) {
+  print('The fight starts for yourself');
+  Quanda.of(context).personal = false;
+  Navigator.pushNamed(
+    context,
+    '/fight',
+  );
+}
+
+Widget CreateLargeButtonWithSVGOverlap(
+    String text,
+    String svgPath,
+    BuildContext context,
+    Radius topLeft,
+    Radius topRight,
+    Radius bottomLeft,
+    Radius bottomRight,
+    Function myAction) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: RaisedButton(
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: topLeft,
+              topRight: topRight,
+              bottomLeft: bottomLeft,
+              bottomRight: bottomRight),
+          side: BorderSide(color: ColorLogicbyRole(context), width: 0)),
+      color: ColorLogicbyPersonality(context),
+      child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Container(
+            child: SvgPicture.asset(
+              svgPath,
+              color: Colors.white,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(0, 0, 0, 16),
+            child: TextFormattedLabelTwo(text, 18, Colors.white),
+            alignment: Alignment.bottomCenter,
+          ),
+        ],
+      ),
+      onPressed: () {
+        myAction(context);
+      },
+    ),
+  );
+}
 
 Widget _buildListofItems(BuildContext context) {
   return StreamBuilder(
       stream: Provider.of(context).fireBase.getMyItems(context),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         }
         //Refresh Items if this list has already been loaded
         if (!snapshot.hasError &&
@@ -179,10 +249,10 @@ Widget _buildListForFirstTime(
       .toList()
       .forEach((f) => myItemsBuild.add(Items.fromJson(f.data)));
   Quanda.of(context).myItems = myItemsBuild;
-  return _buildListofMarterItems(context);
+  return _buildListofMasterItems(context);
 }
 
-Widget _buildListofMarterItems(BuildContext context) {
+Widget _buildListofMasterItems(BuildContext context) {
   return StreamBuilder(
       stream: Provider.of(context).fireBase.getMasterListOfItems(context),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -203,8 +273,10 @@ Widget _buildListofMarterItems(BuildContext context) {
 
 Widget _createFinalListOfItems(BuildContext context) {
   return Container(
-    color: ColorLogicbyPersonality(context),
+    height: MediaQuery.of(context).size.width,
     child: ListView.builder(
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+      shrinkWrap: true,
       itemBuilder: (context, index) => _creatTileForItem(index, context),
       itemCount: Quanda.of(context).myItems.length,
     ),
@@ -432,12 +504,20 @@ SliverGrid mytest() {
   int item_count = 20;
   return new SliverGrid(
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: (item_count / 2).round(), childAspectRatio: 1),
+        crossAxisCount: (item_count / 2).round(), childAspectRatio: 2),
     delegate: SliverChildBuilderDelegate((context, index) {
       return Container(
         height: 10,
         color: RandomColor().randomColor(),
       );
     }, childCount: item_count),
+  );
+}
+
+Widget _buildSpacerBox(BuildContext context) {
+  return SliverToBoxAdapter(
+    child: Container(
+      height: MediaQuery.of(context).size.width / 16,
+    ),
   );
 }

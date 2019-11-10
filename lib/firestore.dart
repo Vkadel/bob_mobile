@@ -31,6 +31,9 @@ abstract class BoBFireBase {
   Stream<QuerySnapshot> getMyAnsweredQuestions(BuildContext context);
   Stream<QuerySnapshot> getMasterListOfItems(BuildContext context);
   Future<void> useItem(BuildContext context, Items itemType, int duration);
+  Stream<DocumentSnapshot> getUserReadListOfBooks(User user);
+  Stream<DocumentSnapshot> getMasterBookInfo(int bookid);
+  Stream<QuerySnapshot> getQuestionsForMasterBook(int bookid);
 }
 
 class MBobFireBase implements BoBFireBase {
@@ -375,5 +378,29 @@ class MBobFireBase implements BoBFireBase {
   Stream<QuerySnapshot> getMyReadBooks(BuildContext context) {
     // TODO: implement getMyReadBooks
     return null;
+  }
+
+  @override
+  Stream<DocumentSnapshot> getUserReadListOfBooks(User user) {
+    return _firestore
+        .collection('user_data')
+        .document('${user.id}')
+        .snapshots();
+  }
+
+  @override
+  Stream<DocumentSnapshot> getMasterBookInfo(int bookid) {
+    return _firestore
+        .collection('book_master')
+        .document('${bookid}')
+        .snapshots();
+  }
+
+  @override
+  Stream<QuerySnapshot> getQuestionsForMasterBook(int bookid) {
+    return _firestore
+        .collection('question')
+        .where('id', isEqualTo: bookid)
+        .snapshots();
   }
 }

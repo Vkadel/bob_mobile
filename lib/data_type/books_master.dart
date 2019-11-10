@@ -1,21 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'books_master.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class BooksMaster {
   BooksMaster(
-    this.bookId, //book id
-    this.status, //0: non-active 1: active
-    this.resource_image_ref,
-    this.pages,
-    this.bookTypesArray,
-  );
+      this.id, //book id
+      this.status, //0: non-active 1: active
+      this.online_picture_link,
+      this.pages,
+      this.bookTypesArray,
+      this.isbn13);
 
-  String bookId;
+  String id;
   int status;
-  String resource_image_ref;
+  /*DocumentReference resource_image_ref;*/
+  String online_picture_link;
   int pages;
-  List<bool> bookTypesArray;
+  List<int> bookTypesArray;
+  String isbn13;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

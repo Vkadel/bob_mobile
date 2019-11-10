@@ -1,4 +1,5 @@
 import 'package:bob_mobile/auth.dart';
+import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/firestore.dart';
 import 'package:bob_mobile/provider.dart';
@@ -43,7 +44,10 @@ class MyApp extends StatelessWidget {
           routes: <String, WidgetBuilder>{
             '/home': (BuildContext context) => HomePage(title: 'Home Page'),
             '/personality_test': (BuildContext context) =>
-                PersonalitySurveyPage(title: 'Tell your tale')
+                PersonalitySurveyPage(title: 'Tell your tale'),
+            '/fight': (BuildContext context) => BattlePage(
+                  personal: Quanda.of(context).personal,
+                ),
           },
         ),
       ),
