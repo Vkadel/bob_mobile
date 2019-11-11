@@ -5,6 +5,7 @@ part 'books_master.g.dart';
 @JsonSerializable(explicitToJson: true)
 class BooksMaster {
   BooksMaster(
+      this.name,
       this.id, //book id
       this.status, //0: non-active 1: active
       this.online_picture_link,
@@ -19,6 +20,7 @@ class BooksMaster {
   int pages;
   List<int> bookTypesArray;
   String isbn13;
+  String name;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

@@ -14,13 +14,9 @@ class BookQuestionUpload {
         'Peake Meadows',
         'Nagspeake',
         1,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('1')
-        .setData(question.toJson());
+        0,
+        1);
+    Provider.of(context).fireBase.uploadQuestion(question, 1);
     question = new BookQuestion(
         'In this book, the family owning the hotel was looking forward to a vacation for which holiday?',
         'Summer',
@@ -28,13 +24,9 @@ class BookQuestionUpload {
         'Thanks Giving',
         'Christmas ',
         1,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('2')
-        .setData(question.toJson());
+        0,
+        2);
+    Provider.of(context).fireBase.uploadQuestion(question, 2);
     question = new BookQuestion(
         'What prompts Milo to start his adventure?',
         'An old crumbling letter',
@@ -42,13 +34,9 @@ class BookQuestionUpload {
         'A history he heard from a stranger',
         'A strange blue stained map',
         1,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('3')
-        .setData(question.toJson());
+        0,
+        3);
+    Provider.of(context).fireBase.uploadQuestion(question, 3);
     question = new BookQuestion(
         'What is the name of the girl that susggest to Milo they should play the game called Odd Trails',
         'Madeline',
@@ -56,13 +44,9 @@ class BookQuestionUpload {
         'Mila',
         'Meddy',
         1,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('4')
-        .setData(question.toJson());
+        0,
+        4);
+    Provider.of(context).fireBase.uploadQuestion(question, 4);
     question = new BookQuestion(
         'What did his playmate constantly nagged Milo about on during the game',
         'He was nagged for being too careful',
@@ -70,45 +54,21 @@ class BookQuestionUpload {
         'He was nagged for not bringing proper equipment',
         'He was nagged to stay on character',
         1,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('5')
-        .setData(question.toJson());
+        0,
+        5);
+    Provider.of(context).fireBase.uploadQuestion(question, 5);
     question = new BookQuestion(
-        'Milos last name is: ', 'Forest', 'Wood', 'Ash', 'Pines', 1, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('6')
-        .setData(question.toJson());
+        'Milos last name is: ', 'Forest', 'Wood', 'Ash', 'Pines', 1, 0, 6);
+    Provider.of(context).fireBase.uploadQuestion(question, 6);
     question = new BookQuestion('Milo favorite book genre is:', 'Adventures',
-        'Novels', 'Thrillers', 'Mysteries', 1, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('7')
-        .setData(question.toJson());
+        'Novels', 'Thrillers', 'Mysteries', 1, 0, 7);
+    Provider.of(context).fireBase.uploadQuestion(question, 7);
     question = new BookQuestion('The guests ocupation in this story was',
-        'Treasure hunters', 'Detectives', 'Writers', 'Smugglers', 1, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('8')
-        .setData(question.toJson());
+        'Treasure hunters', 'Detectives', 'Writers', 'Smugglers', 1, 0, 8);
+    Provider.of(context).fireBase.uploadQuestion(question, 8);
     question = new BookQuestion('The main Characters, Milos, age is', '11',
-        '10', 'The book does not say', '12', 1, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('9')
-        .setData(question.toJson());
+        '10', 'The book does not say', '12', 1, 0, 9);
+    Provider.of(context).fireBase.uploadQuestion(question, 9);
     question = new BookQuestion(
         'The cable car that allowed passage to the hotel in this story was named',
         'Whilforber Hill Climber',
@@ -116,13 +76,9 @@ class BookQuestionUpload {
         'Whilforber Tornado',
         'Whilforber Whirlwind',
         1,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('10')
-        .setData(question.toJson());
+        0,
+        10);
+    Provider.of(context).fireBase.uploadQuestion(question, 10);
     question = new BookQuestion(
         'Part of the adventure required for Milo and his playmate to',
         'Get to interact with very few hotel guests',
@@ -130,37 +86,18 @@ class BookQuestionUpload {
         'Spy on all the guests ',
         'Get to know each of hotel guests',
         1,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('11')
-        .setData(question.toJson());
+        0,
+        11);
+    Provider.of(context).fireBase.uploadQuestion(question, 11);
     question = new BookQuestion('The author of this books is ', 'Ana Milford',
-        'Kateryn Milford', 'Carolyn Milford', 'Kate Milford', 1, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('12')
-        .setData(question.toJson());
+        'Kateryn Milford', 'Carolyn Milford', 'Kate Milford', 1, 0, 12);
+    Provider.of(context).fireBase.uploadQuestion(question, 12);
     question = new BookQuestion('Milo playmate mom worked in the hotel doing:',
-        'Serving Food', 'Guest check in', 'Cleaning', 'Cooking', 1, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('13')
-        .setData(question.toJson());
+        'Serving Food', 'Guest check in', 'Cleaning', 'Cooking', 1, 0, 13);
+    Provider.of(context).fireBase.uploadQuestion(question, 13);
     question = new BookQuestion('The author\'s name for this book',
-        'Carolyn Van Draanen', '', '', 'Wendelin Van Draanen', 2, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('14')
-        .setData(question.toJson());
+        'Carolyn Van Draanen', '', '', 'Wendelin Van Draanen', 2, 0, 14);
+    Provider.of(context).fireBase.uploadQuestion(question, 14);
     question = new BookQuestion(
         'What cause the main character to lose her leg?',
         'She got sick and they had to amputate',
@@ -168,13 +105,9 @@ class BookQuestionUpload {
         'Her leg got burnt in a fire.',
         'An accident caused by truck that hit her bus',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('15')
-        .setData(question.toJson());
+        0,
+        15);
+    Provider.of(context).fireBase.uploadQuestion(question, 15);
     question = new BookQuestion(
         'What  is the first thing the running team do when she came back after her accident',
         'They ignored her and didn’t talk to her',
@@ -182,13 +115,9 @@ class BookQuestionUpload {
         'They broguht her flowers to school',
         'They threw a party for her return',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('16')
-        .setData(question.toJson());
+        0,
+        16);
+    Provider.of(context).fireBase.uploadQuestion(question, 16);
     question = new BookQuestion(
         'Why does the main character would like to trade places with a girl that died in the accident. ',
         'Because she was in heaven',
@@ -196,13 +125,9 @@ class BookQuestionUpload {
         'Because she was an now angels',
         'Because she did not have to sufer for not being able to run',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('17')
-        .setData(question.toJson());
+        0,
+        17);
+    Provider.of(context).fireBase.uploadQuestion(question, 17);
     question = new BookQuestion(
         'Where was Jessica coming from when her accident happened?',
         'A competition',
@@ -210,13 +135,9 @@ class BookQuestionUpload {
         'A doctor\'s appointment',
         'A track meet',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('18')
-        .setData(question.toJson());
+        0,
+        18);
+    Provider.of(context).fireBase.uploadQuestion(question, 18);
     question = new BookQuestion(
         'How do the other students in her school react when she comes back after her accident',
         'The shower her with hugs and cheers',
@@ -224,21 +145,12 @@ class BookQuestionUpload {
         'They have cake and party for her',
         'They stare too much and ignore her',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('19')
-        .setData(question.toJson());
+        0,
+        19);
+    Provider.of(context).fireBase.uploadQuestion(question, 19);
     question = new BookQuestion('What is the protagonist best friend\'s name',
-        'Laura', 'Jessica', 'Rosa', 'Fiona', 2, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('20')
-        .setData(question.toJson());
+        'Laura', 'Jessica', 'Rosa', 'Fiona', 2, 0, 20);
+    Provider.of(context).fireBase.uploadQuestion(question, 20);
     question = new BookQuestion(
         'What is the affliction the rosa suffers from',
         'Essential Tremor',
@@ -246,13 +158,9 @@ class BookQuestionUpload {
         'Rett Syndrome',
         'Cerebral Palsy',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('21')
-        .setData(question.toJson());
+        0,
+        21);
+    Provider.of(context).fireBase.uploadQuestion(question, 21);
     question = new BookQuestion(
         'Why is Jessica aprehensive about sitting with Rosa',
         'Because Rosa is mean to her',
@@ -260,13 +168,9 @@ class BookQuestionUpload {
         'Because Rosa chews gum and that annoys Jessica',
         'Because she does not want to be seen as a handicapped',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('22')
-        .setData(question.toJson());
+        0,
+        22);
+    Provider.of(context).fireBase.uploadQuestion(question, 22);
     question = new BookQuestion(
         'Why do Jessica\'s parents have to fight insurance companies at court?',
         'They share Jessica\'s information without their consent',
@@ -274,13 +178,9 @@ class BookQuestionUpload {
         'They only want to pay a portion of Jesicca\'s medical bills',
         'They refuse to pay Jessica\'s medical bills',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('23')
-        .setData(question.toJson());
+        0,
+        23);
+    Provider.of(context).fireBase.uploadQuestion(question, 23);
     question = new BookQuestion(
         'What does the team do to pay for Jessica\'s prostetic leg',
         'They ask their parents for money',
@@ -288,13 +188,9 @@ class BookQuestionUpload {
         'They protest until the insurance pays for it',
         'They begging a fundraiser',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('24')
-        .setData(question.toJson());
+        0,
+        24);
+    Provider.of(context).fireBase.uploadQuestion(question, 24);
     question = new BookQuestion(
         'How does Jessica and Rosa get to know eachother better',
         'By hanging out after school',
@@ -302,13 +198,9 @@ class BookQuestionUpload {
         'By teaming up for a class project',
         'By passing notes in class',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('25')
-        .setData(question.toJson());
+        0,
+        25);
+    Provider.of(context).fireBase.uploadQuestion(question, 25);
     question = new BookQuestion(
         'What is one of the biggest health concerns Jessica\'s parents have during her recovery',
         'Jessica forgets to take her medications',
@@ -316,21 +208,12 @@ class BookQuestionUpload {
         'Jessica\'s medication may upset her stomach',
         'Jessica can develop medication dependency',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('26')
-        .setData(question.toJson());
+        0,
+        26);
+    Provider.of(context).fireBase.uploadQuestion(question, 26);
     question = new BookQuestion('Which leg did Jessica loose in the accident',
-        'Right ', 'Both', 'None she lost an arm', 'Left', 2, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('27')
-        .setData(question.toJson());
+        'Right ', 'Both', 'None she lost an arm', 'Left', 2, 0, 27);
+    Provider.of(context).fireBase.uploadQuestion(question, 27);
     question = new BookQuestion(
         'What is the name of the town Jessica lives in',
         'VanDraaneen',
@@ -338,13 +221,9 @@ class BookQuestionUpload {
         'Vance',
         'None they do not name in the book',
         2,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('28')
-        .setData(question.toJson());
+        0,
+        28);
+    Provider.of(context).fireBase.uploadQuestion(question, 28);
     question = new BookQuestion(
         'How do they call the United States in this book? ',
         'The United States',
@@ -352,37 +231,18 @@ class BookQuestionUpload {
         'The United Republic',
         'The republic',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('29')
-        .setData(question.toJson());
-    question = new BookQuestion(
-        'What is June family name', 'Laris', 'Paris', 'Day', 'Iparis', 3, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('30')
-        .setData(question.toJson());
+        0,
+        29);
+    Provider.of(context).fireBase.uploadQuestion(question, 29);
+    question = new BookQuestion('What is June family name', 'Laris', 'Paris',
+        'Day', 'Iparis', 3, 0, 30);
+    Provider.of(context).fireBase.uploadQuestion(question, 30);
     question = new BookQuestion('What is June\'s brother name', 'Matias',
-        'Matt', 'Mathew', 'Metias', 3, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('31')
-        .setData(question.toJson());
+        'Matt', 'Mathew', 'Metias', 3, 0, 31);
+    Provider.of(context).fireBase.uploadQuestion(question, 31);
     question = new BookQuestion('Where is plot set?', 'San Francisco',
-        'San Diego', 'Long Beach', 'Los Angeles', 3, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('32')
-        .setData(question.toJson());
+        'San Diego', 'Long Beach', 'Los Angeles', 3, 0, 32);
+    Provider.of(context).fireBase.uploadQuestion(question, 32);
     question = new BookQuestion(
         'What was the name of the rebel group portrayed in this book?',
         'The Giants',
@@ -390,21 +250,12 @@ class BookQuestionUpload {
         'The nationalists',
         'The patriots',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('33')
-        .setData(question.toJson());
-    question = new BookQuestion(
-        'How old is June when the book starts', '14', '12', '16', '15', 3, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('34')
-        .setData(question.toJson());
+        0,
+        33);
+    Provider.of(context).fireBase.uploadQuestion(question, 33);
+    question = new BookQuestion('How old is June when the book starts', '14',
+        '12', '16', '15', 3, 0, 34);
+    Provider.of(context).fireBase.uploadQuestion(question, 34);
     question = new BookQuestion(
         'How well does June do on her Trial',
         'She flunks it',
@@ -412,13 +263,9 @@ class BookQuestionUpload {
         'She passes it',
         'She gets a perfect score',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('35')
-        .setData(question.toJson());
+        0,
+        35);
+    Provider.of(context).fireBase.uploadQuestion(question, 35);
     question = new BookQuestion(
         'Why are June parents not able to guide her?',
         'They have gone in a very long vacation',
@@ -426,13 +273,9 @@ class BookQuestionUpload {
         'They are pretty detached parents',
         'They died in a crash ',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('36')
-        .setData(question.toJson());
+        0,
+        36);
+    Provider.of(context).fireBase.uploadQuestion(question, 36);
     question = new BookQuestion(
         'What was June\'s brother doing when he was killed?',
         'Attacking a rebel camp',
@@ -440,13 +283,9 @@ class BookQuestionUpload {
         'He was in his house playing first person shooters',
         'Guarding a hospital',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('37')
-        .setData(question.toJson());
+        0,
+        37);
+    Provider.of(context).fireBase.uploadQuestion(question, 37);
     question = new BookQuestion(
         'What caused Day to start his criminal life?',
         'He was abandoned by his dad',
@@ -454,13 +293,9 @@ class BookQuestionUpload {
         'He wanted to be the most famous criminal in the Republic',
         'His dad was beaten and he failed his Trial',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('38')
-        .setData(question.toJson());
+        0,
+        38);
+    Provider.of(context).fireBase.uploadQuestion(question, 38);
     question = new BookQuestion(
         'Where was Day sent after he was caught? ',
         'A rehabilitation center',
@@ -468,13 +303,9 @@ class BookQuestionUpload {
         'A Juvenile Detention Facility',
         'The work camps',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('39')
-        .setData(question.toJson());
+        0,
+        39);
+    Provider.of(context).fireBase.uploadQuestion(question, 39);
     question = new BookQuestion(
         'What I sthe name of the other nation in war with the Republic',
         'The Seatlements',
@@ -482,13 +313,9 @@ class BookQuestionUpload {
         'The Annexed Territories',
         'The Colonies',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('40')
-        .setData(question.toJson());
+        0,
+        40);
+    Provider.of(context).fireBase.uploadQuestion(question, 40);
     question = new BookQuestion(
         'What were the work camps?',
         'A farm were criminals worked',
@@ -496,21 +323,12 @@ class BookQuestionUpload {
         'A military training facility',
         'A lab that experimented with children',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('41')
-        .setData(question.toJson());
+        0,
+        41);
+    Provider.of(context).fireBase.uploadQuestion(question, 41);
     question = new BookQuestion('What was taken from Day in the camps?',
-        'Money', 'A Watch ', 'Finger', 'Samples', 3, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('42')
-        .setData(question.toJson());
+        'Money', 'A Watch ', 'Finger', 'Samples', 3, 0, 42);
+    Provider.of(context).fireBase.uploadQuestion(question, 42);
     question = new BookQuestion(
         'How did Day feel about the Republic?',
         'He was indifferent',
@@ -518,13 +336,9 @@ class BookQuestionUpload {
         'He did not agree with them',
         'He hated them',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('43')
-        .setData(question.toJson());
+        0,
+        43);
+    Provider.of(context).fireBase.uploadQuestion(question, 43);
     question = new BookQuestion(
         'How is day connected to Metias death?',
         'He was haging out with Metias when he was killed',
@@ -532,13 +346,9 @@ class BookQuestionUpload {
         'He did not have any connection to Metias death',
         'He was harrasing the republic buildings when Metias was killed',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('44')
-        .setData(question.toJson());
+        0,
+        44);
+    Provider.of(context).fireBase.uploadQuestion(question, 44);
     question = new BookQuestion(
         'How do Day and June meet?',
         'June rescues Day from a fight outside the military college',
@@ -546,13 +356,9 @@ class BookQuestionUpload {
         'June goes out in a stroll to the slums and asks Day for directions',
         'Day rescues June from a fight in the slums',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('45')
-        .setData(question.toJson());
+        0,
+        45);
+    Provider.of(context).fireBase.uploadQuestion(question, 45);
     question = new BookQuestion(
         'What is the main motivation for June to seek Day?',
         'She is in love with him',
@@ -560,13 +366,9 @@ class BookQuestionUpload {
         'She was instructed to find him, but she doesn’t know why',
         'To avenge her brother\'s death',
         3,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('46')
-        .setData(question.toJson());
+        0,
+        46);
+    Provider.of(context).fireBase.uploadQuestion(question, 46);
     question = new BookQuestion(
         'When and where was the book story set?',
         'England during World War I',
@@ -574,21 +376,12 @@ class BookQuestionUpload {
         'Scotland during World War II ',
         'England during World War II',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('47')
-        .setData(question.toJson());
+        0,
+        47);
+    Provider.of(context).fireBase.uploadQuestion(question, 47);
     question = new BookQuestion('How old was Ada when the book starts', '11',
-        '12', 'She was a teenager', '10', 0, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('48')
-        .setData(question.toJson());
+        '12', 'She was a teenager', '10', 0, 0, 48);
+    Provider.of(context).fireBase.uploadQuestion(question, 48);
     question = new BookQuestion(
         'Why does Ada run away from home?',
         'Because her mom did not feed her',
@@ -596,13 +389,9 @@ class BookQuestionUpload {
         'Because her family was annoying',
         'Because her mom was abusive',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('49')
-        .setData(question.toJson());
+        0,
+        49);
+    Provider.of(context).fireBase.uploadQuestion(question, 49);
     question = new BookQuestion(
         'What is the issue with Ada\'s limb?',
         'She was born with a skew foot',
@@ -610,13 +399,9 @@ class BookQuestionUpload {
         'She was born with Juvenile Bunion',
         'She was born with a clubfoot',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('50')
-        .setData(question.toJson());
+        0,
+        50);
+    Provider.of(context).fireBase.uploadQuestion(question, 50);
     question = new BookQuestion(
         'How did Ada interacted with the world when she lived with her mom?',
         'She looked outside through a hole in the wall',
@@ -624,13 +409,9 @@ class BookQuestionUpload {
         'She looked outside through the door\'s peek hole',
         'She was only able to look at it from her window',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('51')
-        .setData(question.toJson());
+        0,
+        51);
+    Provider.of(context).fireBase.uploadQuestion(question, 51);
     question = new BookQuestion(
         'What are the shores Ada must do while she lives with her mom?',
         'Cooking and doing her brothers homework',
@@ -638,13 +419,9 @@ class BookQuestionUpload {
         'Cooking, cleaning and taking care of their pet',
         'Cooking, Cleaning and caring for her brother',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('52')
-        .setData(question.toJson());
+        0,
+        52);
+    Provider.of(context).fireBase.uploadQuestion(question, 52);
     question = new BookQuestion(
         'What is Ada secretly practicing while her mom is not home?',
         'To Read',
@@ -652,13 +429,9 @@ class BookQuestionUpload {
         'to walk and read',
         'To walk',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('53')
-        .setData(question.toJson());
+        0,
+        53);
+    Provider.of(context).fireBase.uploadQuestion(question, 53);
     question = new BookQuestion(
         'What happens to the children of London when the war breaks out?',
         'They are send to family abroad',
@@ -666,13 +439,9 @@ class BookQuestionUpload {
         'They are kept in London',
         'They are take to the country side',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('54')
-        .setData(question.toJson());
+        0,
+        54);
+    Provider.of(context).fireBase.uploadQuestion(question, 54);
     question = new BookQuestion(
         'Who does Ada take with her during the evacuation?',
         'Her cat',
@@ -680,13 +449,9 @@ class BookQuestionUpload {
         'Her mom and brother',
         'Her brother',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('55')
-        .setData(question.toJson());
+        0,
+        55);
+    Provider.of(context).fireBase.uploadQuestion(question, 55);
     question = new BookQuestion(
         'What is the name of the village Ada ends up at during the evacuation',
         'The Village of Burnsall',
@@ -694,13 +459,9 @@ class BookQuestionUpload {
         'The Village of Kingham',
         'The Village of Kent',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('56')
-        .setData(question.toJson());
+        0,
+        56);
+    Provider.of(context).fireBase.uploadQuestion(question, 56);
     question = new BookQuestion(
         'What is preventing Ada and her brother for being taken once they get to the countryside?',
         'People think they are uneducated',
@@ -708,13 +469,9 @@ class BookQuestionUpload {
         'People thik they might steal',
         'People think they are dirty',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('57')
-        .setData(question.toJson());
+        0,
+        57);
+    Provider.of(context).fireBase.uploadQuestion(question, 57);
     question = new BookQuestion(
         'What is the name of the owner of the house where Ada and her brother end up staying?',
         'Susan Smith',
@@ -722,13 +479,9 @@ class BookQuestionUpload {
         'Miss Smyth',
         'Miss Smith',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('58')
-        .setData(question.toJson());
+        0,
+        58);
+    Provider.of(context).fireBase.uploadQuestion(question, 58);
     question = new BookQuestion(
         'What is the reason Ada and her Jamie are allowed into Susan Smith\'s home?',
         'They are related ',
@@ -736,13 +489,9 @@ class BookQuestionUpload {
         'They were adopted by the Smith family',
         'They had nowhere else to go',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('59')
-        .setData(question.toJson());
+        0,
+        59);
+    Provider.of(context).fireBase.uploadQuestion(question, 59);
     question = new BookQuestion(
         'How does the doctor suggest should be done to help Ada fix her foot?',
         'Treatment',
@@ -750,13 +499,9 @@ class BookQuestionUpload {
         'None of these answers is right',
         'Surgery',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('60')
-        .setData(question.toJson());
+        0,
+        60);
+    Provider.of(context).fireBase.uploadQuestion(question, 60);
     question = new BookQuestion(
         'What is preventing the doctor from helping Ada with her foot?',
         'He did not have resources to help her',
@@ -764,13 +509,9 @@ class BookQuestionUpload {
         'Ada could not pay the doctor\'s fees',
         'Parent permission',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('61')
-        .setData(question.toJson());
+        0,
+        61);
+    Provider.of(context).fireBase.uploadQuestion(question, 61);
     question = new BookQuestion(
         'What do Ada and her brother learn while they stay at Miss Smith house',
         'Read and write',
@@ -778,13 +519,9 @@ class BookQuestionUpload {
         'Read and ride a pony',
         'Read, write and ride a pony',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('62')
-        .setData(question.toJson());
+        0,
+        62);
+    Provider.of(context).fireBase.uploadQuestion(question, 62);
     question = new BookQuestion(
         'How helps Ada  walk everywhere in the countryside?',
         'She uses crutches she won in a raffle',
@@ -792,13 +529,9 @@ class BookQuestionUpload {
         'She uses crutches she bough with her savings',
         'She uses crutches Miss smith gave her',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('63')
-        .setData(question.toJson());
+        0,
+        63);
+    Provider.of(context).fireBase.uploadQuestion(question, 63);
     question = new BookQuestion(
         'How did Ada and Jamie help Miss Smith?',
         'They help help her with shores around the house',
@@ -806,13 +539,9 @@ class BookQuestionUpload {
         'They just hang out with her, they don\'t do much else',
         'They help her cope with her depression',
         0,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('64')
-        .setData(question.toJson());
+        0,
+        64);
+    Provider.of(context).fireBase.uploadQuestion(question, 64);
     question = new BookQuestion(
         'How old was Knud Pedersen when Hitler invaded Denmark?',
         '13',
@@ -820,13 +549,9 @@ class BookQuestionUpload {
         '15',
         '14',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('65')
-        .setData(question.toJson());
+        0,
+        65);
+    Provider.of(context).fireBase.uploadQuestion(question, 65);
     question = new BookQuestion(
         'What was the name of the town the protagonist lived?',
         'Svendborg',
@@ -834,13 +559,9 @@ class BookQuestionUpload {
         'Odesa',
         'Odense',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('66')
-        .setData(question.toJson());
+        0,
+        66);
+    Provider.of(context).fireBase.uploadQuestion(question, 66);
     question = new BookQuestion(
         'Why was Knud embarrised about in the time of the invasion?',
         'He was embarrised that Danish authorities fought too hard and sacrificed to many innocents',
@@ -848,13 +569,9 @@ class BookQuestionUpload {
         'He was not embarrised about anything',
         'He was embarrised about the Danish authorities surrendering so easily',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('67')
-        .setData(question.toJson());
+        0,
+        67);
+    Provider.of(context).fireBase.uploadQuestion(question, 67);
     question = new BookQuestion(
         'What trigger Knud involvement in politics',
         'Hitlers invasion of europe',
@@ -862,13 +579,9 @@ class BookQuestionUpload {
         'Hitlers invassion of Copenhagen',
         'Hitler\'s invassion of Denmark',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('68')
-        .setData(question.toJson());
+        0,
+        68);
+    Provider.of(context).fireBase.uploadQuestion(question, 68);
     question = new BookQuestion(
         'What is the name of the resistance group Knud\'s brother starts in Odense?',
         'The RALPH club',
@@ -876,13 +589,9 @@ class BookQuestionUpload {
         'They did not form a club',
         'The RAF club',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('69')
-        .setData(question.toJson());
+        0,
+        69);
+    Provider.of(context).fireBase.uploadQuestion(question, 69);
     question = new BookQuestion(
         'Knuds and Jens savotage club does what to the german army?',
         'Cuts phones wires',
@@ -890,13 +599,9 @@ class BookQuestionUpload {
         'None of this',
         'Both Cuts phones wires and Vandalize signs',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('70')
-        .setData(question.toJson());
+        0,
+        70);
+    Provider.of(context).fireBase.uploadQuestion(question, 70);
     question = new BookQuestion(
         'To which city does Knud\'s father get reasigned to?',
         'Helsingborg',
@@ -904,13 +609,9 @@ class BookQuestionUpload {
         'Svendborg',
         'Aalborg',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('71')
-        .setData(question.toJson());
+        0,
+        71);
+    Provider.of(context).fireBase.uploadQuestion(question, 71);
     question = new BookQuestion(
         'What is the name of the resistance group Knud\'s brother starts at Aalborg?',
         'The RALF club',
@@ -918,13 +619,9 @@ class BookQuestionUpload {
         'They do not form a club in this city',
         'The Churchill Club',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('72')
-        .setData(question.toJson());
+        0,
+        72);
+    Provider.of(context).fireBase.uploadQuestion(question, 72);
     question = new BookQuestion(
         'What was Knuds and parents involvement in the Churchill Club when he started it?',
         'They did not give him the idea, but they support it',
@@ -932,13 +629,9 @@ class BookQuestionUpload {
         'They gave him the idea',
         'They did not participate because the did not know. The club was a secret',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('73')
-        .setData(question.toJson());
+        0,
+        73);
+    Provider.of(context).fireBase.uploadQuestion(question, 73);
     question = new BookQuestion(
         'Why was Hitler interested in Denmark?',
         'Denmark was a fertile land',
@@ -946,13 +639,9 @@ class BookQuestionUpload {
         'Hitler saw Danish as model Aryans',
         'All these options',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('74')
-        .setData(question.toJson());
+        0,
+        74);
+    Provider.of(context).fireBase.uploadQuestion(question, 74);
     question = new BookQuestion(
         'What was Knud\'s dad Job?',
         'He was a politian',
@@ -960,13 +649,9 @@ class BookQuestionUpload {
         'He worked for the nazis',
         'He was a preacher',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('75')
-        .setData(question.toJson());
+        0,
+        75);
+    Provider.of(context).fireBase.uploadQuestion(question, 75);
     question = new BookQuestion(
         'How did danish people showed their patriotism during the invassion?',
         'Buying "kings badges"',
@@ -974,13 +659,9 @@ class BookQuestionUpload {
         'Speaking only Danish at school',
         'All these options',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('76')
-        .setData(question.toJson());
+        0,
+        76);
+    Provider.of(context).fireBase.uploadQuestion(question, 76);
     question = new BookQuestion(
         'All danish people rejected the germans',
         'No, some bussines supported the germans by giving them food',
@@ -988,13 +669,9 @@ class BookQuestionUpload {
         'Yes, the authorities and the whole country erjected the german invasion',
         'No, some bussines helped the germans providing weapons and housing',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('77')
-        .setData(question.toJson());
+        0,
+        77);
+    Provider.of(context).fireBase.uploadQuestion(question, 77);
     question = new BookQuestion(
         'Knud and Jen are prohibited from joining Boyscouts by',
         'Their mom',
@@ -1002,13 +679,9 @@ class BookQuestionUpload {
         'The germans',
         'Their dad',
         5,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('78')
-        .setData(question.toJson());
+        0,
+        78);
+    Provider.of(context).fireBase.uploadQuestion(question, 78);
     question = new BookQuestion(
         'Where is the story set at the beginning of the book?',
         'Florida',
@@ -1016,21 +689,12 @@ class BookQuestionUpload {
         'Chicago',
         'Gainesville',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('79')
-        .setData(question.toJson());
+        0,
+        79);
+    Provider.of(context).fireBase.uploadQuestion(question, 79);
     question = new BookQuestion('What age was Malu at the begging of the story',
-        '11', '10', '13', '12', 6, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('80')
-        .setData(question.toJson());
+        '11', '10', '13', '12', 6, 0, 80);
+    Provider.of(context).fireBase.uploadQuestion(question, 80);
     question = new BookQuestion(
         'What etnicity was Malu?',
         'Puerto Rican-American',
@@ -1038,13 +702,9 @@ class BookQuestionUpload {
         'Salvatorian-American',
         'Mexican-American',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('81')
-        .setData(question.toJson());
+        0,
+        81);
+    Provider.of(context).fireBase.uploadQuestion(question, 81);
     question = new BookQuestion(
         'What bussines did Malu\'s father have in Gainesvile?',
         'A taco shop',
@@ -1052,21 +712,12 @@ class BookQuestionUpload {
         'A book shop',
         'A record store',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('82')
-        .setData(question.toJson());
+        0,
+        82);
+    Provider.of(context).fireBase.uploadQuestion(question, 82);
     question = new BookQuestion('Where does Malu\'s fmaily relocates to?',
-        'Alabama', 'Gainesville', 'New York', 'Chicago', 6, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('83')
-        .setData(question.toJson());
+        'Alabama', 'Gainesville', 'New York', 'Chicago', 6, 0, 83);
+    Provider.of(context).fireBase.uploadQuestion(question, 83);
     question = new BookQuestion(
         'What type of activity does Malu start in Chicago?',
         'A reading club',
@@ -1074,13 +725,9 @@ class BookQuestionUpload {
         'A quartet',
         'A punk band',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('84')
-        .setData(question.toJson());
+        0,
+        84);
+    Provider.of(context).fireBase.uploadQuestion(question, 84);
     question = new BookQuestion(
         'Why does Malu refers to her mom as the Super Mexican?',
         'Because she is a mexican wrestler champion',
@@ -1088,13 +735,9 @@ class BookQuestionUpload {
         'Because she think her mom is amazingly patriotic',
         'Because of her strict Mexican traditions',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('85')
-        .setData(question.toJson());
+        0,
+        85);
+    Provider.of(context).fireBase.uploadQuestion(question, 85);
     question = new BookQuestion(
         'What does Malu\'s dad gives her mom on their anniversary?',
         'A big huge bouquet of flowers',
@@ -1102,13 +745,9 @@ class BookQuestionUpload {
         'A diamond ring',
         'Nothing, they are divorced',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('86')
-        .setData(question.toJson());
+        0,
+        86);
+    Provider.of(context).fireBase.uploadQuestion(question, 86);
     question = new BookQuestion(
         'What does Malu\'s Mom favorite punk band?',
         'The ramones',
@@ -1116,13 +755,9 @@ class BookQuestionUpload {
         'Green day',
         'None, she despises rock',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('87')
-        .setData(question.toJson());
+        0,
+        87);
+    Provider.of(context).fireBase.uploadQuestion(question, 87);
     question = new BookQuestion(
         'What typical mexican dish ingredient does Malu dislike?',
         'Avocado and cilantro',
@@ -1130,13 +765,9 @@ class BookQuestionUpload {
         'tacos and burritos',
         'Cilantro and spicy peppers',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('88')
-        .setData(question.toJson());
+        0,
+        88);
+    Provider.of(context).fireBase.uploadQuestion(question, 88);
     question = new BookQuestion(
         'What prompts Malu to move to Chicago?',
         'Nothing she never moves there',
@@ -1144,13 +775,9 @@ class BookQuestionUpload {
         'Her dad tell her to go',
         'Her mom got a teaching position there',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('89')
-        .setData(question.toJson());
+        0,
+        89);
+    Provider.of(context).fireBase.uploadQuestion(question, 89);
     question = new BookQuestion(
         'What excites Malu the most about moving to chicago?',
         'She wants to be able to attend lots of punk concerts',
@@ -1158,13 +785,9 @@ class BookQuestionUpload {
         'Some of her friends are moving there. ',
         'Nothing, she does not want  to move there',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('90')
-        .setData(question.toJson());
+        0,
+        90);
+    Provider.of(context).fireBase.uploadQuestion(question, 90);
     question = new BookQuestion(
         'What surprises Malu once she arrives at her new school',
         'The small number of hispanic kids in the school',
@@ -1172,13 +795,9 @@ class BookQuestionUpload {
         'The small number of hispanic teachers in the school',
         'The large ammount of hispanic students',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('91')
-        .setData(question.toJson());
+        0,
+        91);
+    Provider.of(context).fireBase.uploadQuestion(question, 91);
     question = new BookQuestion(
         'What is the name of the school Malu joins once she gets to Chicago?',
         'La Casa Middle School',
@@ -1186,13 +805,9 @@ class BookQuestionUpload {
         'Posadon Middle School',
         'Posada Middle School',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('92')
-        .setData(question.toJson());
+        0,
+        92);
+    Provider.of(context).fireBase.uploadQuestion(question, 92);
     question = new BookQuestion(
         'What is Malu\'s hobby besides Punk Rock?',
         'Writing articles for magazines',
@@ -1200,13 +815,9 @@ class BookQuestionUpload {
         'None of these',
         'Making Zines',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('93')
-        .setData(question.toJson());
+        0,
+        93);
+    Provider.of(context).fireBase.uploadQuestion(question, 93);
     question = new BookQuestion(
         'What did Malu put on her mom\'s purse to express her disagrement with moving to Chicago?',
         'A zine talking about the benefits of living in Gainesville',
@@ -1214,13 +825,9 @@ class BookQuestionUpload {
         'None of these, she did not complain',
         'A zine declaring "There is no place like Home"',
         6,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('94')
-        .setData(question.toJson());
+        0,
+        94);
+    Provider.of(context).fireBase.uploadQuestion(question, 94);
     question = new BookQuestion(
         'When does the story takes place?',
         'After world war I',
@@ -1228,21 +835,12 @@ class BookQuestionUpload {
         'In Germany',
         'After world war II',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('95')
-        .setData(question.toJson());
+        0,
+        95);
+    Provider.of(context).fireBase.uploadQuestion(question, 95);
     question = new BookQuestion('Where did Gerta live?', 'West Germany',
-        'Germany', 'None of these', 'East Germany', 7, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('96')
-        .setData(question.toJson());
+        'Germany', 'None of these', 'East Germany', 7, 0, 96);
+    Provider.of(context).fireBase.uploadQuestion(question, 96);
     question = new BookQuestion(
         'What are the Grenzers?',
         'The city firefighters',
@@ -1250,13 +848,9 @@ class BookQuestionUpload {
         'All of the options',
         'The border police',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('97')
-        .setData(question.toJson());
+        0,
+        97);
+    Provider.of(context).fireBase.uploadQuestion(question, 97);
     question = new BookQuestion(
         'What did Gerta\'s father keep from her?',
         'He was a govertment supported',
@@ -1264,13 +858,9 @@ class BookQuestionUpload {
         'None of these. He had nothing to hide',
         'He was critical of the government',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('98')
-        .setData(question.toJson());
+        0,
+        98);
+    Provider.of(context).fireBase.uploadQuestion(question, 98);
     question = new BookQuestion(
         'How long did it take to erect the Berlin wall?',
         '1 day',
@@ -1278,13 +868,9 @@ class BookQuestionUpload {
         '1 week',
         '1 night',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('99')
-        .setData(question.toJson());
+        0,
+        99);
+    Provider.of(context).fireBase.uploadQuestion(question, 99);
     question = new BookQuestion(
         'Why is Gerta\'s father separated from his family?',
         'Because he was at the other side of the wall when it was erected',
@@ -1292,13 +878,9 @@ class BookQuestionUpload {
         'All of these',
         'Because he was seeking employment on West Berlin',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('100')
-        .setData(question.toJson());
+        0,
+        100);
+    Provider.of(context).fireBase.uploadQuestion(question, 100);
     question = new BookQuestion(
         'Gerta\'s mother is not supportive of',
         'Criminals',
@@ -1306,21 +888,12 @@ class BookQuestionUpload {
         'Protesters and Sabotours',
         'Dissidents or protesters',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('101')
-        .setData(question.toJson());
+        0,
+        101);
+    Provider.of(context).fireBase.uploadQuestion(question, 101);
     question = new BookQuestion('Gerta\'s side of the wall government was',
-        'Socialist', 'Democracy', 'Authoritarian', 'Communist', 7, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('102')
-        .setData(question.toJson());
+        'Socialist', 'Democracy', 'Authoritarian', 'Communist', 7, 0, 102);
+    Provider.of(context).fireBase.uploadQuestion(question, 102);
     question = new BookQuestion(
         'Gerta is accompanied by her mother and..',
         'Her dad',
@@ -1328,13 +901,9 @@ class BookQuestionUpload {
         'Her brother Dominic',
         'her brother Fritz',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('103')
-        .setData(question.toJson());
+        0,
+        103);
+    Provider.of(context).fireBase.uploadQuestion(question, 103);
     question = new BookQuestion(
         'Did Gerta and her mom kept sending secret letters to her dad?',
         'Yes, They got letters with money from her dad',
@@ -1342,13 +911,9 @@ class BookQuestionUpload {
         'No, they did not send letter they sent telegrams.',
         'No, they could not communicate or receive support from West Germany',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('104')
-        .setData(question.toJson());
+        0,
+        104);
+    Provider.of(context).fireBase.uploadQuestion(question, 104);
     question = new BookQuestion(
         'What ammenity or ammenities from West Germany does Fritz crave?',
         'The Beatles albums',
@@ -1356,13 +921,9 @@ class BookQuestionUpload {
         'Being able to dress as he pleases',
         'All of these',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('105')
-        .setData(question.toJson());
+        0,
+        105);
+    Provider.of(context).fireBase.uploadQuestion(question, 105);
     question = new BookQuestion(
         'What\'s is the main subject of the book?',
         'Family disputes',
@@ -1370,13 +931,9 @@ class BookQuestionUpload {
         'Family problems',
         'Family relations',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('106')
-        .setData(question.toJson());
+        0,
+        106);
+    Provider.of(context).fireBase.uploadQuestion(question, 106);
     question = new BookQuestion(
         'What did Gerta think when she heard all the noise the morning of August 13 1961? ',
         'She thought her country was being invaded',
@@ -1384,13 +941,9 @@ class BookQuestionUpload {
         'None of these, there was no noise that morning',
         'She thought an air raid was happening',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('107')
-        .setData(question.toJson());
+        0,
+        107);
+    Provider.of(context).fireBase.uploadQuestion(question, 107);
     question = new BookQuestion(
         'Which neighboor warned Gerta\'s family about the government',
         'Herr Krazzer',
@@ -1398,21 +951,12 @@ class BookQuestionUpload {
         'Herr Kraisler',
         'Herr Krause',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('108')
-        .setData(question.toJson());
+        0,
+        108);
+    Provider.of(context).fireBase.uploadQuestion(question, 108);
     question = new BookQuestion('Which city did Gerta live in?', 'Dresden',
-        'Munich', 'Hamburg', 'Berlin', 7, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('109')
-        .setData(question.toJson());
+        'Munich', 'Hamburg', 'Berlin', 7, 0, 109);
+    Provider.of(context).fireBase.uploadQuestion(question, 109);
     question = new BookQuestion(
         'When did gerta realized that something really bad was going to happen?',
         'the day before the fence was buildt during lunch',
@@ -1420,21 +964,12 @@ class BookQuestionUpload {
         'She did not suspect anything was going to happen',
         'Two days before the fence was erected, during dinner',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('110')
-        .setData(question.toJson());
+        0,
+        110);
+    Provider.of(context).fireBase.uploadQuestion(question, 110);
     question = new BookQuestion('What was the name of the secret police?',
-        'Stace', 'Stackers', 'Slavers', 'Staci', 7, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('111')
-        .setData(question.toJson());
+        'Stace', 'Stackers', 'Slavers', 'Staci', 7, 0, 111);
+    Provider.of(context).fireBase.uploadQuestion(question, 111);
     question = new BookQuestion(
         'Who did Herr Krause share his appartment with? ',
         'With his children',
@@ -1442,13 +977,9 @@ class BookQuestionUpload {
         'With his parents',
         'With his wife',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('112')
-        .setData(question.toJson());
+        0,
+        112);
+    Provider.of(context).fireBase.uploadQuestion(question, 112);
     question = new BookQuestion(
         'Which goverment was controlling East Germany',
         'The US, Washington',
@@ -1456,13 +987,9 @@ class BookQuestionUpload {
         'West Germany',
         'Russia, Moscow',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('113')
-        .setData(question.toJson());
+        0,
+        113);
+    Provider.of(context).fireBase.uploadQuestion(question, 113);
     question = new BookQuestion(
         'Who in Gerta\'s family did not want to go to East Germany before the wall was buildt',
         'Her dad ',
@@ -1470,13 +997,9 @@ class BookQuestionUpload {
         'Her mom and dad',
         'Her mom',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('114')
-        .setData(question.toJson());
+        0,
+        114);
+    Provider.of(context).fireBase.uploadQuestion(question, 114);
     question = new BookQuestion(
         'Why did Gerta\'s mom did not want to leaver for West Germany',
         'Because she did not want to live in a refuge camp',
@@ -1484,13 +1007,9 @@ class BookQuestionUpload {
         'She did not want to leave her mom behind',
         'All of these',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('115')
-        .setData(question.toJson());
+        0,
+        115);
+    Provider.of(context).fireBase.uploadQuestion(question, 115);
     question = new BookQuestion(
         'Why did Fritz Offered to accompany his dad to the trip to West Germany',
         'Because he wanted to be able to see a movie he was not able to see on East Germany',
@@ -1498,13 +1017,9 @@ class BookQuestionUpload {
         'Because his mom sugested it',
         'Because he was planning to buy magazines to sell when he came back',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('116')
-        .setData(question.toJson());
+        0,
+        116);
+    Provider.of(context).fireBase.uploadQuestion(question, 116);
     question = new BookQuestion(
         'What was Gerta\'s favorite song before she went to bed',
         'The Farmer in the Farm',
@@ -1512,13 +1027,9 @@ class BookQuestionUpload {
         'The Farmer in the March',
         'The Farmer in March',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('117')
-        .setData(question.toJson());
+        0,
+        117);
+    Provider.of(context).fireBase.uploadQuestion(question, 117);
     question = new BookQuestion(
         'Why did Fritz think his dad was not going to be allowed back?',
         'Because the government thought he was a criminal',
@@ -1526,13 +1037,9 @@ class BookQuestionUpload {
         'None of these, his dad came back',
         'Because the police thouhgt his dad was part of the resistance',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('118')
-        .setData(question.toJson());
+        0,
+        118);
+    Provider.of(context).fireBase.uploadQuestion(question, 118);
     question = new BookQuestion(
         'What did people called the Sunday after the wall was buildt?',
         'Wired Sunday',
@@ -1540,13 +1047,9 @@ class BookQuestionUpload {
         'Sad Sunday',
         'Barbed Wire Sunday',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('119')
-        .setData(question.toJson());
+        0,
+        119);
+    Provider.of(context).fireBase.uploadQuestion(question, 119);
     question = new BookQuestion(
         'How did the Grenzers ruined West Germany protesters pictures?',
         'They crashed the cameras',
@@ -1554,13 +1057,9 @@ class BookQuestionUpload {
         'They made rude gestures at the cameras',
         'They shone sun light to the lenses with mirrors',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('120')
-        .setData(question.toJson());
+        0,
+        120);
+    Provider.of(context).fireBase.uploadQuestion(question, 120);
     question = new BookQuestion(
         'What was the first upgrade to fence?',
         'The Government installed security cameras',
@@ -1568,13 +1067,9 @@ class BookQuestionUpload {
         'The Government added more guards',
         'The government made it into a concrete wall',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('121')
-        .setData(question.toJson());
+        0,
+        121);
+    Provider.of(context).fireBase.uploadQuestion(question, 121);
     question = new BookQuestion(
         'What did the Government of East germany called those who fled ?',
         'Weakminded',
@@ -1582,13 +1077,9 @@ class BookQuestionUpload {
         'They did not make any comments',
         'Desserters and weak minded',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('122')
-        .setData(question.toJson());
+        0,
+        122);
+    Provider.of(context).fireBase.uploadQuestion(question, 122);
     question = new BookQuestion(
         'What did the government of East germany called people in West Germany ',
         'Imperialist',
@@ -1596,13 +1087,9 @@ class BookQuestionUpload {
         'All of these',
         'Fascist',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('123')
-        .setData(question.toJson());
+        0,
+        123);
+    Provider.of(context).fireBase.uploadQuestion(question, 123);
     question = new BookQuestion(
         'What did the Pionners teach Gerta?',
         'Freedom was overrated',
@@ -1610,13 +1097,9 @@ class BookQuestionUpload {
         'Avoid evil influences like the beatles and fancy clothes',
         'All of these',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('124')
-        .setData(question.toJson());
+        0,
+        124);
+    Provider.of(context).fireBase.uploadQuestion(question, 124);
     question = new BookQuestion(
         'Why coundt Gerta\'s family called her dad over the phone?',
         'The government prohibited calls to West Germany ',
@@ -1624,13 +1107,9 @@ class BookQuestionUpload {
         'None of these',
         'The government cut the phone lines to the west',
         7,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('125')
-        .setData(question.toJson());
+        0,
+        125);
+    Provider.of(context).fireBase.uploadQuestion(question, 125);
     question = new BookQuestion(
         'Why is Timothy required to write his memories',
         'As a punishement for stealing food',
@@ -1638,13 +1117,9 @@ class BookQuestionUpload {
         'He enjoyed keeping track of his daily life',
         'As a punishment for stealing wallet',
         8,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('126')
-        .setData(question.toJson());
+        0,
+        126);
+    Provider.of(context).fireBase.uploadQuestion(question, 126);
     question = new BookQuestion(
         'What\'s the name of the Timothy probation Officer',
         'Jameson',
@@ -1652,13 +1127,9 @@ class BookQuestionUpload {
         'John',
         'James',
         8,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('127')
-        .setData(question.toJson());
+        0,
+        127);
+    Provider.of(context).fireBase.uploadQuestion(question, 127);
     question = new BookQuestion(
         'Why does Timothy steal?',
         'He steals because he needs money for a new video game',
@@ -1666,13 +1137,9 @@ class BookQuestionUpload {
         'He steals because he is bored and he wants some exciment in his life',
         'He steals to buy medication for his sick brother',
         8,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('128')
-        .setData(question.toJson());
+        0,
+        128);
+    Provider.of(context).fireBase.uploadQuestion(question, 128);
     question = new BookQuestion(
         'What is Levi health problem?',
         'He has cancer',
@@ -1680,13 +1147,9 @@ class BookQuestionUpload {
         'He is got brochiatis',
         'He suffers from trachea problems',
         8,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('129')
-        .setData(question.toJson());
+        0,
+        129);
+    Provider.of(context).fireBase.uploadQuestion(question, 129);
     question = new BookQuestion(
         'How much money do Levi\'s medication cost every month?',
         '1000',
@@ -1694,13 +1157,9 @@ class BookQuestionUpload {
         '1400',
         '1500',
         8,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('130')
-        .setData(question.toJson());
+        0,
+        130);
+    Provider.of(context).fireBase.uploadQuestion(question, 130);
     question = new BookQuestion(
         'What happens to Levi at the end of winter',
         'He has to go the hospital',
@@ -1708,21 +1167,12 @@ class BookQuestionUpload {
         'All of these',
         'He becomes very ill ',
         8,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('131')
-        .setData(question.toJson());
-    question =
-        new BookQuestion('How old is Timothy?', '11', '10', '13', '12', 8, 0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('132')
-        .setData(question.toJson());
+        0,
+        131);
+    Provider.of(context).fireBase.uploadQuestion(question, 131);
+    question = new BookQuestion(
+        'How old is Timothy?', '11', '10', '13', '12', 8, 0, 132);
+    Provider.of(context).fireBase.uploadQuestion(question, 132);
     question = new BookQuestion(
         'Timothy is labeled by the court to be',
         'A jubvenile criminal',
@@ -1730,13 +1180,9 @@ class BookQuestionUpload {
         'Guilty of a crime',
         'An adjudicated delinquent',
         8,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('133')
-        .setData(question.toJson());
+        0,
+        133);
+    Provider.of(context).fireBase.uploadQuestion(question, 133);
     question = new BookQuestion(
         'How long is Timothy asked to write a journal?',
         '7 days a week for a year',
@@ -1744,13 +1190,9 @@ class BookQuestionUpload {
         'One year',
         '6 days a week for one year',
         8,
-        0);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('134')
-        .setData(question.toJson());
+        0,
+        134);
+    Provider.of(context).fireBase.uploadQuestion(question, 134);
     question = new BookQuestion(
         'How did Timothy\'s dad felt when he stole the wallet',
         'Very disspointed ',
@@ -1758,12 +1200,8 @@ class BookQuestionUpload {
         'Very sad because he could not help Timothy',
         'None of these, His dad left them before he stole the wallet',
         8,
-        1);
-    Provider.of(context)
-        .fireBase
-        .firestore
-        .collection('question')
-        .document('135')
-        .setData(question.toJson());
+        1,
+        135);
+    Provider.of(context).fireBase.uploadQuestion(question, 135);
   }
 }

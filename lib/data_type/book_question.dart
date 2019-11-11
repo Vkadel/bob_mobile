@@ -12,7 +12,7 @@ part 'book_question.g.dart';
 @JsonSerializable(explicitToJson: true)
 class BookQuestion {
   BookQuestion(this.question, this.option_a, this.option_b, this.option_c,
-      this.correct_answer, this.id, this.book_section);
+      this.correct_answer, this.id, this.book_section, this.questionId);
 
   String question;
   String option_a;
@@ -22,6 +22,7 @@ class BookQuestion {
   int selection_a;
   int book_section;
   int id; //The id of the Book it belongs to
+  int questionId;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

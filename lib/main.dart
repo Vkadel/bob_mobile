@@ -45,9 +45,7 @@ class MyApp extends StatelessWidget {
             '/home': (BuildContext context) => HomePage(title: 'Home Page'),
             '/personality_test': (BuildContext context) =>
                 PersonalitySurveyPage(title: 'Tell your tale'),
-            '/fight': (BuildContext context) => BattlePage(
-                  personal: Quanda.of(context).personal,
-                ),
+            '/fight': (BuildContext context) => BattlePage(),
           },
         ),
       ),

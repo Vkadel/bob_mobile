@@ -30,13 +30,13 @@ class UserData {
   );
 
   List<int> list_of_read_books;
-  Map<dynamic, dynamic> list_of_answered_questions;
+  List<Map<dynamic, dynamic>> answered_questions;
   String id;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
   /// The constructor is named after the source class, in this case, User.
-  factory UserData.fromJson(Map<String, dynamic> json) =>
+  factory UserData.fromJson(Map<dynamic, dynamic> json) =>
       _$UserDataFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization

@@ -1,4 +1,5 @@
 import 'package:bob_mobile/battle_page.dart';
+import 'package:bob_mobile/dashboard_page.dart';
 import 'package:bob_mobile/data_type/items_master.dart';
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
@@ -99,6 +100,12 @@ class _HeroPageState extends State<HeroRoomPage> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    stream = null;
+    super.dispose();
+  }
 }
 
 Widget _buildButtonsForBattle(BuildContext context) {
@@ -130,15 +137,16 @@ Widget _buildButtonsForBattle(BuildContext context) {
 void startFightForYourself(BuildContext context) {
   print('The fight starts for yourself');
   Quanda.of(context).personal = true;
-  Navigator.pushNamed(
-    context,
-    '/fight',
-  );
+  pushFightRoom(context);
 }
 
 void startFightForTheTeam(BuildContext context) {
   print('The fight starts for yourself');
   Quanda.of(context).personal = false;
+  pushFightRoom(context);
+}
+
+void pushFightRoom(BuildContext context) {
   Navigator.pushNamed(
     context,
     '/fight',
