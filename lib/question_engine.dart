@@ -19,52 +19,54 @@ import 'data_type/user.dart';
 
 class QuestionEngine {
   User myUser;
-  BuildContext context;
+  BuildContext mcontext;
   Stream<Question> generatedQuestion;
   BooksMaster bookQueried;
   int IdofBookChoosenFromQuanda;
-  final StreamController _controller = StreamController<BookQuestion>();
+  final StreamController _controller =
+      StreamController<BookQuestion>.broadcast();
   List answeredQuestionsForBook;
   QuestionEngine();
 
   Stream<BookQuestion> getStream() {
-    return _controller.stream;
+    return _controller.stream.asBroadcastStream();
   }
 
-  void InitEngine() {
+  void InitEngine(BuildContext context) {
+    mcontext = context;
     getUsersBooks();
   }
 
   void getUsersBooks() {
-    print("Starting to get user books");
-    Provider.of(context)
+    print("Question engine Starting to get user books");
+    Provider.of(mcontext)
         .fireBase
-        .getUserReadListOfBooks(Quanda.of(context).myUser)
+        .getUserReadListOfBooks(Quanda.of(mcontext).myUser)
         .listen((list) => updateQuandaListOfBooks(list));
   }
 
   void updateQuandaListOfBooks(DocumentSnapshot gotDocs) {
-    Quanda.of(context).userData = UserData.fromJson(gotDocs.data);
-    print('Updated Quanda with books Read');
+    Quanda.of(mcontext).userData = UserData.fromJson(gotDocs.data);
+    print('Question engine Updated Quanda with books Read');
     selectBookRandom();
   }
 
   void selectBookRandom() {
-    int listSize = Quanda.of(context).userData.list_of_read_books.length;
+    int listSize = Quanda.of(mcontext).userData.list_of_read_books.length;
     int selectedBook = new Random().nextInt(listSize);
-    print('Selected Book number: ${listSize}');
+    print('Question engine Selected Book number: ${listSize}');
     getMasterBookInfo(selectedBook);
   }
 
   void getMasterBookInfo(int bookLocationInQuanda) {
     /*new BookQuestionUpload().firstLargeUpload(context)*/;
-    print('Getting Master Book Info');
-    IdofBookChoosenFromQuanda = Quanda.of(context)
+    print('Question engine Getting Master Book Info');
+    IdofBookChoosenFromQuanda = Quanda.of(mcontext)
         .userData
         .list_of_read_books
         .elementAt(bookLocationInQuanda);
 
-    Provider.of(context)
+    Provider.of(mcontext)
         .fireBase
         .getMasterBookInfo(IdofBookChoosenFromQuanda)
         .listen((bookSnapshot) =>
@@ -72,20 +74,20 @@ class QuestionEngine {
   }
 
   void getAnsweredQuestions() {
-    print('Getting Answered Questions');
-    Provider.of(context)
+    print('Question engine Getting Answered Questions');
+    Provider.of(mcontext)
         .fireBase
-        .getListOfAnsweredQuestins(context, Quanda.of(context).myUser.id)
+        .getListOfAnsweredQuestins(mcontext, Quanda.of(mcontext).myUser.id)
         .first
         .then((d) => getListOfAnsweredQuestionsUpdateQuanda(d));
   }
 
   void getBookQuestions(DocumentSnapshot bookSnapshot, int booklocation) {
-    print('Getting Book associated questions');
+    print('Question engine Getting Book associated questions');
     bookQueried = BooksMaster.fromJson(bookSnapshot.data);
-    Provider.of(context)
+    Provider.of(mcontext)
         .fireBase
-        .getQuestionsForMasterBook(Quanda.of(context)
+        .getQuestionsForMasterBook(Quanda.of(mcontext)
             .userData
             .list_of_read_books
             .elementAt(booklocation))
@@ -98,16 +100,16 @@ class QuestionEngine {
     int answered_questions_location =
         d.data.keys.toList().indexOf('answered_questions');
     List values = d.data.values.toList()[answered_questions_location];
-    print('Getting List of answered questions');
+    print('Question engine Getting List of answered questions');
     List<Map<dynamic, dynamic>> second;
     List<AnsweredQuestions> myQuestions = new List();
     try {
       //Todo: May want to optimize this operation to just update those that have changed
       values
           .forEach((each) => myQuestions.add(AnsweredQuestions.fromJson(each)));
-      print('Got Answered Question Without Errors');
-      if (Quanda.of(context).allAnsweredQuestions != myQuestions) {
-        Quanda.of(context).allAnsweredQuestions = myQuestions;
+      print('Question engine Got Answered Question Without Errors');
+      if (Quanda.of(mcontext).allAnsweredQuestions != myQuestions) {
+        Quanda.of(mcontext).allAnsweredQuestions = myQuestions;
       }
     } catch (e) {
       print(e);
@@ -121,13 +123,13 @@ class QuestionEngine {
         .map((each) => BookQuestion.fromJson(each.data))
         .toList();
     print(
-        'First Element question: ${listOfBookQuestion.elementAt(0).question}');
+        'Question engine First Element question: ${listOfBookQuestion.elementAt(0).question}');
     int selectRamdomQuestion = new Random().nextInt(listOfBookQuestion.length);
     //Check whether the user has done the question
     if (checkIfQuestionIsNew(listOfBookQuestion, selectRamdomQuestion)) {
-      print('Question found');
+      print('Question engine Question found');
       print(
-          'The Question is: ${listOfBookQuestion.elementAt(selectRamdomQuestion).question}');
+          'Question engine The Question is: ${listOfBookQuestion.elementAt(selectRamdomQuestion).question}');
       //Send question to stream
       _controller.add(listOfBookQuestion.elementAt(selectRamdomQuestion));
       return;
@@ -157,7 +159,7 @@ class QuestionEngine {
   bool checkIfQuestionIsNew(
       List<BookQuestion> listOfBookQuestion, int selectRamdomQuestion) {
     //Check if an item exists in the answered list for this question
-    return Quanda.of(context).userData.answered_questions.indexWhere((e) =>
+    return Quanda.of(mcontext).userData.answered_questions.indexWhere((e) =>
                 e['question'] ==
                 listOfBookQuestion
                     .elementAt(selectRamdomQuestion)
@@ -173,11 +175,11 @@ class QuestionEngine {
 
   void createDummyListOfQuestionsAnswered() {
     AnsweredQuestions myQuestion =
-        new AnsweredQuestions(89, 0, Quanda.of(context).myUser.id);
+        new AnsweredQuestions(89, 0, Quanda.of(mcontext).myUser.id);
     AnsweredQuestions myQuestion2 =
-        new AnsweredQuestions(88, 0, Quanda.of(context).myUser.id);
+        new AnsweredQuestions(88, 0, Quanda.of(mcontext).myUser.id);
     AnsweredQuestions myQuestion3 =
-        new AnsweredQuestions(55, 0, Quanda.of(context).myUser.id);
+        new AnsweredQuestions(55, 0, Quanda.of(mcontext).myUser.id);
     List<AnsweredQuestions> myQuestions = new List();
     myQuestions.add(myQuestion);
     myQuestions.add(myQuestion2);
@@ -188,6 +190,8 @@ class QuestionEngine {
     maps.add(myQuestion2.toJson());
     maps.add(myQuestion3.toJson());
     myQuestions.forEach((i) => map.addAll(i.toJson()));
-    Provider.of(context).fireBase.updateListofAnsweredQuestions(context, maps);
+    Provider.of(mcontext)
+        .fireBase
+        .updateListofAnsweredQuestions(mcontext, maps);
   }
 }

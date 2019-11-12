@@ -50,7 +50,13 @@ class BattlePageState extends State<BattlePage> {
               expandedHeight: Constants.height_extended_bars,
               flexibleSpace: _buildBackgroundForAppBar(context),
             ),
-            _buildQuestions(context, this.widget, questionEngine)
+            _buildQuestions(context, this.widget, questionEngine),
+            _buildPossibleAnwers(context, widget, questionEngine),
+            SliverFillRemaining(
+              child: Container(
+                height: 100,
+              ),
+            )
           ],
         ),
       ),
@@ -60,29 +66,80 @@ class BattlePageState extends State<BattlePage> {
 
 Widget _buildQuestions(
     BuildContext context, BattlePage widget, QuestionEngine questionEngine) {
-  questionEngine.context = context;
-  questionEngine.InitEngine();
-  return SliverFillRemaining(
-    child: StreamBuilder(
-      stream: questionEngine.getStream(),
-      builder: (context, bookQuestion) {
-        if (bookQuestion.hasData) {
-          BookQuestion question = bookQuestion.data;
-          return Column(
-            children: <Widget>[
-              _buildBookReference(context, question, questionEngine),
-              _buildQuestion(question, context),
-              _buildRamdomOrderForAnswers(question, context),
-            ],
-          );
-        } else {
-          questionEngine.InitEngine();
-          return Center(
+  questionEngine.InitEngine(context);
+  return StreamBuilder(
+    stream: questionEngine.getStream(),
+    builder: (context, bookQuestion) {
+      if (bookQuestion.hasData &&
+          !bookQuestion.hasError &&
+          bookQuestion.connectionState == ConnectionState.active) {
+        BookQuestion question = bookQuestion.data;
+        return SliverList(
+          delegate: SliverChildListDelegate([
+            _buildBookReference(context, question, questionEngine),
+            _buildQuestion(question, context),
+          ]),
+        );
+      } else {
+        return SliverFillRemaining(
+          child: Center(
             child: CircularProgressIndicator(),
-          );
-        }
-      },
-    ),
+          ),
+        );
+      }
+    },
+  );
+}
+
+Widget _buildPossibleAnwers(
+    BuildContext context, BattlePage widget, QuestionEngine questionEngine) {
+  return StreamBuilder(
+    stream: questionEngine.getStream(),
+    builder: (context, data) {
+      if (data.hasData) {
+        List<Widget> possibleAnswers = new List();
+        BookQuestion question = data.data;
+        possibleAnswers.add(FormattedRoundedButton(
+            question.correct_answer, functionForCorrect, context));
+        possibleAnswers.add(
+            FormattedRoundedButton(question.option_a, functionFora, context));
+        possibleAnswers.add(
+            FormattedRoundedButton(question.option_b, functionForb, context));
+        possibleAnswers.add(
+            FormattedRoundedButton(question.option_c, functionForc, context));
+        // ignore: missing_return
+        possibleAnswers.shuffle();
+        return SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return possibleAnswers.elementAt(index);
+          }, childCount: possibleAnswers.length),
+        );
+      } else {
+        return SliverToBoxAdapter(
+          child: Container(),
+        );
+      }
+    },
+  );
+}
+
+Widget _buildRamdomOrderForAnswers(
+    BookQuestion question, BuildContext context) {
+  List<Widget> possibleAnswers = new List();
+
+  possibleAnswers.add(FormattedRoundedButton(
+      question.correct_answer, functionForCorrect, context));
+  possibleAnswers
+      .add(FormattedRoundedButton(question.option_a, functionFora, context));
+  possibleAnswers
+      .add(FormattedRoundedButton(question.option_b, functionForb, context));
+  possibleAnswers
+      .add(FormattedRoundedButton(question.option_c, functionForc, context));
+  possibleAnswers.shuffle();
+  return SliverList(
+    delegate: SliverChildBuilderDelegate((context, index) {
+      return possibleAnswers.elementAt(index);
+    }, childCount: possibleAnswers.length),
   );
 }
 
@@ -138,92 +195,4 @@ void functionForc(BuildContext context) {
 
 void functionForCorrect(BuildContext context) {
   print('pressed Correct');
-}
-
-Widget _buildRamdomOrderForAnswers(
-    BookQuestion question, BuildContext context) {
-  int mycase = new Random().nextInt(6);
-
-  switch (mycase) {
-    case 0:
-      return Column(
-        children: <Widget>[
-          FormattedRoundedButton(
-              question.correct_answer, functionForCorrect, context),
-          FormattedRoundedButton(question.option_a, functionFora, context),
-          FormattedRoundedButton(question.option_b, functionForb, context),
-          FormattedRoundedButton(question.option_c, functionForc, context)
-        ],
-      );
-    case 1:
-      return Column(
-        children: <Widget>[
-          FormattedRoundedButton(question.option_a, functionFora, context),
-          FormattedRoundedButton(
-              question.correct_answer, functionForCorrect, context),
-          FormattedRoundedButton(question.option_c, functionForc, context),
-          FormattedRoundedButton(question.option_b, functionForb, context),
-        ],
-      );
-    case 2:
-      return Column(
-        children: <Widget>[
-          FormattedRoundedButton(question.option_a, functionFora, context),
-          FormattedRoundedButton(question.option_b, functionForb, context),
-          FormattedRoundedButton(question.option_c, functionForc, context),
-          FormattedRoundedButton(
-              question.correct_answer, functionForCorrect, context),
-        ],
-      );
-    case 3:
-      return Column(
-        children: <Widget>[
-          FormattedRoundedButton(question.option_b, functionForb, context),
-          FormattedRoundedButton(question.option_a, functionFora, context),
-          FormattedRoundedButton(
-              question.correct_answer, functionForCorrect, context),
-          FormattedRoundedButton(question.option_c, functionForc, context),
-        ],
-      );
-    case 4:
-      return Column(
-        children: <Widget>[
-          FormattedRoundedButton(question.option_b, functionForb, context),
-          FormattedRoundedButton(
-              question.correct_answer, functionForCorrect, context),
-          FormattedRoundedButton(question.option_c, functionForc, context),
-          FormattedRoundedButton(question.option_a, functionFora, context),
-        ],
-      );
-    case 5:
-      return Column(
-        children: <Widget>[
-          FormattedRoundedButton(question.option_c, functionForc, context),
-          FormattedRoundedButton(question.option_b, functionForb, context),
-          FormattedRoundedButton(
-              question.correct_answer, functionForCorrect, context),
-          FormattedRoundedButton(question.option_a, functionFora, context),
-        ],
-      );
-    case 6:
-      return Column(
-        children: <Widget>[
-          FormattedRoundedButton(question.option_c, functionForc, context),
-          FormattedRoundedButton(
-              question.correct_answer, functionForCorrect, context),
-          FormattedRoundedButton(question.option_a, functionFora, context),
-          FormattedRoundedButton(question.option_b, functionForb, context),
-        ],
-      );
-    default:
-      return Column(
-        children: <Widget>[
-          FormattedRoundedButton(question.option_c, functionForc, context),
-          FormattedRoundedButton(question.option_a, functionFora, context),
-          FormattedRoundedButton(
-              question.correct_answer, functionForCorrect, context),
-          FormattedRoundedButton(question.option_b, functionForb, context),
-        ],
-      );
-  }
 }
