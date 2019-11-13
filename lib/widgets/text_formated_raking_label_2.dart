@@ -6,9 +6,10 @@ class TextFormattedLabelTwo extends StatelessWidget {
   double new_font_size;
   Color newColor = Colors.white;
   Color _color = Colors.white;
+  int question_id;
 
   TextFormattedLabelTwo(@required this.text,
-      [this.new_font_size, this.newColor]);
+      [this.new_font_size, this.newColor, this.question_id]);
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class TextFormattedLabelTwo extends StatelessWidget {
       '$text',
       style: new TextStyle(
           color: _color, fontWeight: FontWeight.w300, fontSize: font_size),
+      textAlign: TextAlign.center,
     );
   }
 }

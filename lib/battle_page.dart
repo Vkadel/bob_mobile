@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:bob_mobile/data_type/book_question.dart';
+import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/qanda.dart';
 import 'package:bob_mobile/question_engine.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
@@ -91,58 +92,6 @@ Widget _buildQuestions(
   );
 }
 
-Widget _buildPossibleAnwers(
-    BuildContext context, BattlePage widget, QuestionEngine questionEngine) {
-  return StreamBuilder(
-    stream: questionEngine.getStream(),
-    builder: (context, data) {
-      if (data.hasData) {
-        List<Widget> possibleAnswers = new List();
-        BookQuestion question = data.data;
-        possibleAnswers.add(FormattedRoundedButton(
-            question.correct_answer, functionForCorrect, context));
-        possibleAnswers.add(
-            FormattedRoundedButton(question.option_a, functionFora, context));
-        possibleAnswers.add(
-            FormattedRoundedButton(question.option_b, functionForb, context));
-        possibleAnswers.add(
-            FormattedRoundedButton(question.option_c, functionForc, context));
-        // ignore: missing_return
-        possibleAnswers.shuffle();
-        return SliverList(
-          delegate: SliverChildBuilderDelegate((context, index) {
-            return possibleAnswers.elementAt(index);
-          }, childCount: possibleAnswers.length),
-        );
-      } else {
-        return SliverToBoxAdapter(
-          child: Container(),
-        );
-      }
-    },
-  );
-}
-
-Widget _buildRamdomOrderForAnswers(
-    BookQuestion question, BuildContext context) {
-  List<Widget> possibleAnswers = new List();
-
-  possibleAnswers.add(FormattedRoundedButton(
-      question.correct_answer, functionForCorrect, context));
-  possibleAnswers
-      .add(FormattedRoundedButton(question.option_a, functionFora, context));
-  possibleAnswers
-      .add(FormattedRoundedButton(question.option_b, functionForb, context));
-  possibleAnswers
-      .add(FormattedRoundedButton(question.option_c, functionForc, context));
-  possibleAnswers.shuffle();
-  return SliverList(
-    delegate: SliverChildBuilderDelegate((context, index) {
-      return possibleAnswers.elementAt(index);
-    }, childCount: possibleAnswers.length),
-  );
-}
-
 Widget _buildBackgroundForAppBar(BuildContext context) {
   return Stack(
     alignment: Alignment.centerLeft,
@@ -181,18 +130,62 @@ Widget _buildQuestion(BookQuestion question, BuildContext context) {
   );
 }
 
-void functionFora(BuildContext context) {
+Widget _buildPossibleAnwers(
+    BuildContext context, BattlePage widget, QuestionEngine questionEngine) {
+  return StreamBuilder(
+    stream: questionEngine.getStream(),
+    builder: (context, data) {
+      if (data.hasData) {
+        List<Widget> possibleAnswers = new List();
+        BookQuestion question = data.data;
+        possibleAnswers.add(FormattedRoundedButton(question.correct_answer,
+            functionForCorrect, context, question.questionId));
+        possibleAnswers.add(FormattedRoundedButton(
+            question.option_a, functionFora, context, question.questionId));
+        possibleAnswers.add(FormattedRoundedButton(
+            question.option_b, functionForb, context, question.questionId));
+        possibleAnswers.add(FormattedRoundedButton(
+            question.option_c, functionForc, context, question.questionId));
+        // ignore: missing_return
+        possibleAnswers.shuffle();
+        return SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return possibleAnswers.elementAt(index);
+          }, childCount: possibleAnswers.length),
+        );
+      } else {
+        return SliverToBoxAdapter(
+          child: Container(),
+        );
+      }
+    },
+  );
+}
+
+void functionFora(BuildContext context, int questionId) {
   print('pressed incorrect a');
+  _reportIncorrectQuestion(context, questionId);
 }
 
-void functionForb(BuildContext context) {
+void functionForb(BuildContext context, int questionId) {
   print('pressed incorrect b');
+  _reportIncorrectQuestion(context, questionId);
 }
 
-void functionForc(BuildContext context) {
+void functionForc(BuildContext context, int questionId) {
   print('pressed incorrect c');
+  _reportIncorrectQuestion(context, questionId);
 }
 
-void functionForCorrect(BuildContext context) {
+void functionForCorrect(BuildContext context, int questionId) {
   print('pressed Correct');
+  _reportRightAnswer(context, questionId);
+}
+
+void _reportIncorrectQuestion(BuildContext context, int questionId) {
+  Provider.of(context).fireBase.reportCorrectAnswer(context, questionId, false);
+}
+
+void _reportRightAnswer(BuildContext context, int questionId) {
+  Provider.of(context).fireBase.reportCorrectAnswer(context, questionId, true);
 }

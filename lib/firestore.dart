@@ -6,6 +6,7 @@ import 'package:bob_mobile/data_type/items_master.dart';
 import 'package:bob_mobile/data_type/proposed_books.dart';
 import 'package:bob_mobile/data_type/proposed_questions.dart';
 import 'package:bob_mobile/data_type/user.dart';
+import 'package:bob_mobile/data_type/user_data.dart';
 import 'package:bob_mobile/qanda.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,6 +42,8 @@ abstract class BoBFireBase {
       BuildContext context, List<Map> maps);
   Future<void> uploadQuestion(BookQuestion question, int documentId);
   Stream<QuerySnapshot> getMasterListofBooks();
+  Future<void> reportCorrectAnswer(
+      BuildContext context, int questionId, bool answeredCorrectly);
 }
 
 class MBobFireBase implements BoBFireBase {
@@ -167,8 +170,7 @@ class MBobFireBase implements BoBFireBase {
   }
 
   void _answered_questions_check(uid) {
-    AnsweredQuestions question = new AnsweredQuestions(0, 1, uid);
-    question.id = uid;
+    AnsweredQuestions question = new AnsweredQuestions(0, 1);
     List<AnsweredQuestions> myquestionlist = new List<AnsweredQuestions>();
     myquestionlist.add(question);
     myquestionlist.forEach((propQ) => _firestore
@@ -443,5 +445,66 @@ class MBobFireBase implements BoBFireBase {
         .collection('question')
         .document('$documentId')
         .setData(question.toJson());
+  }
+
+  @override
+  Future<void> reportCorrectAnswer(
+      BuildContext context, int questionId, bool answeredCorrectly) async {
+    DocumentReference reference = _firestore
+        .collection('user_data')
+        .document(Quanda.of(context).myUser.id);
+    //Start transaction to get the item first and lock it
+    _firestore.runTransaction((transaction) async {
+      transaction.get(reference).then((data) {
+        UserData userData = UserData.fromJson(data.data);
+        List<AnsweredQuestions> answeredQuestionsList = new List();
+        try {
+          //Try to create a list of answeredQuestions for searching.
+          answeredQuestionsList = userData.answered_questions
+              .toList()
+              .map((item) => AnsweredQuestions.fromJson(item))
+              .toList();
+        } catch (e) {
+          print('e');
+        }
+
+        int thisQuestionIndex = -1;
+        //identify where this item is located in the list
+        try {
+          thisQuestionIndex =
+              answeredQuestionsList.indexWhere((AnsweredQuestions aq) {
+            aq.question == questionId;
+          });
+        } catch (e) {
+          print(e);
+        }
+        //if question doesn't exist add it,
+        // but if it does replace it and update status
+        if (thisQuestionIndex == -1) {
+          answeredQuestionsList.add(
+              new AnsweredQuestions(questionId, answeredCorrectly ? 0 : 1));
+        } else {
+          answeredQuestionsList.elementAt(thisQuestionIndex).status =
+              answeredQuestionsList.elementAt(thisQuestionIndex).status + 1;
+        }
+        //Replace the value of answeredquestions with updated one on firestore
+        var map;
+        try {
+          map = answeredQuestionsList.map((item) => item.toJson()).toList();
+          userData.answered_questions = map;
+        } catch (e) {
+          print(e);
+        }
+
+        print('I will write the questions answered');
+        try {
+          _firestore.runTransaction((transa) async {
+            await transa.update(reference, userData.toJson());
+          });
+        } catch (e) {
+          print(e);
+        }
+      });
+    });
   }
 }

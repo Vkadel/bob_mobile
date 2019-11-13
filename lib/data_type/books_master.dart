@@ -11,7 +11,8 @@ class BooksMaster {
       this.online_picture_link,
       this.pages,
       this.bookTypesArray,
-      this.isbn13);
+      this.isbn13,
+      this.by);
 
   String id;
   int status;
@@ -21,6 +22,7 @@ class BooksMaster {
   List<int> bookTypesArray;
   String isbn13;
   String name;
+  String by;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

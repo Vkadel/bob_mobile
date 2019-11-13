@@ -174,12 +174,9 @@ class QuestionEngine {
   }
 
   void createDummyListOfQuestionsAnswered() {
-    AnsweredQuestions myQuestion =
-        new AnsweredQuestions(89, 0, Quanda.of(mcontext).myUser.id);
-    AnsweredQuestions myQuestion2 =
-        new AnsweredQuestions(88, 0, Quanda.of(mcontext).myUser.id);
-    AnsweredQuestions myQuestion3 =
-        new AnsweredQuestions(55, 0, Quanda.of(mcontext).myUser.id);
+    AnsweredQuestions myQuestion = new AnsweredQuestions(89, 0);
+    AnsweredQuestions myQuestion2 = new AnsweredQuestions(88, 0);
+    AnsweredQuestions myQuestion3 = new AnsweredQuestions(55, 0);
     List<AnsweredQuestions> myQuestions = new List();
     myQuestions.add(myQuestion);
     myQuestions.add(myQuestion2);
