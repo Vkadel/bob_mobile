@@ -3,7 +3,7 @@ import 'package:bob_mobile/data_type/team_points.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_3.dart';
 import 'package:bob_mobile/provider.dart';
-import 'package:bob_mobile/qanda.dart';
+import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/team_hall_page.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_role.dart';
@@ -117,7 +117,7 @@ Widget TeamRoomButton(BuildContext context) {
 
 Widget PlayerRankings(BuildContext context) {
   return StreamBuilder(
-    stream: Provider.of(context).fireBase.getPlayerRankings(),
+    stream: FireProvider.of(context).fireBase.getPlayerRankings(),
     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
       if (snapshot.connectionState == ConnectionState.active) {
         if (!snapshot.hasError && snapshot.hasData) {
@@ -132,11 +132,11 @@ Widget PlayerRankings(BuildContext context) {
 
 Widget TeamRankings(BuildContext context) {
   return StreamBuilder(
-    stream: Provider.of(context).fireBase.getTeamRankings(),
+    stream: FireProvider.of(context).fireBase.getTeamRankings(),
     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
       if (snapshot.connectionState == ConnectionState.active) {
         if (!snapshot.hasError && snapshot.hasData) {
-          Provider.of(context).fireBase.getBookTypes(context);
+          FireProvider.of(context).fireBase.getBookTypes(context);
           return _listofTeamRankings(context, snapshot);
         }
       } else {

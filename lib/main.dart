@@ -3,7 +3,7 @@ import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/firestore.dart';
 import 'package:bob_mobile/provider.dart';
-import 'package:bob_mobile/qanda.dart';
+import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/select_role_page.dart';
 import 'package:bob_mobile/widgets/loading_indicator_full_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,9 +12,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 import 'dashboard_page.dart';
 import 'login_page.dart';
+import 'modelData/personality_test_state_data.dart';
 import 'personality_test_page.dart';
 import 'data_type/question.dart';
 
@@ -24,29 +26,36 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Quanda(
-      progress: 0,
-      a_pressed: false,
-      b_pressed: false,
-      permanent: <Question>[],
-      child: Provider(
-        auth: Auth(),
-        fireBase: MBobFireBase(),
-        child: MaterialApp(
-          title: 'Battle of the books',
-          theme: new ThemeData(
-            secondaryHeaderColor: Colors.blueAccent,
-            accentColor: Colors.blueAccent,
-            primaryColor: Colors.deepOrange,
-            scaffoldBackgroundColor: Colors.deepOrangeAccent[50],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          builder: (_) => PersonalityTestStateData(),
+        )
+      ],
+      child: Quanda(
+        progress: 0,
+        a_pressed: false,
+        b_pressed: false,
+        permanent: <Question>[],
+        child: FireProvider(
+          auth: Auth(),
+          fireBase: MBobFireBase(),
+          child: MaterialApp(
+            title: 'Battle of the books',
+            theme: new ThemeData(
+              secondaryHeaderColor: Colors.blueAccent,
+              accentColor: Colors.blueAccent,
+              primaryColor: Colors.deepOrange,
+              scaffoldBackgroundColor: Colors.deepOrangeAccent[50],
+            ),
+            home: EntryPage(title: 'Battle of the Books'),
+            routes: <String, WidgetBuilder>{
+              '/home': (BuildContext context) => HomePage(title: 'Home Page'),
+              '/personality_test': (BuildContext context) =>
+                  PersonalitySurveyPage(title: 'Tell your tale'),
+              '/fight': (BuildContext context) => BattlePage(),
+            },
           ),
-          home: EntryPage(title: 'Battle of the Books'),
-          routes: <String, WidgetBuilder>{
-            '/home': (BuildContext context) => HomePage(title: 'Home Page'),
-            '/personality_test': (BuildContext context) =>
-                PersonalitySurveyPage(title: 'Tell your tale'),
-            '/fight': (BuildContext context) => BattlePage(),
-          },
         ),
       ),
     );
@@ -67,7 +76,7 @@ class _EntryPageState extends State<EntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Auth auth = Provider.of(context).auth;
+    final Auth auth = FireProvider.of(context).auth;
 
     return StreamBuilder<FirebaseUser>(
       stream: auth.onAuthStateChanged,
@@ -116,8 +125,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final Auth auth = Provider.of(context).auth;
-    final MBobFireBase mBobFireBase = Provider.of(context).fireBase;
+    final Auth auth = FireProvider.of(context).auth;
+    final MBobFireBase mBobFireBase = FireProvider.of(context).fireBase;
 
     if (widget.uid != null) {
       print('This is the widget INFO: $widget.uid ');
@@ -148,7 +157,7 @@ class _HomePageState extends State<HomePage> {
             FlatButton(
                 onPressed: () async {
                   try {
-                    Auth auth = Provider.of(context).auth;
+                    Auth auth = FireProvider.of(context).auth;
                     await auth.signOut();
                   } catch (e) {
                     print(e);
@@ -204,7 +213,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget createUserProfile() {
     print('SNAPSHOT Connection Returned Empty');
-    Provider.of(context)
+    FireProvider.of(context)
         .fireBase
         .createUserProfile(widget.uid, widget.email, context);
     return Container(
@@ -277,7 +286,7 @@ class _HomePageState extends State<HomePage> {
             FlatButton(
                 onPressed: () async {
                   try {
-                    Auth auth = Provider.of(context).auth;
+                    Auth auth = FireProvider.of(context).auth;
                     await auth.signOut();
                   } catch (e) {
                     print(e);
@@ -309,7 +318,7 @@ class _HomePageState extends State<HomePage> {
           FlatButton(
               onPressed: () async {
                 try {
-                  Auth auth = Provider.of(context).auth;
+                  Auth auth = FireProvider.of(context).auth;
                   await auth.signOut();
                 } catch (e) {
                   print(e);

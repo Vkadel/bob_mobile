@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'firestore.dart';
 
-class Provider extends InheritedWidget {
+class FireProvider extends InheritedWidget {
   final BaseAuth auth;
   final MBobFireBase fireBase;
 
@@ -12,12 +12,12 @@ class Provider extends InheritedWidget {
     return true;
   }
 
-  Provider({Key key, Widget child, this.auth, this.fireBase})
+  FireProvider({Key key, Widget child, this.auth, this.fireBase})
       : super(
           key: key,
           child: child,
         );
 
-  static Provider of(BuildContext context) =>
-      (context.inheritFromWidgetOfExactType(Provider) as Provider);
+  static FireProvider of(BuildContext context) =>
+      (context.inheritFromWidgetOfExactType(FireProvider) as FireProvider);
 }

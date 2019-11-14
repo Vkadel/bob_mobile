@@ -14,6 +14,12 @@ class Constants {
       "You currently do not have items. Buy some at the store";
   static final String hero_stats_label = "Hero Stats";
   static final String individual_rankings_label = "Hero Rankings";
+  static final String active_battle_bonuses_label = "Active Bonuses";
+  static final String hero_stat_buff_label =
+      "Hero Stat Buff for this question is: +";
+  static final String hero_item_buff_label = "Item Bonuses: ";
+  static final String hero_stat_debuff_label =
+      "Hero Stat Debuff for this question is: -";
   static final String team_rankings_label = "Team Rankings";
   static final String items_list_label = "Items";
   static final String hero_room_title = 'Hero Room';

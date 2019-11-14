@@ -7,7 +7,7 @@ import 'package:bob_mobile/data_type/proposed_books.dart';
 import 'package:bob_mobile/data_type/proposed_questions.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/data_type/user_data.dart';
-import 'package:bob_mobile/qanda.dart';
+import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,6 +44,7 @@ abstract class BoBFireBase {
   Stream<QuerySnapshot> getMasterListofBooks();
   Future<void> reportCorrectAnswer(
       BuildContext context, int questionId, bool answeredCorrectly);
+  Future<void> reportPointPersonal(BuildContext context);
 }
 
 class MBobFireBase implements BoBFireBase {
@@ -507,4 +508,7 @@ class MBobFireBase implements BoBFireBase {
       });
     });
   }
+
+  @override
+  Future<void> reportPointPersonal(BuildContext context) {}
 }

@@ -6,10 +6,12 @@ import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'constants.dart';
+import 'modelData/personality_test_state_data.dart';
 import 'provider.dart';
-import 'qanda.dart';
+import 'modelData/qanda.dart';
 
 class PersonalitySurveyPage extends StatefulWidget {
   PersonalitySurveyPage({ObjectKey key, this.title, this.user})
@@ -30,13 +32,10 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
   String _mytext = '';
 
   @override
-  void initState() {}
-
-  @override
   Widget build(BuildContext context) {
     //get questions
     return StreamBuilder(
-      stream: Provider.of(context).fireBase.getQuestions(),
+      stream: FireProvider.of(context).fireBase.getQuestions(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           try {
@@ -45,11 +44,11 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   .toList()
                   .map((DocumentSnapshot doc) => Question.fromJson(doc.data))
                   .toList();
-              var question = _list_of_questions
+              /*   var question = _list_of_questions
                   .elementAt(Quanda.of(context).progress)
-                  .option_a;
-              print('Test of question Received: $question');
-              return BuildSurveyQuestion();
+                  .option_a;*/
+
+              return BuildSurveyQuestion(context);
             }
           } catch (e) {
             print(e);
@@ -66,7 +65,18 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     );
   }
 
-  Widget BuildSurveyQuestion() {
+  Widget BuildSurveyQuestion(context) {
+    return Consumer<PersonalityTestStateData>(
+      builder: (context, personalityTestStateData, _) {
+        return personalityTestStateData.is_calculating_personality
+            ? _isCalculatingPersonality()
+            : _buildScaffoldQuestion(personalityTestStateData);
+      },
+    );
+  }
+
+  Widget _buildScaffoldQuestion(
+      PersonalityTestStateData personalityTestStateData) {
     return Scaffold(
       body: Center(
         child: Column(
@@ -78,26 +88,27 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
               child: TextFormattedLabelTwo(
                 _list_of_questions
-                    .elementAt(Quanda.of(this.context).progress)
+                    .elementAt(personalityTestStateData.progress)
                     .question,
                 35,
                 Colors.deepOrange,
               ),
             ),
-            MyRoundedButton(
-              press_a,
-              Quanda.of(context).a_pressed,
+            MyRoundedButtonForSurvey(
+              personalityTestStateData.a_pressed,
               _list_of_questions
-                  .elementAt(Quanda.of(context).progress)
+                  .elementAt(personalityTestStateData.progress)
                   .option_a,
+              personalityTestStateData,
+              press_a,
             ),
-            MyRoundedButton(
-              press_b,
-              Quanda.of(context).b_pressed,
-              _list_of_questions
-                  .elementAt(Quanda.of(context).progress)
-                  .option_b,
-            ),
+            MyRoundedButtonForSurvey(
+                personalityTestStateData.b_pressed,
+                _list_of_questions
+                    .elementAt(personalityTestStateData.progress)
+                    .option_b,
+                personalityTestStateData,
+                press_b),
             Container(
               alignment: Alignment.center,
               child: Row(
@@ -108,7 +119,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                     child: FlatButton(
                       child: Text('Previous'),
                       onPressed: () {
-                        Go_prev();
+                        Go_prev(personalityTestStateData);
                       },
                     ),
                   ),
@@ -116,7 +127,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   FlatButton(
                     child: Text('Next'),
                     onPressed: () {
-                      Go_next();
+                      Go_next(personalityTestStateData);
                     },
                   ),
                 ],
@@ -128,129 +139,153 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     );
   }
 
-  void Go_next() {
-    clearButs();
-    int showing = Quanda.of(context).progress;
+  Widget _isCalculatingPersonality() {
+    return Scaffold(
+      body: Container(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+    );
+  }
+
+  Go_next(PersonalityTestStateData personalityTestStateData) {
+    clearButs(personalityTestStateData);
+    int showing = personalityTestStateData.progress;
     print('Trying to change state from: $showing');
-    setState(() {
-      if (Quanda.of(context).progress ==
-          Constants().number_of_questions_personality_test) {
-        Quanda.of(context).progress = 0;
-        //TODO: Make sure only one check if done and only happens when
-        //When permanent is size 20. Then it pops back into the dashboard.
-        return CircularProgressIndicator();
-      } else {
-        if (Quanda.of(context).progress ==
-            Constants().number_of_questions_personality_test - 1) {
-          //Calculate Personality
-          calculate_intro_extro_perso();
-        }
-        if (Quanda.of(context).progress <
-            Constants().number_of_questions_personality_test - 1) {
-          print('Trying to change state from: $showing');
-          Quanda.of(context).progress = Quanda.of(context).progress + 1;
-        }
+
+    if (personalityTestStateData.progress ==
+        Constants().number_of_questions_personality_test) {
+      personalityTestStateData.updateProgress(0);
+      //TODO: Make sure only one check if done and only happens when
+      //When permanent is size 20. Then it pops back into the dashboard.
+    } else {
+      if (personalityTestStateData.progress ==
+          Constants().number_of_questions_personality_test - 1) {
+        //Calculate Personality
+        calculate_intro_extro_perso(personalityTestStateData);
       }
-      if (Quanda.of(context).progress < Quanda.of(context).permanent.length) {
-        update_buttons_with_current_selections();
+      if (personalityTestStateData.progress <
+          Constants().number_of_questions_personality_test - 1) {
+        print('Trying to change state from: $showing');
+        //Check if a selection has been done
+        clearButs(personalityTestStateData);
+        personalityTestStateData
+            .updateProgress(personalityTestStateData.progress + 1);
       }
-    });
+    }
+    if (personalityTestStateData.progress <
+        personalityTestStateData.permanent.length) {
+      update_buttons_with_current_selections(personalityTestStateData);
+    }
   }
 
-  void Go_prev() {
-    clearButs();
-    setState(() {
-      if (Quanda.of(context).progress == 0) {
-        Quanda.of(context).progress =
-            Constants().number_of_questions_personality_test - 1;
-      } else {
-        if (Quanda.of(context).progress > 0) {
-          print('Trying to change state');
-          Quanda.of(context).progress = Quanda.of(context).progress - 1;
-          //Clean last Item
-        }
+  void Go_prev(PersonalityTestStateData personalityTestStateData) {
+    clearButs(personalityTestStateData);
+    if (personalityTestStateData.progress == 0) {
+      //Will not allow users to go back from the first question
+      //Todo: dissable in this case
+      /*personalityTestStateData
+          .updateProgress(Constants().number_of_questions_personality_test - 1);*/
+    } else {
+      if (personalityTestStateData.progress > 0) {
+        print('Trying to change state');
+        personalityTestStateData
+            .updateProgress(personalityTestStateData.progress - 1);
+        update_buttons_with_current_selections(personalityTestStateData);
+        //Clean last Item
       }
-      update_buttons_with_current_selections();
-    });
+    }
   }
 
-  void press_a() {
+  void press_a(PersonalityTestStateData personalityTestStateData) {
     print('setting state to A');
-    Quanda.of(context).b_pressed = false;
-    Quanda.of(context).a_pressed = true;
     Question question =
-        _list_of_questions.elementAt(Quanda.of(context).progress);
-    setState(() {
-      if (Quanda.of(context).progress == 0 ||
-          Quanda.of(context).permanent.length <= Quanda.of(context).progress) {
-        Quanda.of(context)
-            .permanent
-            .insert(Quanda.of(context).progress, question);
-      } else {
-        Quanda.of(context).permanent[Quanda.of(context).progress] = question;
-        update_buttons_with_current_selections();
-      }
-      Quanda.of(context).permanent[Quanda.of(context).progress].selection_b = 0;
-      Quanda.of(context).permanent[Quanda.of(context).progress].selection_a = 1;
-      printit();
-    });
+        _list_of_questions.elementAt(personalityTestStateData.progress);
+    //this check is for the edgecase of the first item
+    bool nonewerepressed = !(personalityTestStateData.a_pressed ||
+        personalityTestStateData.b_pressed);
+    if ((personalityTestStateData.progress == 0 && nonewerepressed) ||
+        personalityTestStateData.permanent.length <=
+            personalityTestStateData.progress) {
+      //If the record does not exist add it
+      personalityTestStateData.permanent
+          .insert(personalityTestStateData.progress, question);
+    } else {
+      //If the record exist update it
+      personalityTestStateData.permanent[personalityTestStateData.progress] =
+          question;
+      update_buttons_with_current_selections(personalityTestStateData);
+    }
+    personalityTestStateData
+        .permanent[personalityTestStateData.progress].selection_b = 0;
+    personalityTestStateData
+        .permanent[personalityTestStateData.progress].selection_a = 1;
+    //Update the dataModel
+    personalityTestStateData.updateb_pressed(false);
+    personalityTestStateData.updatea_pressed(true);
+    printit(personalityTestStateData);
   }
 
-  void press_b() {
+  void press_b(PersonalityTestStateData personalityTestStateData) {
     print('setting state to B');
-    Quanda.of(context).b_pressed = true;
-    Quanda.of(context).a_pressed = false;
+
     Question question =
-        _list_of_questions.elementAt(Quanda.of(context).progress);
-    setState(() {
-      if (Quanda.of(context).progress == 0 ||
-          Quanda.of(context).permanent.length <= Quanda.of(context).progress) {
-        Quanda.of(context)
-            .permanent
-            .insert(Quanda.of(context).progress, question);
-      } else {
-        Quanda.of(context).permanent[Quanda.of(context).progress] = question;
-        update_buttons_with_current_selections();
-      }
-      Quanda.of(context).permanent[Quanda.of(context).progress].selection_b = 1;
-      Quanda.of(context).permanent[Quanda.of(context).progress].selection_a = 0;
-      printit();
-    });
+        _list_of_questions.elementAt(personalityTestStateData.progress);
+    bool nonewerepressed = !(personalityTestStateData.a_pressed ||
+        personalityTestStateData.b_pressed);
+    if ((personalityTestStateData.progress == 0 && nonewerepressed) ||
+        personalityTestStateData.permanent.length <=
+            personalityTestStateData.progress) {
+      personalityTestStateData.permanent
+          .insert(personalityTestStateData.progress, question);
+    } else {
+      personalityTestStateData.permanent[personalityTestStateData.progress] =
+          question;
+      update_buttons_with_current_selections(personalityTestStateData);
+    }
+    personalityTestStateData
+        .permanent[personalityTestStateData.progress].selection_b = 1;
+    personalityTestStateData
+        .permanent[personalityTestStateData.progress].selection_a = 0;
+    personalityTestStateData.updateb_pressed(true);
+    personalityTestStateData.updatea_pressed(false);
+    printit(personalityTestStateData);
   }
 
-  void printit() {
-    _mytext = Quanda.of(context)
-            .permanent
+  void printit(PersonalityTestStateData personalityTestStateData) {
+    _mytext = personalityTestStateData.permanent
             .elementAt(Quanda.of(context).progress)
             .selection_a
             .toString() +
-        Quanda.of(context)
-            .permanent
+        personalityTestStateData.permanent
             .elementAt(Quanda.of(context).progress)
             .selection_b
             .toString();
   }
 
-  void clearButs() {
-    Quanda.of(context).a_pressed = false;
-    Quanda.of(context).b_pressed = false;
+  void clearButs(PersonalityTestStateData personalityTestStateData) {
+    personalityTestStateData.updatea_pressed(false);
+    personalityTestStateData.updateb_pressed(false);
   }
 
-  void update_buttons_with_current_selections() {
-    if (Quanda.of(context)
-            .permanent
-            .elementAt(Quanda.of(context).progress)
+  void update_buttons_with_current_selections(
+      PersonalityTestStateData personalityTestStateData) {
+    if (personalityTestStateData.permanent
+            .elementAt(personalityTestStateData.progress)
             .selection_a ==
         1) {
-      Quanda.of(context).a_pressed = true;
-      Quanda.of(context).b_pressed = false;
+      personalityTestStateData.updatea_pressed(true);
+      personalityTestStateData.updateb_pressed(false);
     } else {
-      Quanda.of(context).a_pressed = false;
-      Quanda.of(context).b_pressed = true;
+      personalityTestStateData.updatea_pressed(false);
+      personalityTestStateData.updateb_pressed(true);
     }
   }
 
-  void calculate_intro_extro_perso() {
+  void calculate_intro_extro_perso(
+      PersonalityTestStateData personalityTestStateData) {
+    personalityTestStateData.is_calculating_personality = true;
     //Calculate E and I;
     Set<int> checking_set_e_i = ({1, 5, 9, 13, 17});
     Set<int> checking_set_s_n = ({2, 6, 10, 14, 18});
@@ -261,8 +296,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     for (i = 0; i <= checking_set_e_i.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_e'] =
           Quanda.of(context).myUser.personality['value_e'] +
-              Quanda.of(context)
-                  .permanent
+              personalityTestStateData.permanent
                   .where((l) => l.id == checking_set_e_i.elementAt(i))
                   .first
                   .selection_a;
@@ -271,8 +305,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     for (i = 0; i <= checking_set_e_i.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_i'] =
           Quanda.of(context).myUser.personality['value_i'] +
-              Quanda.of(context)
-                  .permanent
+              personalityTestStateData.permanent
                   .where((l) => l.id == checking_set_e_i.elementAt(i))
                   .first
                   .selection_b;
@@ -281,8 +314,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     for (i = 0; i <= checking_set_s_n.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_s'] =
           Quanda.of(context).myUser.personality['value_s'] +
-              Quanda.of(context)
-                  .permanent
+              personalityTestStateData.permanent
                   .where((l) => l.id == checking_set_s_n.elementAt(i))
                   .first
                   .selection_a;
@@ -291,8 +323,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     for (i = 0; i <= checking_set_s_n.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_n'] =
           Quanda.of(context).myUser.personality['value_n'] +
-              Quanda.of(context)
-                  .permanent
+              personalityTestStateData.permanent
                   .where((l) => l.id == checking_set_s_n.elementAt(i))
                   .first
                   .selection_b;
@@ -301,8 +332,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     for (i = 0; i <= checking_set_t_f.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_t'] =
           Quanda.of(context).myUser.personality['value_t'] +
-              Quanda.of(context)
-                  .permanent
+              personalityTestStateData.permanent
                   .where((l) => l.id == checking_set_t_f.elementAt(i))
                   .first
                   .selection_a;
@@ -311,8 +341,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     for (i = 0; i <= checking_set_t_f.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_f'] =
           Quanda.of(context).myUser.personality['value_f'] +
-              Quanda.of(context)
-                  .permanent
+              personalityTestStateData.permanent
                   .where((l) => l.id == checking_set_t_f.elementAt(i))
                   .first
                   .selection_b;
@@ -321,8 +350,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     for (i = 0; i <= checking_set_j_p.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_j'] =
           Quanda.of(context).myUser.personality['value_j'] +
-              Quanda.of(context)
-                  .permanent
+              personalityTestStateData.permanent
                   .where((l) => l.id == checking_set_j_p.elementAt(i))
                   .first
                   .selection_a;
@@ -331,8 +359,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     for (i = 0; i <= checking_set_j_p.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_p'] =
           Quanda.of(context).myUser.personality['value_p'] +
-              Quanda.of(context)
-                  .permanent
+              personalityTestStateData.permanent
                   .where((l) => l.id == checking_set_j_p.elementAt(i))
                   .first
                   .selection_b;
@@ -350,9 +377,8 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     print('Personality Values: E:$extro I:$intro S:'
         '$S N:$N T:$T F:$F J:$J P:$P');
 
-    Provider.of(context).fireBase.setUpUserPersonality(
-        Provider.of(context).auth.getLastUserLoged(),
+    FireProvider.of(context).fireBase.setUpUserPersonality(
+        FireProvider.of(context).auth.getLastUserLoged(),
         Quanda.of(context).myUser);
-    setState(() {});
   }
 }

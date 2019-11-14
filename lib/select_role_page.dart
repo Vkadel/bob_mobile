@@ -1,5 +1,5 @@
 import 'package:bob_mobile/provider.dart';
-import 'package:bob_mobile/qanda.dart';
+import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:bob_mobile/widgets/text_formatted_body.dart';
 import 'package:bob_mobile/widgets/scrollable_widget_window.dart';
@@ -83,8 +83,8 @@ class _SelectRoleState extends State<SelectRolePage> {
           onPressed: () {
             Quanda.of(context).myUser.role =
                 DefaultTabController.of(context).index + 1;
-            Provider.of(context).fireBase.setUpHero(
-                Provider.of(context).auth.getLastUserLoged(),
+            FireProvider.of(context).fireBase.setUpHero(
+                FireProvider.of(context).auth.getLastUserLoged(),
                 Quanda.of(context).myUser);
             print(
                 'This is the index ${DefaultTabController.of(context).index}');

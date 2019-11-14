@@ -8,7 +8,7 @@ import 'package:bob_mobile/data_type/books.dart';
 import 'package:bob_mobile/data_type/books_master.dart';
 import 'package:bob_mobile/data_type/user_data.dart';
 import 'package:bob_mobile/provider.dart';
-import 'package:bob_mobile/qanda.dart';
+import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/data_type/firstQuestionsUpload.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,7 +39,7 @@ class QuestionEngine {
 
   void getUsersBooks() {
     print("Question engine Starting to get user books");
-    Provider.of(mcontext)
+    FireProvider.of(mcontext)
         .fireBase
         .getUserReadListOfBooks(Quanda.of(mcontext).myUser)
         .listen((list) => updateQuandaListOfBooks(list));
@@ -66,7 +66,7 @@ class QuestionEngine {
         .list_of_read_books
         .elementAt(bookLocationInQuanda);
 
-    Provider.of(mcontext)
+    FireProvider.of(mcontext)
         .fireBase
         .getMasterBookInfo(IdofBookChoosenFromQuanda)
         .listen((bookSnapshot) =>
@@ -75,7 +75,7 @@ class QuestionEngine {
 
   void getAnsweredQuestions() {
     print('Question engine Getting Answered Questions');
-    Provider.of(mcontext)
+    FireProvider.of(mcontext)
         .fireBase
         .getListOfAnsweredQuestins(mcontext, Quanda.of(mcontext).myUser.id)
         .first
@@ -85,7 +85,7 @@ class QuestionEngine {
   void getBookQuestions(DocumentSnapshot bookSnapshot, int booklocation) {
     print('Question engine Getting Book associated questions');
     bookQueried = BooksMaster.fromJson(bookSnapshot.data);
-    Provider.of(mcontext)
+    FireProvider.of(mcontext)
         .fireBase
         .getQuestionsForMasterBook(Quanda.of(mcontext)
             .userData
@@ -187,7 +187,7 @@ class QuestionEngine {
     maps.add(myQuestion2.toJson());
     maps.add(myQuestion3.toJson());
     myQuestions.forEach((i) => map.addAll(i.toJson()));
-    Provider.of(mcontext)
+    FireProvider.of(mcontext)
         .fireBase
         .updateListofAnsweredQuestions(mcontext, maps);
   }

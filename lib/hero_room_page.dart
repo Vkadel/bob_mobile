@@ -2,7 +2,7 @@ import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/dashboard_page.dart';
 import 'package:bob_mobile/data_type/items_master.dart';
 import 'package:bob_mobile/provider.dart';
-import 'package:bob_mobile/qanda.dart';
+import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_role.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
@@ -199,7 +199,7 @@ Widget CreateLargeButtonWithSVGOverlap(
 
 Widget _buildListofItems(BuildContext context) {
   return StreamBuilder(
-      stream: Provider.of(context).fireBase.getMyItems(context),
+      stream: FireProvider.of(context).fireBase.getMyItems(context),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -262,7 +262,7 @@ Widget _buildListForFirstTime(
 
 Widget _buildListofMasterItems(BuildContext context) {
   return StreamBuilder(
-      stream: Provider.of(context).fireBase.getMasterListOfItems(context),
+      stream: FireProvider.of(context).fireBase.getMasterListOfItems(context),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasError &&
             snapshot.connectionState == ConnectionState.active &&
@@ -373,7 +373,7 @@ Widget _cardForItemCanBeUsed(int index, BuildContext context) {
       trailing: FlatButton(
         onPressed: () {
           print('I will use this item');
-          Provider.of(context).fireBase.useItem(
+          FireProvider.of(context).fireBase.useItem(
               context,
               Quanda.of(context).myItems.elementAt(index),
               Quanda.of(context)
@@ -407,11 +407,11 @@ Widget _youDontHaveItems(context, AsyncSnapshot<QuerySnapshot> snapshot) {
 }
 
 void _initStream(Stream<DocumentSnapshot> stream, BuildContext context) {
-  stream = Provider.of(context).fireBase.getClassStats(context);
+  stream = FireProvider.of(context).fireBase.getClassStats(context);
 }
 
 Widget _buildStats(BuildContext context, Stream<DocumentSnapshot> stream) {
-  stream = Provider.of(context).fireBase.getClassStats(context);
+  stream = FireProvider.of(context).fireBase.getClassStats(context);
   return StreamBuilder(
     stream: stream,
     builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {

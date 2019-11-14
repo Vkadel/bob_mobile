@@ -2,7 +2,7 @@ import 'package:bob_mobile/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 
-import '../qanda.dart';
+import '../modelData/qanda.dart';
 
 Color ColorLogicbyPersonality(BuildContext context) {
   Constants myconstants = new Constants();

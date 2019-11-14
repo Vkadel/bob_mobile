@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void submit() async {
     if (validate()) {
-      final auth = Provider.of(context).auth;
+      final auth = FireProvider.of(context).auth;
       try {
         if (_formtype == FormType.login) {
           String userid =
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
         //TODO: String
         FormattedRoundedButton('Login with email', submit, context),
         //TODO: String
-        GoogleSingInButton('Log in with Google', Provider.of(context).auth),
+        GoogleSingInButton('Log in with Google', FireProvider.of(context).auth),
         FlatButton(
           onPressed: () {
             switchFormState(_formtype);
@@ -128,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         FlatButton(
           onPressed: () {
-            Provider.of(context).auth.passwordReset(_email);
+            FireProvider.of(context).auth.passwordReset(_email);
           },
           //TODO: String
           child: Text('Forgot my Password'),
@@ -141,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
         FormattedRoundedButton('Create Account with email', submit, context),
         //TODO: String
         GoogleSingInButton(
-            'Register with your Google Account', Provider.of(context).auth),
+            'Register with your Google Account', FireProvider.of(context).auth),
         FlatButton(
           //TODO: String
           child: Text('Go to Login'),

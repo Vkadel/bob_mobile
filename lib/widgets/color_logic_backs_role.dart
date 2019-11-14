@@ -1,7 +1,7 @@
 import 'package:bob_mobile/constants.dart';
 import 'package:flutter/material.dart';
 
-import '../qanda.dart';
+import '../modelData/qanda.dart';
 
 Color ColorLogicbyRole(BuildContext context) {
   Constants myconstants = new Constants();
