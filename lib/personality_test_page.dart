@@ -255,11 +255,11 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
 
   void printit(PersonalityTestStateData personalityTestStateData) {
     _mytext = personalityTestStateData.permanent
-            .elementAt(Quanda.of(context).progress)
+            .elementAt(personalityTestStateData.progress)
             .selection_a
             .toString() +
         personalityTestStateData.permanent
-            .elementAt(Quanda.of(context).progress)
+            .elementAt(personalityTestStateData.progress)
             .selection_b
             .toString();
   }

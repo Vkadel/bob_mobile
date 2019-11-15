@@ -9,21 +9,12 @@ import 'package:flutter/material.dart';
 import '../data_type/question.dart';
 import '../data_type/user.dart';
 
-class Quanda extends InheritedModel {
+class Quanda extends InheritedModel with ChangeNotifier {
   bool personal;
-  int progress;
-
   List<Question> list_of_questions;
-  List<Question> permanent;
-  bool a_pressed = false;
-  bool b_pressed = false;
-  bool c_pressed = false;
-  bool d_pressed = false;
   String my_text = '';
-
   User myUser;
   AvatarStats myAvatarStats;
-
   List<BookTypes> bookTypes;
   List<Items> myItems;
   List<ItemsMaster> masterListOfItems;
@@ -31,22 +22,11 @@ class Quanda extends InheritedModel {
   List<AnsweredQuestions> allAnsweredQuestions;
   List<BooksMaster> listOfMasterBooks;
 
-  int currentAddForQuestion;
-  int currentDeductionForQuestions;
-  int currentItemBuffs;
-  int total_points_if_correct;
-
   Quanda(
       {Key key,
       Widget child,
-      this.progress,
       this.list_of_questions,
-      this.permanent,
-      this.a_pressed,
-      this.b_pressed,
       this.my_text,
-      this.c_pressed,
-      this.d_pressed,
       this.myUser,
       this.myAvatarStats,
       this.bookTypes})
@@ -61,12 +41,7 @@ class Quanda extends InheritedModel {
 
   @override
   bool updateShouldNotify(Quanda oldWidget) {
-    return currentItemBuffs != oldWidget.currentItemBuffs ||
-        currentDeductionForQuestions !=
-            oldWidget.currentDeductionForQuestions ||
-        currentAddForQuestion != oldWidget.currentAddForQuestion ||
-        total_points_if_correct != oldWidget.total_points_if_correct ||
-        personal != oldWidget.personal ||
+    return personal != oldWidget.personal ||
         myAvatarStats != oldWidget.myAvatarStats ||
         listOfMasterBooks != oldWidget.listOfMasterBooks ||
         myUser != oldWidget.myUser ||
@@ -75,27 +50,14 @@ class Quanda extends InheritedModel {
         allAnsweredQuestions != oldWidget.userData ||
         masterListOfItems != oldWidget.masterListOfItems ||
         bookTypes != oldWidget.bookTypes ||
-        d_pressed != oldWidget.d_pressed ||
-        c_pressed != oldWidget.c_pressed ||
-        a_pressed != oldWidget.a_pressed ||
-        progress != oldWidget.progress ||
-        b_pressed != oldWidget.b_pressed ||
         list_of_questions != oldWidget.list_of_questions ||
-        my_text != oldWidget.my_text ||
-        permanent != oldWidget.permanent;
+        my_text != oldWidget.my_text;
   }
 
   @override
   bool updateShouldNotifyDependent(Quanda oldWidget, Set dependencies) {
-    return (currentDeductionForQuestions != oldWidget.currentAddForQuestion &&
-            dependencies.contains('currentDeductionForQuestions')) ||
-        (currentItemBuffs != oldWidget.currentItemBuffs &&
-            dependencies.contains('currentItemBuffs')) ||
-        (currentAddForQuestion != oldWidget.currentAddForQuestion &&
-            dependencies.contains('currentAddForQuestion')) ||
-        (total_points_if_correct != oldWidget.total_points_if_correct &&
-            dependencies.contains('total_points_if_correct')) ||
-        (personal != oldWidget.personal && dependencies.contains('personal')) ||
+    return (personal != oldWidget.personal &&
+            dependencies.contains('personal')) ||
         (myAvatarStats != oldWidget.myAvatarStats &&
             dependencies.contains('myAvatarStats')) ||
         (listOfMasterBooks != oldWidget.listOfMasterBooks &&
@@ -109,20 +71,9 @@ class Quanda extends InheritedModel {
             dependencies.contains('masterListOfItems')) ||
         (bookTypes != oldWidget.bookTypes &&
             dependencies.contains('bookTypes')) ||
-        (d_pressed != oldWidget.d_pressed &&
-            dependencies.contains('d_pressed')) ||
-        (c_pressed != oldWidget.c_pressed &&
-            dependencies.contains('c_pressed')) ||
-        (a_pressed != oldWidget.a_pressed &&
-            dependencies.contains('a_pressed')) ||
-        (progress != oldWidget.progress && dependencies.contains('progress')) ||
-        (b_pressed != oldWidget.b_pressed &&
-            dependencies.contains('b_pressed')) ||
         (list_of_questions != oldWidget.list_of_questions &&
             dependencies.contains('list_of_questions')) ||
         (my_text != oldWidget.list_of_questions &&
-            dependencies.contains('my_text')) ||
-        (permanent != oldWidget.list_of_questions &&
-            dependencies.contains('permanent'));
+            dependencies.contains('my_text'));
   }
 }

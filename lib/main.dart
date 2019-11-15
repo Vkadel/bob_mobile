@@ -2,6 +2,7 @@ import 'package:bob_mobile/auth.dart';
 import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/firestore.dart';
+import 'package:bob_mobile/modelData/battle_page_state_data.dart';
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/select_role_page.dart';
@@ -30,13 +31,12 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           builder: (_) => PersonalityTestStateData(),
-        )
+        ),
+        ChangeNotifierProvider(
+          builder: (_) => BattlePageStateData(),
+        ),
       ],
       child: Quanda(
-        progress: 0,
-        a_pressed: false,
-        b_pressed: false,
-        permanent: <Question>[],
         child: FireProvider(
           auth: Auth(),
           fireBase: MBobFireBase(),

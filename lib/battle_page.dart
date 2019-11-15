@@ -1,5 +1,6 @@
 import 'package:bob_mobile/data_type/book_question.dart';
 import 'package:bob_mobile/data_type/books_master.dart';
+import 'package:bob_mobile/modelData/battle_page_state_data.dart';
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/question_engine.dart';
@@ -10,6 +11,7 @@ import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'constants.dart';
 
 class BattlePage extends StatefulWidget {
@@ -221,11 +223,13 @@ int _calculateHeroAdditionsFromStats(
   int pointsToAdd = 0;
 
   //Loop to get Additions
-  book.bookTypesArray.forEach(
-      (item) => Quanda.of(context).myAvatarStats.additions.forEach((k, v) => {
+  book.bookTypesArray.forEach((item) => Quanda.of(context)
+      .myAvatarStats
+      .additions
+      .forEach((k, v) => {
             int.parse(k) == item
-                ? pointsToAdd == pointsToAdd + 1
-                : pointsToAdd == pointsToAdd
+                ? pointsToAdd = pointsToAdd + 1
+                : pointsToAdd = pointsToAdd
           }));
 
   return pointsToAdd;
@@ -236,11 +240,13 @@ int _calculateHeroSubstractionsFromStats(
   int pointsToAdd = 0;
 
   //Loop to get Additions
-  book.bookTypesArray.forEach((item) =>
-      Quanda.of(context).myAvatarStats.substractions.forEach((k, v) => {
+  book.bookTypesArray.forEach((item) => Quanda.of(context)
+      .myAvatarStats
+      .substractions
+      .forEach((k, v) => {
             int.parse(k) == item
-                ? pointsToAdd == pointsToAdd + 1
-                : pointsToAdd == pointsToAdd
+                ? pointsToAdd = pointsToAdd + 1
+                : pointsToAdd = pointsToAdd
           }));
 
   return pointsToAdd;
@@ -263,19 +269,7 @@ Widget _buildBuff(
                   bookSnapshot.hasData &&
                   bookSnapshot.data != null) {
                 BooksMaster book = BooksMaster.fromJson(bookSnapshot.data.data);
-                Quanda.of(context).currentAddForQuestion =
-                    _calculateHeroAdditionsFromStats(context, question, book);
-                Quanda.of(context).currentDeductionForQuestions =
-                    _calculateHeroSubstractionsFromStats(
-                        context, question, book);
-                Quanda.of(context).currentItemBuffs =
-                    _calculateItemGains(context);
-                Quanda.of(context).total_points_if_correct =
-                    Quanda.of(context).currentAddForQuestion -
-                        Quanda.of(context).currentDeductionForQuestions +
-                        Quanda.of(context).currentItemBuffs +
-                        1;
-                return _listOfBuffs(context);
+                return _listOfBuffs(context, question, book);
               } else {
                 return returnEmpty();
               }
@@ -293,42 +287,58 @@ Widget returnEmpty() {
   );
 }
 
-Widget _listOfBuffs(BuildContext context) {
+Widget _listOfBuffs(
+    BuildContext context, BookQuestion question, BooksMaster book) {
   int textDiv = 23;
-  return SliverList(
-    delegate: SliverChildListDelegate([
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextFormattedLabelTwo(
-            '${Constants.active_battle_bonuses_label} ${Quanda.of(context).currentAddForQuestion - Quanda.of(context).currentDeductionForQuestions + Quanda.of(context).currentItemBuffs}',
-            MediaQuery.of(context).size.width / 15,
-            ColorLogicbyRole(context)),
-      ),
-      Divider(),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextFormattedLabelTwo(
-            '${Constants.hero_stat_buff_label}  ${Quanda.of(context).currentAddForQuestion}',
-            MediaQuery.of(context).size.width / textDiv,
-            ColorLogicbyRole(context)),
-      ),
-      Divider(),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextFormattedLabelTwo(
-            '${Constants.hero_stat_debuff_label} ${Quanda.of(context).currentDeductionForQuestions}',
-            MediaQuery.of(context).size.width / textDiv,
-            ColorLogicbyRole(context)),
-      ),
-      Divider(),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextFormattedLabelTwo(
-            '${Constants.hero_item_buff_label} ${Quanda.of(context).currentItemBuffs}',
-            MediaQuery.of(context).size.width / textDiv,
-            ColorLogicbyRole(context)),
-      ),
-    ]),
+  return Consumer<BattlePageStateData>(
+    builder: (context, battlePageData, _) {
+      battlePageData.updatecurrentAddForQuestion(
+          _calculateHeroAdditionsFromStats(context, question, book));
+      battlePageData.updatecurrentDeductionForQuestions(
+          _calculateHeroSubstractionsFromStats(context, question, book));
+      battlePageData.updatecurrentItemBuffs(_calculateItemGains(context));
+      battlePageData.updatetotal_points_if_correct(
+          battlePageData.currentAddForQuestion -
+              battlePageData.currentDeductionForQuestions +
+              battlePageData.currentItemBuffs +
+              1);
+      return SliverList(
+        delegate: SliverChildListDelegate([
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormattedLabelTwo(
+                '${Constants.active_battle_bonuses_label} '
+                '${battlePageData.currentAddForQuestion - battlePageData.currentDeductionForQuestions + battlePageData.currentItemBuffs}',
+                MediaQuery.of(context).size.width / 15,
+                ColorLogicbyRole(context)),
+          ),
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormattedLabelTwo(
+                '${Constants.hero_stat_buff_label}  ${battlePageData.currentAddForQuestion}',
+                MediaQuery.of(context).size.width / textDiv,
+                ColorLogicbyRole(context)),
+          ),
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormattedLabelTwo(
+                '${Constants.hero_stat_debuff_label} ${battlePageData.currentDeductionForQuestions}',
+                MediaQuery.of(context).size.width / textDiv,
+                ColorLogicbyRole(context)),
+          ),
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormattedLabelTwo(
+                '${Constants.hero_item_buff_label} ${battlePageData.currentItemBuffs}',
+                MediaQuery.of(context).size.width / textDiv,
+                ColorLogicbyRole(context)),
+          ),
+        ]),
+      );
+    },
   );
 }
 

@@ -485,8 +485,10 @@ class MBobFireBase implements BoBFireBase {
           answeredQuestionsList.add(
               new AnsweredQuestions(questionId, answeredCorrectly ? 0 : 1));
         } else {
-          answeredQuestionsList.elementAt(thisQuestionIndex).status =
-              answeredQuestionsList.elementAt(thisQuestionIndex).status + 1;
+          answeredCorrectly
+              ? answeredQuestionsList.elementAt(thisQuestionIndex).status = 0
+              : answeredQuestionsList.elementAt(thisQuestionIndex).status =
+                  answeredQuestionsList.elementAt(thisQuestionIndex).status + 1;
         }
         //Replace the value of answeredquestions with updated one on firestore
         var map;
