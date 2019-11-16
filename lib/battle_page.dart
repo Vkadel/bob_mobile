@@ -1,23 +1,25 @@
 import 'package:bob_mobile/data_type/book_question.dart';
 import 'package:bob_mobile/data_type/books_master.dart';
+import 'package:bob_mobile/main.dart';
 import 'package:bob_mobile/modelData/battle_page_state_data.dart';
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/question_engine.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_role.dart';
+import 'package:bob_mobile/widgets/generate_background_for_fight.dart';
+import 'package:bob_mobile/widgets/generate_random_monster.dart';
 import 'package:bob_mobile/widgets/rounded_edge_button.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
 
 class BattlePage extends StatefulWidget {
-  //if this this true then the user will add points to his ledger
-  //Otherwise it will be the team
-  /* final bool personal;*/
   BattlePage({ObjectKey keyBattle}) : super(key: keyBattle);
   @override
   State<StatefulWidget> createState() {
@@ -26,53 +28,187 @@ class BattlePage extends StatefulWidget {
 }
 
 class BattlePageState extends State<BattlePage> {
-  QuestionEngine questionEngine = new QuestionEngine();
+  QuestionEngine questionEngine;
 
   @override
   void deactivate() {
-    questionEngine = null;
     super.deactivate();
   }
 
   @override
   void dispose() {
     questionEngine = null;
+
     super.dispose();
   }
 
   @override
+  void didChangeDependencies() {
+    questionEngine.InitEngine(context);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    Provider.of<BattlePageStateData>(context, listen: false)
+        .resetWithoutUpdate();
+    questionEngine = new QuestionEngine();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SafeArea(
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                backgroundColor: ColorLogicbyRole(context),
-                forceElevated: true,
-                pinned: true,
-                snap: true,
-                floating: true,
-                expandedHeight: Constants.height_extended_bars,
-                flexibleSpace: _buildBackgroundForAppBar(context),
-              ),
-              _buildQuestions(context, this.widget, questionEngine),
-              _buildPossibleAnwers(context, widget, questionEngine),
-              _buildBuff(context, widget, questionEngine),
-              SliverFillRemaining(
-                child: Container(),
-              )
-            ],
-          ),
-        ),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Consumer<BattlePageStateData>(
+        builder: (context, battleData, _) {
+          return battleData.continue_fighting
+              ? _buildPage(context, questionEngine, this)
+              : Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new HomePage()));
+        },
       ),
     );
   }
+
+  Future<bool> _onBackPressed() {
+    print('Do you want to end the battle');
+    return showDialog<bool>(
+      context: this.context,
+      builder: (context) => AlertDialog(
+        title: Text('Do you want to leave the Battle?'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('No'),
+            onPressed: () => {Navigator.pop(context, false)},
+          ),
+          FlatButton(
+            child: Text('Yes'),
+            onPressed: () => {_resetBattleGoBackToRoom(context)},
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  void _resetBattleGoBackToRoom(BuildContext context) {
+    Provider.of<BattlePageStateData>(context, listen: false)
+        .resetWithoutUpdate();
+    Navigator.pop(context, true);
+  }
+}
+
+Widget _buildPage(BuildContext context, QuestionEngine questionEngine,
+    BattlePageState battlePageState) {
+  return SafeArea(
+    child: Scaffold(
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              leading: null,
+              backgroundColor: ColorLogicbyRole(context),
+              forceElevated: true,
+              pinned: true,
+              snap: true,
+              floating: true,
+              expandedHeight: Constants.height_extended_bars,
+              flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.parallax,
+                centerTitle: true,
+                background: _buildBackgroundForAppBar(context),
+              ),
+            ),
+            _buildQuestions(context, battlePageState.widget, questionEngine),
+            _buildPossibleAnwers(
+                context, battlePageState.widget, questionEngine),
+            _buildBuff(context, battlePageState.widget, questionEngine),
+            SliverFillRemaining(
+              child: Container(),
+            )
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildBackgroundForAppBar(BuildContext context) {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    child: Stack(
+      children: <Widget>[
+        Image.asset(
+            new GenerateBackGroundForFight(context).getRamdomBackground()),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            _buildheroSideFight(context),
+            _buildMonsterSideOfFight(context),
+          ],
+        )
+      ],
+    ),
+  );
+}
+
+Widget _buildheroSideFight(BuildContext context) {
+  return Consumer<BattlePageStateData>(
+    builder: (context, battlePageState, _) {
+      return Row(
+        children: <Widget>[
+          //Life Column
+          _buildLifeBar(context, battlePageState, battlePageState.hero_life),
+          Image.asset(
+            Constants.myAvatars
+                .elementAt(Quanda.of(context).myUser.role - 1)
+                .asset_Large,
+            height: Constants.height_extended_bars,
+          )
+        ],
+      );
+    },
+  );
+}
+
+Widget _buildMonsterSideOfFight(BuildContext context) {
+  return Consumer<BattlePageStateData>(
+    builder: (context, battlePageState, _) {
+      return Row(
+        children: <Widget>[
+          //Life Column
+          Image.asset(new GenerateMonsterImageForFight(context)
+              .getRamdomMonsterImage()),
+          _buildLifeBar(context, battlePageState, battlePageState.monster_life),
+        ],
+      );
+    },
+  );
+}
+
+Widget _buildLifeBar(
+    BuildContext context, BattlePageStateData battlePageState, int life) {
+  double heightOflife = (Constants.height_extended_bars) * (life) / 100;
+  double heighofVoid = (Constants.height_extended_bars) * (1 - (life / 100));
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: <Widget>[
+      Container(
+        height: heighofVoid,
+        width: MediaQuery.of(context).size.width / 15,
+        color: Constants.color_main,
+      ),
+      Container(
+        height: heightOflife,
+        width: MediaQuery.of(context).size.width / 15,
+        color: ColorLogicbyRole(context),
+      ),
+    ],
+  );
 }
 
 Widget _buildQuestions(
     BuildContext context, BattlePage widget, QuestionEngine questionEngine) {
-  questionEngine.InitEngine(context);
   return StreamBuilder(
     stream: questionEngine.getStream(),
     builder: (context, bookQuestion) {
@@ -94,21 +230,6 @@ Widget _buildQuestions(
         );
       }
     },
-  );
-}
-
-Widget _buildBackgroundForAppBar(BuildContext context) {
-  return Stack(
-    alignment: Alignment.centerLeft,
-    children: <Widget>[
-      Image.asset('assets/monster_0.png'),
-      Image.asset(
-        Constants.myAvatars
-            .elementAt(Quanda.of(context).myUser.role - 1)
-            .asset_Large,
-        height: Constants.height_extended_bars,
-      ),
-    ],
   );
 }
 
@@ -187,16 +308,20 @@ void functionForCorrect(BuildContext context, int questionId) {
   _reportRightAnswer(context, questionId);
 }
 
-void _reportIncorrectQuestion(BuildContext context, int questionId) {
-  FireProvider.of(context)
+void _reportIncorrectQuestion(BuildContext context, int questionId) async {
+  Provider.of<BattlePageStateData>(context, listen: false).hitHero();
+  await FireProvider.of(context)
       .fireBase
-      .reportCorrectAnswer(context, questionId, false);
+      .reportAnswer(context, questionId, false);
+  //is User Alive
 }
 
-void _reportRightAnswer(BuildContext context, int questionId) {
-  FireProvider.of(context)
+void _reportRightAnswer(BuildContext context, int questionId) async {
+  print('The Question was answered correctly');
+  Provider.of<BattlePageStateData>(context, listen: false).hitMob();
+  await FireProvider.of(context)
       .fireBase
-      .reportCorrectAnswer(context, questionId, true);
+      .reportAnswer(context, questionId, true);
   Quanda.of(context).personal ? _sendPointToPersonal() : _sendPointToTeam();
 }
 

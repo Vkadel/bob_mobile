@@ -36,15 +36,16 @@ abstract class BoBFireBase {
   Stream<DocumentSnapshot> getUserReadListOfBooks(User user);
   Stream<DocumentSnapshot> getMasterBookInfo(int bookid);
   Stream<QuerySnapshot> getQuestionsForMasterBook(int bookid);
-  Stream<DocumentSnapshot> getListOfAnsweredQuestins(
+  Stream<DocumentSnapshot> getListOfAnsweredQuestions(
       BuildContext context, String uid);
   Future<void> updateListofAnsweredQuestions(
       BuildContext context, List<Map> maps);
   Future<void> uploadQuestion(BookQuestion question, int documentId);
   Stream<QuerySnapshot> getMasterListofBooks();
-  Future<void> reportCorrectAnswer(
+  Future<void> reportAnswer(
       BuildContext context, int questionId, bool answeredCorrectly);
   Future<void> reportPointPersonal(BuildContext context);
+  Future<void> resetQuestionsForAbook(BuildContext context, int bookId);
 }
 
 class MBobFireBase implements BoBFireBase {
@@ -171,7 +172,7 @@ class MBobFireBase implements BoBFireBase {
   }
 
   void _answered_questions_check(uid) {
-    AnsweredQuestions question = new AnsweredQuestions(0, 1);
+    AnsweredQuestions question = new AnsweredQuestions(0, 1, 0);
     List<AnsweredQuestions> myquestionlist = new List<AnsweredQuestions>();
     myquestionlist.add(question);
     myquestionlist.forEach((propQ) => _firestore
@@ -420,7 +421,7 @@ class MBobFireBase implements BoBFireBase {
   }
 
   @override
-  Stream<DocumentSnapshot> getListOfAnsweredQuestins(
+  Stream<DocumentSnapshot> getListOfAnsweredQuestions(
       BuildContext context, String uid) {
     return _firestore
         .collection('user_data')
@@ -449,7 +450,7 @@ class MBobFireBase implements BoBFireBase {
   }
 
   @override
-  Future<void> reportCorrectAnswer(
+  Future<void> reportAnswer(
       BuildContext context, int questionId, bool answeredCorrectly) async {
     DocumentReference reference = _firestore
         .collection('user_data')
@@ -471,19 +472,15 @@ class MBobFireBase implements BoBFireBase {
 
         int thisQuestionIndex = -1;
         //identify where this item is located in the list
-        try {
-          thisQuestionIndex =
-              answeredQuestionsList.indexWhere((AnsweredQuestions aq) {
-            aq.question == questionId;
-          });
-        } catch (e) {
-          print(e);
-        }
+
+        thisQuestionIndex =
+            answeredQuestionsList.indexWhere((a) => a.question == questionId);
+
         //if question doesn't exist add it,
         // but if it does replace it and update status
         if (thisQuestionIndex == -1) {
           answeredQuestionsList.add(
-              new AnsweredQuestions(questionId, answeredCorrectly ? 0 : 1));
+              new AnsweredQuestions(questionId, answeredCorrectly ? 0 : 1, 0));
         } else {
           answeredCorrectly
               ? answeredQuestionsList.elementAt(thisQuestionIndex).status = 0
@@ -508,6 +505,52 @@ class MBobFireBase implements BoBFireBase {
           print(e);
         }
       });
+    });
+  }
+
+  Future<void> resetQuestionsForAbook(BuildContext context, int bookId) async {
+    await getQuestionsForMasterBook(bookId).forEach((item) {
+      List<BookQuestion> bookQuestions;
+      List<AnsweredQuestions> answeredQuestionsList;
+      try {
+        //Try to create a list of answeredQuestions for searching.
+        answeredQuestionsList = Quanda.of(context)
+            .userData
+            .answered_questions
+            .toList()
+            .map((item) => AnsweredQuestions.fromJson(item))
+            .toList();
+      } catch (e) {
+        print('e');
+      }
+      try {
+        bookQuestions = item.documents
+            .map((each) => BookQuestion.fromJson(each.data))
+            .toList();
+        print('I got the book questions');
+      } catch (e) {
+        print(e);
+      }
+      for (int i = 0; i <= bookQuestions.length - 1; i++) {
+        int index = answeredQuestionsList.indexWhere(
+            (e) => e.question == bookQuestions.elementAt(i).questionId);
+        answeredQuestionsList.elementAt(index).resetAnsweredQuestion();
+        print(
+            'Will Reset question: ${answeredQuestionsList.elementAt(index).question}');
+      }
+      print('Will start update to local to reset for Awnsered Questions');
+      //Need to save it in Quanda
+      try {
+        Quanda.of(context).userData.answered_questions =
+            answeredQuestionsList.map((anq) => anq.toJson()).toList();
+        print('Updated local reset for Awnsered Questions');
+      } catch (e) {
+        print(e);
+      }
+      print('Will need to send to firestore');
+      List<Map> maps = new List();
+      answeredQuestionsList.forEach((item) => maps.add(item.toJson()));
+      updateListofAnsweredQuestions(context, maps);
     });
   }
 

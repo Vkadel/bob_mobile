@@ -17,6 +17,7 @@ import 'data_type/question.dart';
 import 'data_type/user.dart';
 
 class QuestionEngine {
+  bool isGettingQuestion = false;
   User myUser;
   BuildContext mcontext;
   Stream<Question> generatedQuestion;
@@ -32,6 +33,8 @@ class QuestionEngine {
   }
 
   void InitEngine(BuildContext context) {
+    print('Initializing Question Engine.....');
+    isGettingQuestion = true;
     mcontext = context;
     getUsersBooks();
   }
@@ -76,7 +79,7 @@ class QuestionEngine {
     print('Question engine Getting Answered Questions');
     FireProvider.of(mcontext)
         .fireBase
-        .getListOfAnsweredQuestins(mcontext, Quanda.of(mcontext).myUser.id)
+        .getListOfAnsweredQuestions(mcontext, Quanda.of(mcontext).myUser.id)
         .first
         .then((d) => getListOfAnsweredQuestionsUpdateQuanda(d));
   }
@@ -98,7 +101,8 @@ class QuestionEngine {
     List<Map> myMaps = new List();
     int answered_questions_location =
         d.data.keys.toList().indexOf('answered_questions');
-    List values = d.data.values.toList()[answered_questions_location];
+    List values;
+    values = d.data.values.toList()[answered_questions_location];
     print('Question engine Getting List of answered questions');
     List<Map<dynamic, dynamic>> second;
     List<AnsweredQuestions> myQuestions = new List();
@@ -116,56 +120,109 @@ class QuestionEngine {
   }
 
   void selectOneQuestionToSendBack(
-      QuerySnapshot listOfQuestions, int booklocation) {
+      QuerySnapshot listOfQuestions, int booklocation) async {
+    if (Quanda.of(mcontext).userData.answered_questions == null) {
+      print(
+          'Will create List of Anwsered question in Firestore after manual reset');
+      this.createDummyListOfQuestionsAnswered();
+    }
     List<BookQuestion> listOfBookQuestion = listOfQuestions.documents
         .toList()
         .map((each) => BookQuestion.fromJson(each.data))
         .toList();
     print(
         'Question engine First Element question: ${listOfBookQuestion.elementAt(0).question}');
-    int selectRamdomQuestion = new Random().nextInt(listOfBookQuestion.length);
-    //Check whether the user has done the question
-    if (checkIfQuestionIsNew(listOfBookQuestion, selectRamdomQuestion)) {
-      print('Question engine Question found');
+    int randomqIndex = new Random().nextInt(listOfBookQuestion.length);
+
+    if (checkQuestionToSend(listOfBookQuestion, randomqIndex)) {
       print(
-          'Question engine The Question is: ${listOfBookQuestion.elementAt(selectRamdomQuestion).question}');
-      //Send question to stream
-      _controller.add(listOfBookQuestion.elementAt(selectRamdomQuestion));
-      return;
+          'Question found. The Question is: ${listOfBookQuestion.elementAt(randomqIndex).question}');
+      _controller.add(listOfBookQuestion.elementAt(randomqIndex));
     } else {
-      //TODO:get Another question
       print('Will need to check another questions');
-      //Checking forward
-      print('Will check forward');
-      for (int i = 0; i < listOfBookQuestion.length; i++) {
-        int newQuestionIndex = selectRamdomQuestion + i;
-        if (checkIfQuestionIsNew(listOfBookQuestion, newQuestionIndex)) {
-          _controller.add(listOfBookQuestion.elementAt(newQuestionIndex));
-          return;
-        }
-      }
-      print(' That did not work Will check backwards');
-      for (int i = selectRamdomQuestion; i >= 0; i--) {
-        int newQuestionIndex = selectRamdomQuestion + i;
-        if (checkIfQuestionIsNew(listOfBookQuestion, newQuestionIndex)) {
-          _controller.add(listOfBookQuestion.elementAt(newQuestionIndex));
-          return;
+      if (willLookForQuestionsUp(listOfBookQuestion, randomqIndex) != null) {
+        print('Found Question going Up');
+        _controller
+            .add(willLookForQuestionsUp(listOfBookQuestion, randomqIndex));
+      } else {
+        print(' That did not work Will check backwards');
+        if (willLookForQuestionsDown(listOfBookQuestion, randomqIndex) !=
+            null) {
+          print('Found Question going Down');
+          _controller
+              .add(willLookForQuestionsDown(listOfBookQuestion, randomqIndex));
+        } else {
+          print(
+              'Search did not find a question will need to reset questions for this book');
+          FireProvider.of(mcontext).fireBase.resetQuestionsForAbook(
+              mcontext, listOfBookQuestion.elementAt(0).id);
+          /* _controller
+              .add(willLookForQuestionsDown(listOfBookQuestion, randomqIndex));*/
         }
       }
     }
   }
 
+  bool checkQuestionToSend(
+      List<BookQuestion> listOfBookQuestion, int randomqIndex) {
+    return checkIfQuestionIsNew(listOfBookQuestion, randomqIndex) ||
+        checkIfQuestionHasNotBeenCorrect(listOfBookQuestion, randomqIndex);
+  }
+
   bool checkIfQuestionIsNew(
-      List<BookQuestion> listOfBookQuestion, int selectRamdomQuestion) {
+      List<BookQuestion> listOfBookQuestion, int new_question_index) {
     //Check if an item exists in the answered list for this question
+    int number = Quanda.of(mcontext).userData.answered_questions.indexWhere(
+        (e) =>
+            e['question'] ==
+            listOfBookQuestion.elementAt(new_question_index).questionId);
     return Quanda.of(mcontext).userData.answered_questions.indexWhere((e) =>
                 e['question'] ==
-                listOfBookQuestion
-                    .elementAt(selectRamdomQuestion)
-                    .questionId) ==
+                listOfBookQuestion.elementAt(new_question_index).questionId) ==
             -1
         ? true
         : false;
+  }
+
+  bool checkIfQuestionHasNotBeenCorrect(
+      List<BookQuestion> listOfBookQuestion, int new_question_index) {
+    //Check if an item exists in the answered list for this question
+    int number = Quanda.of(mcontext).userData.answered_questions.indexWhere(
+        (e) =>
+            e['question'] ==
+            listOfBookQuestion.elementAt(new_question_index).questionId);
+    return number != -1 &&
+            Quanda.of(mcontext)
+                    .userData
+                    .answered_questions
+                    .elementAt(number)['status'] >
+                0
+        ? true
+        : false;
+  }
+
+  BookQuestion willLookForQuestionsDown(
+      List<BookQuestion> listOfBookQuestion, int randomqIndex) {
+    for (var i = randomqIndex; i >= 0; i--) {
+      if (checkQuestionToSend(listOfBookQuestion, i)) {
+        print(
+            'Broadcasting question from backwards: ${listOfBookQuestion.elementAt(i).question}');
+        return listOfBookQuestion.elementAt(i);
+      }
+    }
+    return null;
+  }
+
+  BookQuestion willLookForQuestionsUp(
+      List<BookQuestion> listOfBookQuestion, int randomqIndex) {
+    for (var i = randomqIndex; i < listOfBookQuestion.length; i++) {
+      if (checkQuestionToSend(listOfBookQuestion, i)) {
+        print(
+            'Broadcasting question from backwards: ${listOfBookQuestion.elementAt(i).question}');
+        return listOfBookQuestion.elementAt(i);
+      }
+    }
+    return null;
   }
 
   void requestQuestionAgain() {
@@ -173,21 +230,19 @@ class QuestionEngine {
   }
 
   void createDummyListOfQuestionsAnswered() {
-    AnsweredQuestions myQuestion = new AnsweredQuestions(89, 0);
-    AnsweredQuestions myQuestion2 = new AnsweredQuestions(88, 0);
-    AnsweredQuestions myQuestion3 = new AnsweredQuestions(55, 0);
+    AnsweredQuestions myQuestion = new AnsweredQuestions(0, 0, 0);
+
     List<AnsweredQuestions> myQuestions = new List();
     myQuestions.add(myQuestion);
-    myQuestions.add(myQuestion2);
-    myQuestions.add(myQuestion3);
+
     Map map = new Map();
     List<Map> maps = new List();
     maps.add(myQuestion.toJson());
-    maps.add(myQuestion2.toJson());
-    maps.add(myQuestion3.toJson());
+
     myQuestions.forEach((i) => map.addAll(i.toJson()));
     FireProvider.of(mcontext)
         .fireBase
         .updateListofAnsweredQuestions(mcontext, maps);
+    return;
   }
 }

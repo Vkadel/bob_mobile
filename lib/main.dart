@@ -2,6 +2,7 @@ import 'package:bob_mobile/auth.dart';
 import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/firestore.dart';
+import 'package:bob_mobile/hero_room_page.dart';
 import 'package:bob_mobile/modelData/battle_page_state_data.dart';
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
               '/home': (BuildContext context) => HomePage(title: 'Home Page'),
               '/personality_test': (BuildContext context) =>
                   PersonalitySurveyPage(title: 'Tell your tale'),
+              '/hero_room': (BuildContext context) => HeroRoomPage(),
               '/fight': (BuildContext context) => BattlePage(),
             },
           ),

@@ -14,7 +14,7 @@ class Constants {
       "You currently do not have items. Buy some at the store";
   static final String hero_stats_label = "Hero Stats";
   static final String individual_rankings_label = "Hero Rankings";
-  static final String active_battle_bonuses_label = "Active Bonuses";
+  static final String active_battle_bonuses_label = "Total Active Bonuses";
   static final String hero_stat_buff_label =
       "Hero Stat Buff for this question is: +";
   static final String hero_item_buff_label = "Item Bonuses: ";
@@ -37,6 +37,8 @@ class Constants {
   final String archer_3_story =
       "Archers struggle to survive in the forest.  Within their lands the darkness spread stealing away those that cannot defend themselves. Some are leaving their homes and looking for better hunt elsewhere. The ones that stay must face the darkness head-on to protect their land and loved ones.";
   static List<Avatar> myAvatars;
+  static List<String> fight_background_list;
+  static List<String> monster_pic_list;
 
 /*  static Color icon_Colors = Colors.yellow[50];
   static Color color_main = Color.fromRGBO(255, 106, 36, 255);
@@ -49,6 +51,7 @@ class Constants {
   static Color color_secondary = Colors.lightGreenAccent;
   static Color color_intro = Colors.deepPurple;
   static Color color_extro = Colors.redAccent[400];
+  static Color transparent = Color.fromRGBO(150, 10, 10, 5);
 
   //Button Labels hero screen
   static final String i_want_to_be_knight = 'Tap if you want to be a Knight';
@@ -96,5 +99,9 @@ class Constants {
           contract_archer,
           'assets/archer_header_dashboard.png'),
     );
+    fight_background_list = List();
+    fight_background_list.add('assets/fight_background_1.png');
+    monster_pic_list = List();
+    monster_pic_list.add('assets/monster_0.png');
   }
 }
