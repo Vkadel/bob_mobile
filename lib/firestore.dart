@@ -3,6 +3,7 @@ import 'package:bob_mobile/data_type/book_question.dart';
 import 'package:bob_mobile/data_type/book_types.dart';
 import 'package:bob_mobile/data_type/items.dart';
 import 'package:bob_mobile/data_type/items_master.dart';
+import 'package:bob_mobile/data_type/player_points.dart';
 import 'package:bob_mobile/data_type/proposed_books.dart';
 import 'package:bob_mobile/data_type/proposed_questions.dart';
 import 'package:bob_mobile/data_type/user.dart';
@@ -44,7 +45,7 @@ abstract class BoBFireBase {
   Stream<QuerySnapshot> getMasterListofBooks();
   Future<void> reportAnswer(
       BuildContext context, int questionId, bool answeredCorrectly);
-  Future<void> reportPointPersonal(BuildContext context);
+  Future<void> reportPointPersonal(BuildContext context, int pointsToAdd);
   Future<void> resetQuestionsForAbook(BuildContext context, int bookId);
 }
 
@@ -555,5 +556,31 @@ class MBobFireBase implements BoBFireBase {
   }
 
   @override
-  Future<void> reportPointPersonal(BuildContext context) {}
+  Future<void> reportPointPersonal(
+      BuildContext context, int pointsToAdd) async {
+    var playerPointsDocument = await _firestore
+        .collection('player_rankings')
+        .document(Quanda.of(context).myUser.id)
+        .get();
+    if (playerPointsDocument.data == null || !playerPointsDocument.exists) {
+      print('Had to create a playerpoints');
+      await _firestore
+          .collection('player_rankings')
+          .document(Quanda.of(context).myUser.id)
+          .setData(new PlayerPoints(pointsToAdd, Quanda.of(context).myUser.id,
+                  Quanda.of(context).myUser.name)
+              .toJson());
+    } else {
+      _firestore.runTransaction((transa) async {
+        DocumentSnapshot playerPointdata =
+            await transa.get(playerPointsDocument.reference);
+        PlayerPoints playerPoints =
+            await PlayerPoints.fromJson(playerPointdata.data);
+        playerPoints.player_points = playerPoints.player_points + pointsToAdd;
+        transa
+            .set(playerPointsDocument.reference, playerPoints.toJson())
+            .catchError((e) => print(e));
+      });
+    }
+  }
 }

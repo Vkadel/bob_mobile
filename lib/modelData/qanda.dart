@@ -4,6 +4,7 @@ import 'package:bob_mobile/data_type/book_types.dart';
 import 'package:bob_mobile/data_type/books_master.dart';
 import 'package:bob_mobile/data_type/items.dart';
 import 'package:bob_mobile/data_type/items_master.dart';
+import 'package:bob_mobile/data_type/player_points.dart';
 import 'package:bob_mobile/data_type/user_data.dart';
 import 'package:flutter/material.dart';
 import '../data_type/question.dart';
@@ -21,6 +22,7 @@ class Quanda extends InheritedModel with ChangeNotifier {
   UserData userData;
   List<AnsweredQuestions> allAnsweredQuestions;
   List<BooksMaster> listOfMasterBooks;
+  PlayerPoints myPlayerPoints;
 
   Quanda(
       {Key key,

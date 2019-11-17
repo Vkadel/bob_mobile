@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 
+import '../constants.dart';
+
 /// A class to keep the battle information
 ///
 ///
@@ -145,22 +147,33 @@ class BattlePageStateData with ChangeNotifier {
   void hitMob() {
     print(
         'going to hit the mob with multiplier of: ${_blows_required_to_kill_mob}');
+    int numberToadd = _currentAddForQuestion +
+        currentItemBuffs -
+        _currentDeductionForQuestions;
+    numberToadd >= 0 ? numberToadd = numberToadd : numberToadd = 0;
+    //if No gains are obtained them the cap of loss is null
+
+    updatetotal_points_if_correct(
+        _total_points_if_correct + Constants.point_perQuestion + numberToadd);
+
+    _blows_required_to_kill_mob = 2;
+
     double ammountToLifeToTake = (100 / _blows_required_to_kill_mob);
-    monster_life <= 0
+    monster_life - ammountToLifeToTake.round() <= 0
         ? finishBattle()
         : this.updatemonster_life(_monster_life - ammountToLifeToTake.round());
   }
 
   void hitHero() {
     double ammountToLifeToTake = (100 / _blows_required_to_kill_mob);
-    hero_life <= 0
+    hero_life - ammountToLifeToTake.round() <= 0
         ? finishBattle()
         : this.updatehero_life(hero_life - ammountToLifeToTake.round());
   }
 
   void finishBattle() {
     resetWithoutUpdate();
-    this.updatecontinue_fighting(false);
+    _continue_fighting = false;
   }
 
   void resetWithoutUpdate() {

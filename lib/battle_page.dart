@@ -38,13 +38,11 @@ class BattlePageState extends State<BattlePage> {
   @override
   void dispose() {
     questionEngine = null;
-
     super.dispose();
   }
 
   @override
   void didChangeDependencies() {
-    questionEngine.InitEngine(context);
     super.didChangeDependencies();
   }
 
@@ -57,17 +55,24 @@ class BattlePageState extends State<BattlePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Consumer<BattlePageStateData>(
-        builder: (context, battleData, _) {
-          return battleData.continue_fighting
-              ? _buildPage(context, questionEngine, this)
-              : Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => new HomePage()));
-        },
-      ),
-    );
+    if (!questionEngine.engineIsRunning) {
+      print('Starting Engine');
+      questionEngine.InitEngine(context);
+    }
+    if (Provider.of<BattlePageStateData>(context).continue_fighting) {
+      return WillPopScope(
+        onWillPop: _onBackPressed,
+        child: _buildPage(context, questionEngine, this),
+      );
+    } else {
+      print('I will want to POP');
+
+      return Scaffold(
+        body: Center(
+            child: FormattedRoundedButton(
+                'The battle is over', _resetBattleGoBackToRoom, context)),
+      );
+    }
   }
 
   Future<bool> _onBackPressed() {
@@ -309,23 +314,34 @@ void functionForCorrect(BuildContext context, int questionId) {
 }
 
 void _reportIncorrectQuestion(BuildContext context, int questionId) async {
-  Provider.of<BattlePageStateData>(context, listen: false).hitHero();
-  await FireProvider.of(context)
-      .fireBase
-      .reportAnswer(context, questionId, false);
+  await Provider.of<BattlePageStateData>(context, listen: false).hitHero();
+  FireProvider.of(context).fireBase.reportAnswer(context, questionId, false);
   //is User Alive
 }
 
 void _reportRightAnswer(BuildContext context, int questionId) async {
   print('The Question was answered correctly');
-  Provider.of<BattlePageStateData>(context, listen: false).hitMob();
-  await FireProvider.of(context)
-      .fireBase
-      .reportAnswer(context, questionId, true);
-  Quanda.of(context).personal ? _sendPointToPersonal() : _sendPointToTeam();
+  await Provider.of<BattlePageStateData>(context, listen: false).hitMob();
+  FireProvider.of(context).fireBase.reportAnswer(context, questionId, true);
+  Quanda.of(context).personal
+      ? _sendPointToPersonal(context)
+      : _sendPointToTeam();
 }
 
-void _sendPointToPersonal() {}
+void _sendPointToPersonal(BuildContext context) {
+  if (Provider.of<BattlePageStateData>(context, listen: false)
+      .battlePageData
+      .continue_fighting) {
+    print(
+        'So far we got:${Provider.of<BattlePageStateData>(context, listen: false).total_points_if_correct}points');
+  } else {
+    FireProvider.of(context).fireBase.reportPointPersonal(
+        context,
+        Provider.of<BattlePageStateData>(context, listen: false)
+            .battlePageData
+            .total_points_if_correct);
+  }
+}
 
 void _sendPointToTeam() {}
 

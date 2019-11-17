@@ -26,6 +26,7 @@ class QuestionEngine {
   final StreamController _controller =
       StreamController<BookQuestion>.broadcast();
   List answeredQuestionsForBook;
+  bool engineIsRunning = false;
   QuestionEngine();
 
   Stream<BookQuestion> getStream() {
@@ -33,6 +34,7 @@ class QuestionEngine {
   }
 
   void InitEngine(BuildContext context) {
+    engineIsRunning = true;
     print('Initializing Question Engine.....');
     isGettingQuestion = true;
     mcontext = context;
