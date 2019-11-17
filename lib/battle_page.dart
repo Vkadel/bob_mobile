@@ -203,8 +203,21 @@ Widget _buildMonsterSideOfFight(BuildContext context) {
       return Row(
         children: <Widget>[
           //Life Column
-          Image.asset(new GenerateMonsterImageForFight(context)
-              .getRamdomMonsterImage()),
+          Stack(
+            alignment: Alignment.topRight,
+            children: <Widget>[
+              Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                      'Monster Level: ${battlePageState.blows_required_to_kill_mob}'),
+                ),
+              ),
+              Image.asset(new GenerateMonsterImageForFight(context)
+                  .getRamdomMonsterImage()),
+            ],
+          ),
+
           _buildLifeBar(context, battlePageState, battlePageState.monster_life),
         ],
       );
@@ -336,6 +349,7 @@ void functionForCorrect(BuildContext context, int questionId) {
 
 void _reportIncorrectQuestion(BuildContext context, int questionId) async {
   Provider.of<BattlePageStateData>(context, listen: false).hitHero();
+
   FireProvider.of(context).fireBase.reportAnswer(context, questionId, false);
   //is User Alive
 }
@@ -343,6 +357,7 @@ void _reportIncorrectQuestion(BuildContext context, int questionId) async {
 void _reportRightAnswer(BuildContext context, int questionId) async {
   print('The Question was answered correctly');
   Provider.of<BattlePageStateData>(context, listen: false).hitMob();
+  Provider.of<BattlePageStateData>(context, listen: false).addPointHitForHero();
   FireProvider.of(context).fireBase.reportAnswer(context, questionId, true);
   Quanda.of(context).personal
       ? _sendPointToPersonal(context)
@@ -356,11 +371,10 @@ void _sendPointToPersonal(BuildContext context) {
     print(
         'So far we got:${Provider.of<BattlePageStateData>(context, listen: false).total_points_if_correct}points');
   } else {
-    FireProvider.of(context).fireBase.reportPointPersonal(
-        context,
-        Provider.of<BattlePageStateData>(context, listen: false)
-            .battlePageData
-            .total_points_if_correct);
+    int points = Provider.of<BattlePageStateData>(context, listen: false)
+        .battlePageData
+        .total_points_if_correct;
+    FireProvider.of(context).fireBase.reportPointPersonal(context, points);
   }
 }
 
@@ -459,11 +473,7 @@ Widget _listOfBuffs(
       battlePageData.updatecurrentDeductionForQuestions(
           _calculateHeroSubstractionsFromStats(context, question, book));
       battlePageData.updatecurrentItemBuffs(_calculateItemGains(context));
-      battlePageData.updatetotal_points_if_correct(
-          battlePageData.currentAddForQuestion -
-              battlePageData.currentDeductionForQuestions +
-              battlePageData.currentItemBuffs +
-              1);
+
       return SliverList(
         delegate: SliverChildListDelegate([
           Padding(

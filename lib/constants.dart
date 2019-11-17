@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Constants {
-  static final int point_perQuestion = 1;
+  static final int point_perQuestion = 2;
+  static final int blows_ceiling_to_kill_mob = 6;
   static final int item_used = 2;
   static final int item_availble = 1;
   static final int item_unavailable = 0;

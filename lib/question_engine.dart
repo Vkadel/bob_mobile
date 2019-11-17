@@ -158,8 +158,6 @@ class QuestionEngine {
               'Search did not find a question will need to reset questions for this book');
           FireProvider.of(mcontext).fireBase.resetQuestionsForAbook(
               mcontext, listOfBookQuestion.elementAt(0).id);
-          /* _controller
-              .add(willLookForQuestionsDown(listOfBookQuestion, randomqIndex));*/
         }
       }
     }

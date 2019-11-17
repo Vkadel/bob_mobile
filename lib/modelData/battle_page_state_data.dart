@@ -20,10 +20,10 @@ class BattlePageStateData with ChangeNotifier {
   bool _pressed_c;
   bool _pressed_d;
   bool _pressed_correct;
-  int _currentAddForQuestion;
-  int _currentDeductionForQuestions;
-  int _currentItemBuffs;
-  int _total_points_if_correct;
+  int _currentAddForQuestion = 0;
+  int _currentDeductionForQuestions = 0;
+  int _currentItemBuffs = 0;
+  int _total_points_if_correct = 0;
   int _monster_life = 100;
   int _hero_life = 100;
   int _blows_required_to_kill_mob = new Random().nextInt(5) + 1;
@@ -43,6 +43,7 @@ class BattlePageStateData with ChangeNotifier {
   int get total_points_if_correct => _total_points_if_correct;
   int get monster_life => _monster_life;
   int get hero_life => _hero_life;
+  int get blows_required_to_kill_mob => _blows_required_to_kill_mob;
   BattlePageStateData get battlePageData => this;
 
   BattlePageStateData();
@@ -144,21 +145,23 @@ class BattlePageStateData with ChangeNotifier {
     }
   }
 
+  addPointHitForHero() {
+    int buffPoints = this._currentAddForQuestion +
+        this.currentItemBuffs -
+        this._currentDeductionForQuestions;
+    int newPoints;
+    buffPoints >= 0 ? buffPoints = buffPoints : buffPoints = 0;
+    int myConstant = Constants.point_perQuestion;
+    this.updatetotal_points_if_correct(
+        _total_points_if_correct + buffPoints + myConstant);
+  }
+
   hitMob() {
     print(
         'going to hit the mob with multiplier of: ${_blows_required_to_kill_mob}');
-    int buffPoints = _currentAddForQuestion +
-        currentItemBuffs -
-        _currentDeductionForQuestions;
-    buffPoints >= 0 ? buffPoints = buffPoints : buffPoints = 0;
-    int calculation;
-    //if No gains are obtained them the cap of loss is null
 
-    calculation =
-        _total_points_if_correct + Constants.point_perQuestion + buffPoints;
-    _total_points_if_correct = calculation;
-    //TODO: update to random number
-    _blows_required_to_kill_mob = 2;
+    _blows_required_to_kill_mob =
+        new Random().nextInt(Constants.blows_ceiling_to_kill_mob);
 
     double ammountToLifeToTake = (100 / _blows_required_to_kill_mob);
     monster_life - ammountToLifeToTake.round() <= 0
@@ -174,7 +177,6 @@ class BattlePageStateData with ChangeNotifier {
   }
 
   void finishBattle() {
-    /*  resetWithoutUpdate();*/
     _continue_fighting = false;
     notifyListeners();
   }
