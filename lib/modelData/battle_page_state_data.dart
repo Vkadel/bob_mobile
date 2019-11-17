@@ -144,18 +144,20 @@ class BattlePageStateData with ChangeNotifier {
     }
   }
 
-  void hitMob() {
+  hitMob() {
     print(
         'going to hit the mob with multiplier of: ${_blows_required_to_kill_mob}');
-    int numberToadd = _currentAddForQuestion +
+    int buffPoints = _currentAddForQuestion +
         currentItemBuffs -
         _currentDeductionForQuestions;
-    numberToadd >= 0 ? numberToadd = numberToadd : numberToadd = 0;
+    buffPoints >= 0 ? buffPoints = buffPoints : buffPoints = 0;
+    int calculation;
     //if No gains are obtained them the cap of loss is null
 
-    updatetotal_points_if_correct(
-        _total_points_if_correct + Constants.point_perQuestion + numberToadd);
-
+    calculation =
+        _total_points_if_correct + Constants.point_perQuestion + buffPoints;
+    _total_points_if_correct = calculation;
+    //TODO: update to random number
     _blows_required_to_kill_mob = 2;
 
     double ammountToLifeToTake = (100 / _blows_required_to_kill_mob);
@@ -172,8 +174,9 @@ class BattlePageStateData with ChangeNotifier {
   }
 
   void finishBattle() {
-    resetWithoutUpdate();
+    /*  resetWithoutUpdate();*/
     _continue_fighting = false;
+    notifyListeners();
   }
 
   void resetWithoutUpdate() {

@@ -68,9 +68,30 @@ class BattlePageState extends State<BattlePage> {
       print('I will want to POP');
 
       return Scaffold(
-        body: Center(
-            child: FormattedRoundedButton(
-                'The battle is over', _resetBattleGoBackToRoom, context)),
+        body: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+                child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(Constants.myAvatars
+                      .elementAt(Quanda.of(context).myUser.role - 1)
+                      .asset_Large),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextFormattedLabelTwo(
+                        'The battle is over and you got ${Provider.of<BattlePageStateData>(context).total_points_if_correct} Points',
+                        30),
+                  ),
+                  FormattedRoundedButton(
+                      'Go to Hero Room ', _resetBattleGoBackToRoom, context),
+                ],
+              ),
+            ))
+          ],
+        ),
       );
     }
   }
@@ -314,14 +335,14 @@ void functionForCorrect(BuildContext context, int questionId) {
 }
 
 void _reportIncorrectQuestion(BuildContext context, int questionId) async {
-  await Provider.of<BattlePageStateData>(context, listen: false).hitHero();
+  Provider.of<BattlePageStateData>(context, listen: false).hitHero();
   FireProvider.of(context).fireBase.reportAnswer(context, questionId, false);
   //is User Alive
 }
 
 void _reportRightAnswer(BuildContext context, int questionId) async {
   print('The Question was answered correctly');
-  await Provider.of<BattlePageStateData>(context, listen: false).hitMob();
+  Provider.of<BattlePageStateData>(context, listen: false).hitMob();
   FireProvider.of(context).fireBase.reportAnswer(context, questionId, true);
   Quanda.of(context).personal
       ? _sendPointToPersonal(context)
