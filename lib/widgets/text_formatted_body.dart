@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 class TextFormattedBody extends StatelessWidget {
   String text;
 
-  TextFormattedBody(this.text) {}
+  TextFormattedBody(this.text);
 
   @override
   Widget build(BuildContext context) {

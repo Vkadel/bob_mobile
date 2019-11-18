@@ -31,73 +31,71 @@ class _HeroPageState extends State<HeroRoomPage> {
   @override
   Widget build(BuildContext context) {
     _initStream(stream, context);
-    return WillPopScope(
-      child: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          body: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                pinned: true,
-                floating: true,
-                backgroundColor: ColorLogicbyRole(context),
-                expandedHeight: 150.0,
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: Text(Constants.hero_room_title),
-                  titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  collapseMode: CollapseMode.parallax,
-                  background: Image(
-                      image: AssetImage(Constants.myAvatars
-                          .elementAt(Quanda.of(context).myUser.role - 1)
-                          .asset_Large)),
-                ),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              pinned: true,
+              floating: true,
+              backgroundColor: ColorLogicbyRole(context),
+              expandedHeight: 150.0,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text(Constants.hero_room_title),
+                titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                collapseMode: CollapseMode.parallax,
+                background: Image(
+                    image: AssetImage(Constants.myAvatars
+                        .elementAt(Quanda.of(context).myUser.role - 1)
+                        .asset_Large)),
               ),
-              SliverToBoxAdapter(
-                child: Center(
-                  child: TextFormattedRoomLabel(
-                      Constants.hero_stats_label, context),
-                ),
+            ),
+            SliverToBoxAdapter(
+              child: Center(
+                child:
+                    TextFormattedRoomLabel(Constants.hero_stats_label, context),
               ),
-              _buildStats(context, stream),
-              _buildSpacerBox(context),
-              SliverToBoxAdapter(
-                child: TabBar(
-                  labelColor: ColorLogicbyPersonality(context),
-                  unselectedLabelColor: ColorLogicbyRole(context),
-                  indicatorColor: Constants.color_secondary,
-                  tabs: <Widget>[
-                    Tab(
-                      icon: Icon(Icons.settings_input_composite),
-                      child: Text('Items'),
+            ),
+            _buildStats(context, stream),
+            _buildSpacerBox(context),
+            SliverToBoxAdapter(
+              child: TabBar(
+                labelColor: ColorLogicbyPersonality(context),
+                unselectedLabelColor: ColorLogicbyRole(context),
+                indicatorColor: Constants.color_secondary,
+                tabs: <Widget>[
+                  Tab(
+                    icon: Icon(Icons.settings_input_composite),
+                    child: Text('Items'),
+                  ),
+                  Tab(icon: Icon(Icons.view_week), child: Text('library')),
+                  Tab(
+                      icon: Icon(Icons.question_answer),
+                      child: TextFormattedLabelTwo('Add Questions')),
+                ],
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                height: Constants.height_lists_hero_page,
+                child: TabBarView(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.width * 2,
+                      child: _buildListofItems(context),
                     ),
-                    Tab(icon: Icon(Icons.view_week), child: Text('library')),
-                    Tab(
-                        icon: Icon(Icons.question_answer),
-                        child: TextFormattedLabelTwo('Add Questions')),
+                    Icon(Icons.directions_transit),
+                    Icon(Icons.directions_bike),
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Container(
-                  height: Constants.height_lists_hero_page,
-                  child: TabBarView(
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.width * 2,
-                        child: _buildListofItems(context),
-                      ),
-                      Icon(Icons.directions_transit),
-                      Icon(Icons.directions_bike),
-                    ],
-                  ),
-                ),
-              ),
-              _buildSpacerBox(context),
-              _buildButtonsForBattle(context),
-              _buildSpacerBox(context)
-            ],
-          ),
+            ),
+            _buildSpacerBox(context),
+            _buildButtonsForBattle(context),
+            _buildSpacerBox(context)
+          ],
         ),
       ),
     );

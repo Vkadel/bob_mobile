@@ -6,14 +6,17 @@ part of 'answered_questions.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AnsweredQuestions _$AnsweredQuestionsFromJson(Map<dynamic, dynamic> json) {
+AnsweredQuestions _$AnsweredQuestionsFromJson(Map<String, dynamic> json) {
   return AnsweredQuestions(
-      json['question'] as int, json['status'] as int, json['reset'] as int);
+    json['question'] as int,
+    json['status'] as int,
+    json['reset'] as int,
+  );
 }
 
 Map<String, dynamic> _$AnsweredQuestionsToJson(AnsweredQuestions instance) =>
     <String, dynamic>{
       'question': instance.question,
       'status': instance.status,
-      'reset': instance.reset
+      'reset': instance.reset,
     };

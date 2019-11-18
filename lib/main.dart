@@ -1,7 +1,8 @@
+import 'package:bob_mobile/add_player_page.dart';
 import 'package:bob_mobile/auth.dart';
 import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/data_type/user.dart';
-import 'package:bob_mobile/firestore.dart';
+import 'package:bob_mobile/mfirestore.dart';
 import 'package:bob_mobile/hero_room_page.dart';
 import 'package:bob_mobile/modelData/battle_page_state_data.dart';
 import 'package:bob_mobile/provider.dart';
@@ -11,14 +12,13 @@ import 'package:bob_mobile/widgets/loading_indicator_full_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'dashboard_page.dart';
 import 'login_page.dart';
 import 'modelData/personality_test_state_data.dart';
+import 'modelData/team_formation_data.dart';
 import 'personality_test_page.dart';
 import 'data_type/question.dart';
 
@@ -35,6 +35,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           builder: (_) => BattlePageStateData(),
+        ),
+        ChangeNotifierProvider(
+          builder: (_) => TeamFormationData(),
         ),
       ],
       child: Quanda(
@@ -56,6 +59,7 @@ class MyApp extends StatelessWidget {
                   PersonalitySurveyPage(title: 'Tell your tale'),
               '/hero_room': (BuildContext context) => HeroRoomPage(),
               '/fight': (BuildContext context) => BattlePage(),
+              '/add_player_to_team': (BuildContext context) => AddPlayerPage(),
             },
           ),
         ),

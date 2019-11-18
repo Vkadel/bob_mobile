@@ -9,6 +9,7 @@ import 'package:bob_mobile/data_type/proposed_questions.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/data_type/user_data.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
+import 'package:bob_mobile/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -92,7 +93,7 @@ class MBobFireBase implements BoBFireBase {
         },
         0);
 
-    //Proposed_questions_Test_creation
+    /*//Proposed_questions_Test_creation
     _proposed_question_test_creationg(uid);
 
     //Items_test_creation
@@ -102,11 +103,26 @@ class MBobFireBase implements BoBFireBase {
     _proposed_books_test_creation(uid);
 
     _read_books_test_creation(uid);
-    _answered_questions_check(uid);
-    //Todo: Check the query for documents works
+    _answered_questions_check(uid);*/
 
     Quanda.of(context).myUser = user;
     _firestore.collection('users').document().setData(user.toJson());
+
+    print('Creating user Data');
+    UserData userData = new UserData(List<int>(), uid);
+    userData.answered_questions = List<Map<dynamic, dynamic>>();
+    print('Updating Firestore with User_data');
+    _firestore.collection('user_data').document(uid).setData(userData.toJson());
+
+    print('Creating Player ranking');
+    PlayerPoints playerPoints = new PlayerPoints(
+        Constants.initial_point_value, uid, Quanda.of(context).myUser.name);
+
+    print('Updating Firestore with User_data');
+    _firestore
+        .collection('player_rankings')
+        .document(uid)
+        .setData(playerPoints.toJson());
   }
 
   void _proposed_question_test_creationg(String uid) {
@@ -128,6 +144,8 @@ class MBobFireBase implements BoBFireBase {
         .collection('list_of_proposed_questions')
         .document()
         .setData(propQ.toJson()));
+
+    //Todo: Create
   }
 
   void _items_list_test_generation(String uid) {
@@ -228,8 +246,10 @@ class MBobFireBase implements BoBFireBase {
               if (freshSnapShot.exists) {
                 User freshUser = User.fromJson(freshSnapShot.data);
                 freshUser.role = user.role;
+                freshUser.name = user.name;
                 await transaction.update(
                     freshSnapShot.reference, freshUser.toJson());
+                //TODO:Set up all the other lists for items and proposedbooks for the first time
                 _setUpUserListOfProposedQuestion(firebaseuser);
               }
             }));
@@ -581,6 +601,31 @@ class MBobFireBase implements BoBFireBase {
             .set(playerPointsDocument.reference, playerPoints.toJson())
             .catchError((e) => print(e));
       });
+    }
+  }
+
+  Future<bool> checkIfNameExistAndCreateRanking(
+      BuildContext context, String name) async {
+    bool nameExist;
+    PlayerPoints playerPoints =
+        new PlayerPoints(0, Quanda.of(context).myUser.id, name);
+    QuerySnapshot itemSnapShot = await _firestore
+        .collection('player_rankings')
+        .where('player_name', isEqualTo: name)
+        .snapshots()
+        .first;
+    if (itemSnapShot.documents.length > 0) {
+      return true;
+    } else {
+      print('Setting up player ranking');
+      var response = await _firestore
+          .collection('player_rankings')
+          .document(Quanda.of(context).myUser.id)
+          .setData(playerPoints.toJson());
+      var response2 = await setUpHero(
+          FireProvider.of(context).auth.getLastUserLoged(),
+          Quanda.of(context).myUser);
+      return false;
     }
   }
 }

@@ -11,6 +11,7 @@ import '../data_type/question.dart';
 import '../data_type/user.dart';
 
 class Quanda extends InheritedModel with ChangeNotifier {
+  List<PlayerPoints> playerRankings;
   bool personal;
   List<Question> list_of_questions;
   String my_text = '';

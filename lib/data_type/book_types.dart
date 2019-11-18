@@ -9,7 +9,7 @@ class BookTypes {
   int id;
   String type;
 
-  BookTypes(this.id, this.type) {}
+  BookTypes(this.id, this.type);
 
   factory BookTypes.fromJson(Map<String, dynamic> json) =>
       _$BookTypesFromJson(json);

@@ -121,6 +121,10 @@ Widget PlayerRankings(BuildContext context) {
     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
       if (snapshot.connectionState == ConnectionState.active) {
         if (!snapshot.hasError && snapshot.hasData) {
+          List<PlayerPoints> playerRankings = snapshot.data.documents
+              .map((item) => PlayerPoints.fromJson(item.data))
+              .toList();
+          Quanda.of(context).playerRankings = playerRankings;
           return _listofIndividualRankings(context, snapshot);
         }
       } else {

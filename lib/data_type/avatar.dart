@@ -20,5 +20,5 @@ class Avatar {
     this.small_icon,
     this.contract_button,
     this.header_dashboard,
-  ) {}
+  );
 }

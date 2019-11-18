@@ -1,7 +1,7 @@
 import 'package:bob_mobile/auth.dart';
 import 'package:flutter/material.dart';
 
-import 'firestore.dart';
+import 'mfirestore.dart';
 
 class FireProvider extends InheritedWidget {
   final BaseAuth auth;
