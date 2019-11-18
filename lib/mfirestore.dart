@@ -463,7 +463,6 @@ class MBobFireBase implements BoBFireBase {
 
   @override
   Future<void> uploadQuestion(BookQuestion question, int documentId) async {
-    // TODO: implement uploadQuestion
     await _firestore
         .collection('question')
         .document('$documentId')
