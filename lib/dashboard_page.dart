@@ -140,6 +140,10 @@ Widget TeamRankings(BuildContext context) {
     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
       if (snapshot.connectionState == ConnectionState.active) {
         if (!snapshot.hasError && snapshot.hasData) {
+          Quanda.of(context).teamRankings = snapshot.data.documents
+              .toList()
+              .map((item) => TeamPoints.fromJson(item.data))
+              .toList();
           FireProvider.of(context).fireBase.getBookTypes(context);
           return _listofTeamRankings(context, snapshot);
         }
@@ -152,17 +156,17 @@ Widget TeamRankings(BuildContext context) {
 
 gotoHeroRoom(BuildContext context) {
   print('Debug: I will go to the hero room');
-  Navigator.push(
+  Navigator.pushNamed(
     context,
-    MaterialPageRoute(builder: (context) => HeroRoomPage()),
+    '/hero_room',
   );
 }
 
 gotoTeamHall(BuildContext context) {
   print('Debug: I will go to the team halls');
-  Navigator.push(
+  Navigator.pushNamed(
     context,
-    MaterialPageRoute(builder: (context) => TeamHallPage()),
+    '/team_hall',
   );
 }
 

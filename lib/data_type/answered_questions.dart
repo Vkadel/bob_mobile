@@ -12,15 +12,11 @@ class AnsweredQuestions {
   int status;
   int reset = 0;
 
-  /// A necessary factory constructor for creating a new User instance
-  /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
-  /// The constructor is named after the source class, in this case, User.
+  // TODO to keep: make sure the conversion is also dynamic,dynamic the auto runner
+  // tends to change the part file to String
   factory AnsweredQuestions.fromJson(Map<dynamic, dynamic> json) =>
       _$AnsweredQuestionsFromJson(json);
 
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$UserToJson`.
   Map<String, dynamic> toJson() => _$AnsweredQuestionsToJson(this);
 
   void resetAnsweredQuestion() {

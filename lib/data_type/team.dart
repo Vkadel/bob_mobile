@@ -25,8 +25,19 @@ part 'team.g.dart';
 class Team {
   String leader_id;
   String team_name;
+  String leaderName;
+  String memberOneName;
+  String memberTwoName;
+  String memberThreeName;
   int points;
   int school_id;
+  bool invitationMemberOnePending;
+  bool invitationMemberTwoPending;
+  bool invitationMemberThreePending;
+  bool invitationMemberOneAccepted;
+  bool invitationMemberTwoAccepted;
+  bool invitationMemberThreeAccepted;
+  bool teamIsActive;
 
   Team();
 

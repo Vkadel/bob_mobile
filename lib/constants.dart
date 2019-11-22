@@ -13,6 +13,7 @@ class Constants {
   static final double height_lists_hero_page = 230;
   static final double height_raking_items = 76;
   static final double card_elevation = 8;
+  static final String form_or_join_a_team = "Form or join a team";
   static final String name_exist = "Name exists try another one";
   static final String name_cannot_be_empty = "A hero needs a name";
   static final String hint_text_for_hero_name = "Enter Hero Name";

@@ -349,7 +349,6 @@ void functionForCorrect(BuildContext context, int questionId) {
 
 void _reportIncorrectQuestion(BuildContext context, int questionId) async {
   Provider.of<BattlePageStateData>(context, listen: false).hitHero();
-
   FireProvider.of(context).fireBase.reportAnswer(context, questionId, false);
   //is User Alive
 }
@@ -358,7 +357,9 @@ void _reportRightAnswer(BuildContext context, int questionId) async {
   print('The Question was answered correctly');
   Provider.of<BattlePageStateData>(context, listen: false).hitMob();
   Provider.of<BattlePageStateData>(context, listen: false).addPointHitForHero();
-  FireProvider.of(context).fireBase.reportAnswer(context, questionId, true);
+  await FireProvider.of(context)
+      .fireBase
+      .reportAnswer(context, questionId, true);
   Quanda.of(context).personal
       ? _sendPointToPersonal(context)
       : _sendPointToTeam();

@@ -7,6 +7,7 @@ class PlayerPoints {
   int player_points;
   String id;
   String player_name;
+  bool playerTeamId;
 
   PlayerPoints(this.player_points, this.id, this.player_name);
 

@@ -57,6 +57,7 @@ class QuestionEngine {
 
   void selectBookRandom() {
     int listSize = Quanda.of(mcontext).userData.list_of_read_books.length;
+    //Todo:Make sure user has books before going into the questions
     int selectedBook = new Random().nextInt(listSize);
     print('Question engine Selected Book number: ${listSize}');
     getMasterBookInfo(selectedBook);

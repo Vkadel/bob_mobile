@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class TeamFormationData with ChangeNotifier {
+  String _teamName;
   String _teamMemberOneName;
   String _teamMemberTwoName;
   String _teamMemberThreeName;
@@ -19,6 +20,7 @@ class TeamFormationData with ChangeNotifier {
   String get teamMemberTwoName => _teamMemberTwoName;
   String get teamMemberThreeName => _teamMemberThreeName;
   String get leaderName => _leaderName;
+  String get teamName => _teamName;
   bool get teamInviteStatusOne => _teamInviteStatusOne;
   bool get teamInviteStatusTwo => _teamInviteStatusTwo;
   bool get teamInviteStatusThree => _teamInviteStatusThree;
@@ -32,6 +34,13 @@ class TeamFormationData with ChangeNotifier {
   TeamFormationData();
 
   ///Updaters
+  void updateteamName(String newteamName) {
+    if (this.teamName != newteamName) {
+      this._teamName = newteamName;
+      notifyListeners();
+    }
+  }
+
   void updateteamMemberOneName(String newteamMemberOneName) {
     if (this.teamMemberOneName != newteamMemberOneName) {
       this._teamMemberOneName = newteamMemberOneName;

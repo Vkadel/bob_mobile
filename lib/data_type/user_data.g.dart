@@ -6,7 +6,7 @@ part of 'user_data.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserData _$UserDataFromJson(Map<String, dynamic> json) {
+UserData _$UserDataFromJson(Map<dynamic, dynamic> json) {
   return UserData(
     (json['list_of_read_books'] as List)?.map((e) => e as int)?.toList(),
     json['id'] as String,
@@ -15,7 +15,7 @@ UserData _$UserDataFromJson(Map<String, dynamic> json) {
       ?.toList();
 }
 
-Map<String, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
+Map<dynamic, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
       'list_of_read_books': instance.list_of_read_books,
       'answered_questions': instance.answered_questions,
       'id': instance.id,

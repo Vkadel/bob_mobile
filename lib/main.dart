@@ -8,6 +8,7 @@ import 'package:bob_mobile/modelData/battle_page_state_data.dart';
 import 'package:bob_mobile/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/select_role_page.dart';
+import 'package:bob_mobile/team_hall_page.dart';
 import 'package:bob_mobile/widgets/loading_indicator_full_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
               '/personality_test': (BuildContext context) =>
                   PersonalitySurveyPage(title: 'Tell your tale'),
               '/hero_room': (BuildContext context) => HeroRoomPage(),
+              '/team_hall': (BuildContext context) => TeamHallPage(),
               '/fight': (BuildContext context) => BattlePage(),
               '/add_player_to_team': (BuildContext context) => AddPlayerPage(),
             },

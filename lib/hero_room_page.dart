@@ -106,31 +106,43 @@ class _HeroPageState extends State<HeroRoomPage> {
     stream = null;
     super.dispose();
   }
+
+  void showSnackBarOnHeroRoom(String text) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(text),
+    ));
+  }
 }
 
 Widget _buildButtonsForBattle(BuildContext context) {
-  return SliverGrid.count(
-    crossAxisCount: 2,
-    children: <Widget>[
-      CreateLargeButtonWithSVGOverlap(
-          'Fight for Yourself',
-          'assets/fight_for_yourself.svg',
-          context,
-          Radius.circular(20),
-          Radius.circular(0),
-          Radius.circular(20),
-          Radius.circular(0),
-          startFightForYourself),
-      CreateLargeButtonWithSVGOverlap(
-          'Fight for the Team',
-          'assets/fight_for_your_team.svg',
-          context,
-          Radius.circular(0),
-          Radius.circular(20),
-          Radius.circular(0),
-          Radius.circular(20),
-          startFightForTheTeam)
-    ],
+  return Builder(
+    builder: (BuildContext context) {
+      return SliverGrid.count(
+        crossAxisCount: 2,
+        children: <Widget>[
+          CreateLargeButtonWithSVGOverlap(
+              'Fight for Yourself',
+              'assets/fight_for_yourself.svg',
+              context,
+              Radius.circular(20),
+              Radius.circular(0),
+              Radius.circular(20),
+              Radius.circular(0),
+              startFightForYourself,
+              true),
+          CreateLargeButtonWithSVGOverlap(
+              'Fight for the Team',
+              'assets/fight_for_your_team.svg',
+              context,
+              Radius.circular(0),
+              Radius.circular(20),
+              Radius.circular(0),
+              Radius.circular(20),
+              startFightForTheTeam,
+              Quanda.of(context).myUser.team_id == null ? false : true),
+        ],
+      );
+    },
   );
 }
 
@@ -161,11 +173,12 @@ Widget CreateLargeButtonWithSVGOverlap(
     Radius topRight,
     Radius bottomLeft,
     Radius bottomRight,
-    Function myAction) {
+    Function myAction,
+    bool enabled) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: RaisedButton(
-      elevation: 8,
+      elevation: enabled ? 16 : 0,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: topLeft,
@@ -191,7 +204,16 @@ Widget CreateLargeButtonWithSVGOverlap(
         ],
       ),
       onPressed: () {
-        myAction(context);
+        if (enabled) {
+          myAction(context);
+        } else {
+          Scaffold.of(context).showSnackBar(SnackBar(
+            backgroundColor: ColorLogicbyRole(context),
+            content: Text(
+              Constants.form_or_join_a_team,
+            ),
+          ));
+        }
       },
     ),
   );

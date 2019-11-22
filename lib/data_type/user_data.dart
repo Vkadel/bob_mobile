@@ -30,12 +30,13 @@ class UserData {
   );
 
   List<int> list_of_read_books;
+
+  ///TODO to keep: make sure to convert this to dynamic,dynamic
   List<Map<dynamic, dynamic>> answered_questions;
   String id;
 
-  /// A necessary factory constructor for creating a new User instance
-  /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
-  /// The constructor is named after the source class, in this case, User.
+  ///TODO to keep: make sure the helper method is also
+  ///dynamic, dynamic the builder changes it to String,dynamic
   factory UserData.fromJson(Map<dynamic, dynamic> json) =>
       _$UserDataFromJson(json);
 
