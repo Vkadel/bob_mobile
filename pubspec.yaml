@@ -32,6 +32,8 @@ dependencies:
   provider: ^3.2.0
   autocomplete_textfield: ^1.7.3
   json_serializable: ^3.2.3
+  flare_flutter: ^1.7.3
+  flare_dart: ^2.2.5
 
 dev_dependencies:
   flutter_test:
@@ -43,3 +45,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/anim/
+

@@ -8,6 +8,9 @@ import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_role.dart';
 import 'package:bob_mobile/widgets/loading_indicator_message.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
+import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_flutter/flare_cache_builder.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -138,13 +141,18 @@ Widget _buildBookTile(int index) {
               ),
               Stack(
                 children: <Widget>[
+                  Container(
+                    height: (MediaQuery.of(context).size.width - 20) / 3,
+                    child: FlareActor(
+                      "assets/anim/book_progress_anim.flr",
+                      alignment: Alignment.center,
+                      animation: "100",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   Image.network(
                     '${Quanda.of(context).listOfMasterBooks.elementAt(index).online_picture_link}',
                     width: (MediaQuery.of(context).size.width - 20) / 3,
-                  ),
-                  Container(
-                    height: (MediaQuery.of(context).size.width - 20) / 3,
-                    color: Color.fromRGBO(10, 10, 10, 50),
                   ),
                 ],
               ),
