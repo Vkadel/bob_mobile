@@ -1,127 +1,233 @@
+import 'package:bob_mobile/data_type/team.dart';
+import 'package:bob_mobile/helpers/constants.dart';
+import 'package:bob_mobile/helpers/not_null_not_empty.dart';
+import 'package:bob_mobile/helpers/snack_bar_message.dart';
+import 'package:bob_mobile/helpers/snack_bar_message_w_spin.dart';
+import 'package:bob_mobile/modelData/provider.dart';
+import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class TeamFormationData with ChangeNotifier {
-  String _teamName;
-  String _teamMemberOneName;
-  String _teamMemberTwoName;
-  String _teamMemberThreeName;
-  String _leaderName;
-  bool _teamInviteStatusOne;
-  bool _teamInviteStatusTwo;
-  bool _teamInviteStatusThree;
-  bool _sendInvitationToOne;
-  bool _sendInvitationToTwo;
-  bool _sendInvitationToThree;
-  bool _sendInvitationToAll;
-  bool _teamFormed;
+  bool _teamGenerated = false;
+  bool _allAccepted = false;
+  bool _nameCanBeUsed = false;
+  Team _theTeam = new Team();
 
   ///Getters
-  String get teamMemberOneName => _teamMemberOneName;
-  String get teamMemberTwoName => _teamMemberTwoName;
-  String get teamMemberThreeName => _teamMemberThreeName;
-  String get leaderName => _leaderName;
-  String get teamName => _teamName;
-  bool get teamInviteStatusOne => _teamInviteStatusOne;
-  bool get teamInviteStatusTwo => _teamInviteStatusTwo;
-  bool get teamInviteStatusThree => _teamInviteStatusThree;
-  bool get sendInvitationToOne => _sendInvitationToOne;
-  bool get sendInvitationToTwo => _sendInvitationToTwo;
-  bool get sendInvitationToThree => _sendInvitationToThree;
-  bool get sendInvitationToAll => _sendInvitationToAll;
-  bool get teamFormed => _teamFormed;
+  Team get theTeam => _theTeam;
+
+  ///Will be false until the team is formed
+  ///in Firestore and the user has it on profile
+  bool get teamGenerated => _teamGenerated;
+  bool get nameCanBeUsed => _nameCanBeUsed;
+
+  ///this will show team is completed
+  ///team is now formed
+  bool get allAccepted => _allAccepted;
   TeamFormationData get teamFormationData => this;
 
-  TeamFormationData();
+  TeamFormationData() {}
+  //Initialization
+  void initializeTeamData(BuildContext context) {
+    ///if there is already a this needs to reflect it
+    updateteamGenerated(
+        NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot());
+    if (NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot()) {
+      updateteamName(Quanda.of(context).myUser.team_id, context);
+    }
+    FireProvider.of(context)
+        .fireBase
+        .getTeamStream(context, Quanda.of(context).myUser.team_id)
+        .listen(
+            (snapshot) => {updateTeam(Team.fromJson(snapshot.data), context)});
+  }
 
   ///Updaters
-  void updateteamName(String newteamName) {
-    if (this.teamName != newteamName) {
-      this._teamName = newteamName;
+
+  void updateTeam(Team newTeam, BuildContext context) {
+    if (this.theTeam != newTeam) {
+      this._theTeam = newTeam;
+      Quanda.of(context).myTeam = newTeam;
+      checkAllAccepted(newTeam, context);
       notifyListeners();
     }
   }
 
-  void updateteamMemberOneName(String newteamMemberOneName) {
-    if (this.teamMemberOneName != newteamMemberOneName) {
-      this._teamMemberOneName = newteamMemberOneName;
+  void updateteamGenerated(bool newteamFormed) {
+    if (this.teamGenerated != newteamFormed) {
+      this._teamGenerated = newteamFormed;
       notifyListeners();
     }
   }
 
-  void updateteamMemberTwoName(String newteamMemberTwoName) {
-    if (this.teamMemberTwoName != newteamMemberTwoName) {
-      this._teamMemberTwoName = newteamMemberTwoName;
+  void updatenameCanBeUsed(bool newnameCanBeUsed) {
+    if (this.nameCanBeUsed != newnameCanBeUsed) {
+      this._nameCanBeUsed = newnameCanBeUsed;
       notifyListeners();
     }
   }
 
-  void updateteamMemberThreeName(String newteamMemberThreeName) {
-    if (this.teamMemberThreeName != newteamMemberThreeName) {
-      this._teamMemberThreeName = newteamMemberThreeName;
+  void updateallAccepted(bool newallAccepted, context) {
+    if (this.allAccepted != newallAccepted) {
+      this._allAccepted = newallAccepted;
+      if (!theTeam.teamIsActive) {
+        FireProvider.of(context).fireBase.makeTeamActive(theTeam.team_name);
+      }
       notifyListeners();
     }
   }
 
-  void updateleaderName(String newleaderName) {
-    if (this.leaderName != newleaderName) {
-      this._leaderName = newleaderName;
-      notifyListeners();
+  void updateteamName(String newteamName, BuildContext context) {
+    if (this.theTeam.team_name != newteamName) {
+      this._theTeam.team_name = newteamName;
+      _checkifTeamNameCanBeUsed(context);
     }
   }
 
-  void updateteamInviteStatusOne(bool newteamInviteStatusOne) {
-    if (this.teamInviteStatusOne != newteamInviteStatusOne) {
-      this._teamInviteStatusOne = newteamInviteStatusOne;
-      notifyListeners();
+  bool _checkifTeamNameCanBeUsed(BuildContext context) {
+    int indexLocation;
+    try {
+      indexLocation = Quanda.of(context).teamRankings.indexWhere((item) => item
+          .team_name
+          .trim()
+          .toLowerCase()
+          .startsWith(_theTeam.team_name.trim().toLowerCase()));
+    } catch (e) {
+      print(e);
+    }
+    if (indexLocation == -1) {
+      print('${_theTeam.team_name} can be used');
+      updatenameCanBeUsed(true);
+    } else {
+      print('${_theTeam.team_name} cannot be used');
+      updatenameCanBeUsed(false);
     }
   }
 
-  void updateteamInviteStatusTwo(bool newteamInviteStatusTwo) {
-    if (this.teamInviteStatusTwo != newteamInviteStatusTwo) {
-      this._teamInviteStatusTwo = newteamInviteStatusTwo;
-      notifyListeners();
+  Future<void> updateTeamInFireStore(BuildContext context) async {
+    bool teamWasFormed = await FireProvider.of(context)
+        .fireBase
+        .createTeam(context, _theTeam.team_name);
+    print('the result of team has formed is: ${teamWasFormed}');
+    if (teamWasFormed == null) {
+      //Sometimes when the transaction does not go through
+      // because of errors it will return null
+      return false;
+    } else {
+      return teamWasFormed;
     }
   }
 
-  void updateteamInviteStatusThree(bool newteamInviteStatusThree) {
-    if (this.teamInviteStatusThree != newteamInviteStatusThree) {
-      this._teamInviteStatusThree = newteamInviteStatusThree;
-      notifyListeners();
+  Future<void> sendInvitationToMember(
+    context,
+    index,
+    String text,
+  ) async {
+    String memberName;
+    if (index == 1) memberName = _theTeam.memberOneName;
+    if (index == 2) memberName = _theTeam.memberTwoName;
+    if (index == 3) memberName = _theTeam.memberThreeName;
+    try {
+      if (NotNullNotEmpty(text).isnot())
+        SnackBarWithSpin(
+            'Sending invitation please to: $text wait for transaction to complete',
+            context);
+      await FireProvider.of(context)
+          .fireBase
+          .sendInviteToMember(text, _theTeam.team_name, context, index)
+          .whenComplete((() {
+        SnackBarMessage('Invitation sent to: ${text}', context);
+      }));
+    } on Exception catch (e) {
+      //Todo: uncover error for user
+      SnackBarMessage(e.toString(), context);
+      /*SnackBarMessage('There was a problem sending the invite to: ${memberName}', context);*/
     }
   }
 
-  void updatecontinue_fighting(bool newsendInvitationToAll) {
-    if (this.sendInvitationToAll != newsendInvitationToAll) {
-      this._sendInvitationToAll = newsendInvitationToAll;
-      notifyListeners();
+  void updateTeamMateName(
+      String teamMemberName, BuildContext context, int index) {
+    if (teamMemberName != this.theTeam.leaderName ||
+        Constants.choose_yourself_as_team_member) {
+      if (index == 1 &&
+          NotNullNotEmpty(teamMemberName).isnot() &&
+          teamMemberCanBeUsed(teamMemberName, index, context)) {
+        if (this.theTeam.memberOneName != teamMemberName) {
+          this._theTeam.memberOneName = teamMemberName;
+          notifyListeners();
+        }
+      }
+
+      if (index == 2 &&
+          teamMemberCanBeUsed(teamMemberName, index, context) &&
+          NotNullNotEmpty(teamMemberName).isnot()) {
+        if (this.theTeam.memberTwoName != teamMemberName) {
+          this._theTeam.memberTwoName = teamMemberName;
+          notifyListeners();
+        }
+      }
+
+      if (index == 3 &&
+          teamMemberCanBeUsed(teamMemberName, index, context) &&
+          NotNullNotEmpty(teamMemberName).isnot()) {
+        if (this.theTeam.memberThreeName != teamMemberName) {
+          this._theTeam.memberThreeName = teamMemberName;
+          notifyListeners();
+        }
+      }
+    } else {
+      SnackBarMessage("You are already a team member", context);
     }
   }
 
-  void updatesendInvitationToOne(bool newsendInvitationToOne) {
-    if (this.sendInvitationToOne != newsendInvitationToOne) {
-      this._sendInvitationToOne = newsendInvitationToOne;
-      notifyListeners();
+  bool teamMemberCanBeUsed(String name, int index, BuildContext context) {
+    String compareOne;
+    String compareTwo;
+    String compareThree;
+    compareOne != null ? compareOne = compareOne : compareOne = "";
+    compareTwo != null ? compareTwo = compareTwo : compareTwo = "";
+    compareThree != null ? compareThree = compareThree : compareThree = "";
+    if (index == 1) {
+      if (NotNullNotEmpty(name).isnot() &&
+          name != theTeam.memberTwoName &&
+          name != theTeam.memberThreeName) {
+        return true;
+      } else {
+        this._theTeam.memberOneName = "";
+        SnackBarMessage(Constants.team_member_is_on_your_team, context);
+        return false;
+      }
+    }
+    if (index == 2) {
+      if (NotNullNotEmpty(name).isnot() &&
+          name != theTeam.memberOneName &&
+          name != theTeam.memberThreeName) {
+        return true;
+      } else {
+        this._theTeam.memberTwoName = "";
+        SnackBarMessage(Constants.team_member_is_on_your_team, context);
+        return false;
+      }
+    }
+    if (index == 3) {
+      if (NotNullNotEmpty(name).isnot() &&
+          name != theTeam.memberOneName &&
+          name != theTeam.memberTwoName) {
+        return true;
+      } else {
+        this._theTeam.memberThreeName = "";
+        SnackBarMessage(Constants.team_member_is_on_your_team, context);
+        return false;
+      }
     }
   }
 
-  void updatesendInvitationToTwo(bool newsendInvitationToTwo) {
-    if (this.sendInvitationToTwo != newsendInvitationToTwo) {
-      this._sendInvitationToTwo = newsendInvitationToTwo;
-      notifyListeners();
-    }
-  }
-
-  void updatesendInvitationToThree(bool newsendInvitationToThree) {
-    if (this.sendInvitationToThree != newsendInvitationToThree) {
-      this._sendInvitationToThree = newsendInvitationToThree;
-      notifyListeners();
-    }
-  }
-
-  void updateteamFormed(bool newteamFormed) {
-    if (this.teamFormed != newteamFormed) {
-      this._teamFormed = newteamFormed;
-      notifyListeners();
-    }
+  bool checkAllAccepted(Team team, BuildContext context) {
+    (team.invitationMemberOneAccepted &&
+            theTeam.invitationMemberTwoAccepted &&
+            team.invitationMemberThreeAccepted)
+        ? updateallAccepted(true, context)
+        : null;
   }
 }

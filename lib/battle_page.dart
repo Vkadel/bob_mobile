@@ -2,7 +2,7 @@ import 'package:bob_mobile/data_type/book_question.dart';
 import 'package:bob_mobile/data_type/books_master.dart';
 import 'package:bob_mobile/main.dart';
 import 'package:bob_mobile/modelData/battle_page_state_data.dart';
-import 'package:bob_mobile/provider.dart';
+import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/question_engine.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'constants.dart';
+import 'helpers/constants.dart';
 
 class BattlePage extends StatefulWidget {
   BattlePage({ObjectKey keyBattle}) : super(key: keyBattle);
@@ -51,6 +51,7 @@ class BattlePageState extends State<BattlePage> {
     Provider.of<BattlePageStateData>(context, listen: false)
         .resetWithoutUpdate();
     questionEngine = new QuestionEngine();
+    super.initState();
   }
 
   @override

@@ -1,4 +1,4 @@
-import 'package:bob_mobile/constants.dart';
+import 'package:bob_mobile/helpers/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 

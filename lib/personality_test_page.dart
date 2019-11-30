@@ -8,9 +8,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'constants.dart';
+import 'helpers/constants.dart';
 import 'modelData/personality_test_state_data.dart';
-import 'provider.dart';
+import 'modelData/provider.dart';
 import 'modelData/qanda.dart';
 
 class PersonalitySurveyPage extends StatefulWidget {
@@ -127,6 +127,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   FlatButton(
                     child: Text('Next'),
                     onPressed: () {
+                      //Todo: make sure you don't move on unless you have selected an item
                       Go_next(personalityTestStateData);
                     },
                   ),

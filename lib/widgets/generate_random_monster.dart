@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:bob_mobile/constants.dart';
+import 'package:bob_mobile/helpers/constants.dart';
 import 'package:flutter/cupertino.dart';
 
 class GenerateMonsterImageForFight {

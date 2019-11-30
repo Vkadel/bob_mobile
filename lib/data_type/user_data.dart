@@ -1,5 +1,7 @@
 import 'package:bob_mobile/data_type/answered_questions.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'books.dart';
 part 'user_data.g.dart';
 
 /// An annotation for the code generator to know that this class needs the
@@ -29,7 +31,7 @@ class UserData {
     this.id,
   );
 
-  List<int> list_of_read_books;
+  List<Books> list_of_read_books;
 
   ///TODO to keep: make sure to convert this to dynamic,dynamic
   List<Map<dynamic, dynamic>> answered_questions;

@@ -4,6 +4,9 @@ part 'team_points.g.dart';
 @JsonSerializable(explicitToJson: true)
 class TeamPoints {
   static const String _orderfield_ranking = 'team_points';
+  static const String leader_designation = 'leader';
+  static const String member_one_designation = 'member1';
+  static const String member_two_designation = 'member2';
   int team_points;
   Map<dynamic, dynamic> id;
   String team_name;
@@ -20,4 +23,10 @@ class TeamPoints {
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$UserToJson`.
   Map<String, dynamic> toJson() => _$TeamPointsToJson(this);
+
+  void addUserIdToLeader(String teamLeaderId) {
+    Map<dynamic, dynamic> ids = new Map();
+    ids[leader_designation] = teamLeaderId;
+    this.id = ids;
+  }
 }

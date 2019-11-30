@@ -1,7 +1,10 @@
 import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/dashboard_page.dart';
 import 'package:bob_mobile/data_type/items_master.dart';
-import 'package:bob_mobile/provider.dart';
+import 'package:bob_mobile/data_type/team_invites.dart';
+import 'package:bob_mobile/helpers/not_null_not_empty.dart';
+import 'package:bob_mobile/helpers/snack_bar_message.dart';
+import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_role.dart';
@@ -15,9 +18,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:random_color/random_color.dart';
 import 'package:intl/intl.dart';
-import 'constants.dart';
+import 'helpers/constants.dart';
 import 'data_type/avatar_stats.dart';
 import 'data_type/items.dart';
+import 'helpers/date_millis_to_string.dart';
 
 class HeroRoomPage extends StatefulWidget {
   @override
@@ -60,6 +64,7 @@ class _HeroPageState extends State<HeroRoomPage> {
             ),
             _buildStats(context, stream),
             _buildSpacerBox(context),
+            _buildOutstandingTeamInvitations(context),
             SliverToBoxAdapter(
               child: TabBar(
                 labelColor: ColorLogicbyPersonality(context),
@@ -86,7 +91,7 @@ class _HeroPageState extends State<HeroRoomPage> {
                       height: MediaQuery.of(context).size.width * 2,
                       child: _buildListofItems(context),
                     ),
-                    Icon(Icons.directions_transit),
+                    _buildLibraryTab(),
                     Icon(Icons.directions_bike),
                   ],
                 ),
@@ -114,6 +119,216 @@ class _HeroPageState extends State<HeroRoomPage> {
   }
 }
 
+Widget _buildLibraryTab() {
+  int listSize;
+
+  return Builder(
+    builder: (context) {
+      (Quanda.of(context).userData == null ||
+              Quanda.of(context).userData.list_of_read_books == null)
+          ? listSize = 0
+          : listSize = Quanda.of(context).userData.list_of_read_books.length;
+      if ((Quanda.of(context).userData != null &&
+              Quanda.of(context).userData.list_of_read_books != null) ||
+          listSize > 0) {
+        print('Will show list of books');
+        return Container(
+          height: MediaQuery.of(context).size.width * 2,
+          color: ColorLogicbyRole(context),
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Row(
+                  children: <Widget>[TextFormattedLabelTwo('Add Books')],
+                );
+              } else {
+                return TextFormattedLabelTwo('item container');
+              }
+            },
+            itemCount: listSize + 1,
+          ),
+        );
+      } else {
+        print('Player has read no books');
+        return Container(
+          color: ColorLogicbyRole(context),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  TextFormattedLabelTwo(
+                      'Add some books you have read into your library',
+                      MediaQuery.of(context).size.width / 20,
+                      Colors.white,
+                      null,
+                      TextAlign.center),
+                  FlatButton.icon(
+                      shape: Border.all(color: Colors.white, width: 2),
+                      onPressed: () {
+                        print('I will launch add book screen');
+                        Navigator.of(context).pushNamed('/add_read_book');
+                      },
+                      icon: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
+                      label: TextFormattedLabelTwo(
+                          'Add Read Books',
+                          MediaQuery.of(context).size.width / 20,
+                          Colors.white,
+                          null,
+                          TextAlign.center)),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+    },
+  );
+}
+
+Widget _buildBookTile(int index) {
+  return (Builder(
+    builder: (context) {
+      return ListTile(
+        title: TextFormattedLabelTwo(Quanda.of(context)
+            .listOfMasterBooks
+            .elementAt(Quanda.of(context)
+                .userData
+                .list_of_read_books
+                .elementAt(index)
+                .bookId)
+            .name),
+      );
+    },
+  ));
+}
+
+Widget _buildOutstandingTeamInvitations(context) {
+  return Builder(builder: (BuildContext context) {
+    //Todo: make this the opposite
+    bool dontHaveTeam =
+        !NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot();
+    if (dontHaveTeam) {
+      //Show Invitation list
+      return StreamBuilder(
+        stream: FireProvider.of(context)
+            .fireBase
+            .getOutstandingTeamInvitations(context),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapShot) {
+          if (snapShot.connectionState == ConnectionState.active &&
+              snapShot.hasData) {
+            Quanda.of(context).pendingTeamInvites = snapShot.data.documents
+                .map((snapShotItem) => TeamInvites.fromJson(snapShotItem.data))
+                .toList();
+            return SliverToBoxAdapter(
+              child: Container(
+                height: 200,
+                child: CustomScrollView(
+                  shrinkWrap: true,
+                  slivers: <Widget>[
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                        return Container(
+                          padding: EdgeInsets.all(0),
+                          height: index == 0
+                              ? MediaQuery.of(context).size.width / 10
+                              : MediaQuery.of(context).size.width / 4,
+                          child: Column(
+                            children: <Widget>[
+                              index == 0
+                                  ? Container(
+                                      padding: EdgeInsets.all(0),
+                                      alignment: Alignment.center,
+                                      child: TextFormattedLabelTwo(
+                                          'Pending Invitations',
+                                          MediaQuery.of(context).size.width /
+                                              15,
+                                          ColorLogicbyRole(context)),
+                                    )
+                                  : _pendingInvitationChildItem(
+                                      TeamInvites.fromJson(snapShot
+                                          .data.documents
+                                          .elementAt(index - 1)
+                                          .data),
+                                      context,
+                                      index),
+                            ],
+                          ),
+                        );
+                      }, childCount: snapShot.data.documents.length + 1),
+                    )
+                  ],
+                ),
+              ),
+            );
+          } else {
+            //Have a loading if the
+            return SliverToBoxAdapter(
+              child: Container(
+                child: Stack(
+                  children: <Widget>[
+                    Text('Checking for team invites'),
+                    CircularProgressIndicator()
+                  ],
+                ),
+              ),
+            );
+          }
+        },
+      );
+    } else {
+      //Show empty
+      return returnEmpty();
+    }
+  });
+}
+
+Widget _pendingInvitationChildItem(
+    TeamInvites teamInvites, BuildContext context, int index) {
+  return ListTile(
+    dense: true,
+    leading: Icon(Icons.hourglass_empty),
+    title: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Container(
+          alignment: Alignment.center,
+          width: MediaQuery.of(context).size.width / 2,
+          child: TextFormattedLabelTwo(
+              '${teamInvites.from} has invited you to ${teamInvites.team_name}',
+              MediaQuery.of(context).size.width / 30,
+              ColorLogicbyPersonality(context),
+              null,
+              TextAlign.justify),
+        ),
+        Container(
+          child: FlatButton(
+            onPressed: () {
+              //Todo anim for accept
+              print('I accept this invitation ${index}');
+              FireProvider.of(context)
+                  .fireBase
+                  .acceptTeamInvite(index - 1, context);
+            },
+            child: TextFormattedLabelTwo(
+                'Accept',
+                MediaQuery.of(context).size.width / 20,
+                ColorLogicbyPersonality(context)),
+          ),
+        )
+      ],
+    ),
+    subtitle: TextFormattedLabelTwo(
+        new DateMillisToString(teamInvites.date_sent).getDateString()),
+  );
+}
+
 Widget _buildButtonsForBattle(BuildContext context) {
   return Builder(
     builder: (BuildContext context) {
@@ -139,7 +354,9 @@ Widget _buildButtonsForBattle(BuildContext context) {
               Radius.circular(0),
               Radius.circular(20),
               startFightForTheTeam,
-              Quanda.of(context).myUser.team_id == null ? false : true),
+              NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot()
+                  ? false
+                  : true),
         ],
       );
     },
@@ -153,16 +370,48 @@ void startFightForYourself(BuildContext context) {
 }
 
 void startFightForTheTeam(BuildContext context) {
-  print('The fight starts for yourself');
-  Quanda.of(context).personal = false;
-  pushFightRoom(context);
+  if (NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot()) {
+    print('Player has a team will check if ready to earn points');
+    print('Refreshing team from online');
+    FireProvider.of(context)
+        .fireBase
+        .getTeam(context, Quanda.of(context).myUser.team_id);
+    if (NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot() &&
+        Quanda.of(context).myTeam.teamIsActive != null &&
+        Quanda.of(context).myTeam.teamIsActive) {
+      print('The fight starts for yourself');
+      Quanda.of(context).personal = false;
+      pushFightRoom(context);
+    }
+    if (NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot() &&
+        Quanda.of(context).myTeam.teamIsActive != null &&
+        !Quanda.of(context).myTeam.teamIsActive) {
+      print('Team exist but is not ready');
+      SnackBarMessage(
+          'Make sure your team is full and all the invitations accepted',
+          context);
+    }
+  } else {
+    print('Player cannot compete for team');
+    if (!NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot()) {
+      print('The player doesnt have a team');
+      SnackBarMessage(
+          'Please create or join a team before you can earn points', context);
+    }
+  }
 }
 
 void pushFightRoom(BuildContext context) {
-  Navigator.pushNamed(
-    context,
-    '/fight',
-  );
+  if (!Quanda.of(context).playeReadNoBooks) {
+    Navigator.pushNamed(
+      context,
+      '/fight',
+    );
+  } else {
+    SnackBarMessage(
+        'You currently have any books logged in your library, add some before you can fight',
+        context);
+  }
 }
 
 Widget CreateLargeButtonWithSVGOverlap(
@@ -186,7 +435,7 @@ Widget CreateLargeButtonWithSVGOverlap(
               bottomLeft: bottomLeft,
               bottomRight: bottomRight),
           side: BorderSide(color: ColorLogicbyRole(context), width: 0)),
-      color: ColorLogicbyPersonality(context),
+      color: enabled ? ColorLogicbyPersonality(context) : Colors.grey,
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
@@ -204,16 +453,7 @@ Widget CreateLargeButtonWithSVGOverlap(
         ],
       ),
       onPressed: () {
-        if (enabled) {
-          myAction(context);
-        } else {
-          Scaffold.of(context).showSnackBar(SnackBar(
-            backgroundColor: ColorLogicbyRole(context),
-            content: Text(
-              Constants.form_or_join_a_team,
-            ),
-          ));
-        }
+        myAction(context);
       },
     ),
   );
@@ -323,7 +563,7 @@ Widget _creatTileForItem(int index, BuildContext context) {
   }
 }
 
-//TOdo: Move to Widgets
+//Todo: Move to Widgets
 Widget _cardForItemInUse(int index, BuildContext context) {
   var formatter = new DateFormat('MM-dd-yyyy');
   DateTime date = DateTime.fromMillisecondsSinceEpoch(
@@ -364,7 +604,7 @@ Widget _cardForItemInUse(int index, BuildContext context) {
   );
 }
 
-//TOdo: Move to Widgets
+//Todo: Move to Widgets
 Widget _cardForItemCanBeUsed(int index, BuildContext context) {
   return Card(
     elevation: Constants.card_elevation,

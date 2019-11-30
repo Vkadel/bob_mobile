@@ -16,6 +16,8 @@ BooksMaster _$BooksMasterFromJson(Map<String, dynamic> json) {
     (json['bookTypesArray'] as List)?.map((e) => e as int)?.toList(),
     json['isbn13'] as String,
     json['by'] as String,
+    (json['keyword_name'] as List)?.map((e) => e as String)?.toList(),
+    (json['keywords_by'] as List)?.map((e) => e as String)?.toList(),
   );
 }
 
@@ -29,4 +31,6 @@ Map<String, dynamic> _$BooksMasterToJson(BooksMaster instance) =>
       'isbn13': instance.isbn13,
       'name': instance.name,
       'by': instance.by,
+      'keyword_name': instance.keyword_name,
+      'keywords_by': instance.keywords_by,
     };

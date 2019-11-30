@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Constants {
+  //Todo: Change this to false
+  static final bool choose_yourself_as_team_member = true;
   static final int initial_point_value = 0;
   static final int point_perQuestion = 2;
   static final int blows_ceiling_to_kill_mob = 6;
@@ -13,6 +15,8 @@ class Constants {
   static final double height_lists_hero_page = 230;
   static final double height_raking_items = 76;
   static final double card_elevation = 8;
+  static final String team_member_is_on_your_team =
+      'That team Member is already in your team try someone else';
   static final String form_or_join_a_team = "Form or join a team";
   static final String name_exist = "Name exists try another one";
   static final String name_cannot_be_empty = "A hero needs a name";

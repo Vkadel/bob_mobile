@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:bob_mobile/auth.dart';
+import 'package:bob_mobile/modelData/auth.dart';
 
 Widget GoogleSingInButton(String label, Auth auth) {
   return Container(

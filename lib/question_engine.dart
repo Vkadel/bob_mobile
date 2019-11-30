@@ -6,7 +6,7 @@ import 'package:bob_mobile/data_type/book_question.dart';
 import 'package:bob_mobile/data_type/books.dart';
 import 'package:bob_mobile/data_type/books_master.dart';
 import 'package:bob_mobile/data_type/user_data.dart';
-import 'package:bob_mobile/provider.dart';
+import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/data_type/firstQuestionsUpload.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,6 +27,7 @@ class QuestionEngine {
       StreamController<BookQuestion>.broadcast();
   List answeredQuestionsForBook;
   bool engineIsRunning = false;
+  bool playeReadNoBooks = true;
   QuestionEngine();
 
   Stream<BookQuestion> getStream() {
@@ -38,29 +39,34 @@ class QuestionEngine {
     print('Initializing Question Engine.....');
     isGettingQuestion = true;
     mcontext = context;
-    getUsersBooks();
+    getUsersBooks(context);
   }
 
-  void getUsersBooks() {
+  void getUsersBooks(BuildContext context) {
     print("Question engine Starting to get user books");
     FireProvider.of(mcontext)
         .fireBase
         .getUserReadListOfBooks(Quanda.of(mcontext).myUser)
-        .listen((list) => updateQuandaListOfBooks(list));
+        .listen((list) => updateQuandaListOfBooks(list, context));
   }
 
-  void updateQuandaListOfBooks(DocumentSnapshot gotDocs) {
+  void updateQuandaListOfBooks(DocumentSnapshot gotDocs, BuildContext context) {
     Quanda.of(mcontext).userData = UserData.fromJson(gotDocs.data);
     print('Question engine Updated Quanda with books Read');
-    selectBookRandom();
+    selectBookRandom(context);
   }
 
-  void selectBookRandom() {
+  void selectBookRandom(BuildContext context) {
     int listSize = Quanda.of(mcontext).userData.list_of_read_books.length;
     //Todo:Make sure user has books before going into the questions
-    int selectedBook = new Random().nextInt(listSize);
-    print('Question engine Selected Book number: ${listSize}');
-    getMasterBookInfo(selectedBook);
+    if (listSize == 0) {
+      return null;
+    } else {
+      Quanda.of(context).playeReadNoBooks = false;
+      int selectedBook = new Random().nextInt(listSize);
+      print('Question engine Selected Book number: ${listSize}');
+      getMasterBookInfo(selectedBook);
+    }
   }
 
   void getMasterBookInfo(int bookLocationInQuanda) {
@@ -69,7 +75,8 @@ class QuestionEngine {
     IdofBookChoosenFromQuanda = Quanda.of(mcontext)
         .userData
         .list_of_read_books
-        .elementAt(bookLocationInQuanda);
+        .elementAt(bookLocationInQuanda)
+        .bookId;
 
     FireProvider.of(mcontext)
         .fireBase
@@ -92,10 +99,17 @@ class QuestionEngine {
     bookQueried = BooksMaster.fromJson(bookSnapshot.data);
     FireProvider.of(mcontext)
         .fireBase
-        .getQuestionsForMasterBook(Quanda.of(mcontext)
-            .userData
-            .list_of_read_books
-            .elementAt(booklocation))
+        .getQuestionsForMasterBook(
+            Quanda.of(mcontext)
+                .userData
+                .list_of_read_books
+                .elementAt(booklocation)
+                .bookId,
+            Quanda.of(mcontext)
+                .userData
+                .list_of_read_books
+                .elementAt(booklocation)
+                .status)
         .listen((listOfQuestions) =>
             selectOneQuestionToSendBack(listOfQuestions, booklocation));
   }
@@ -226,8 +240,8 @@ class QuestionEngine {
     return null;
   }
 
-  void requestQuestionAgain() {
-    selectBookRandom();
+  void requestQuestionAgain(BuildContext context) {
+    selectBookRandom(context);
   }
 
   void createDummyListOfQuestionsAnswered() {

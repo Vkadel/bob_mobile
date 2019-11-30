@@ -1,7 +1,7 @@
 import 'package:bob_mobile/data_type/user.dart';
-import 'package:bob_mobile/provider.dart';
+import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
-import 'package:bob_mobile/validators.dart';
+import 'package:bob_mobile/helpers/validators.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:bob_mobile/widgets/text_formatted_body.dart';
@@ -12,7 +12,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'constants.dart';
+import 'helpers/constants.dart';
 import 'data_type/player_points.dart';
 
 class SelectRolePage extends StatefulWidget {

@@ -6,13 +6,23 @@ class TeamInvites {
   String team_name;
   String invited_name;
   String team_id;
-  String from;
 
   ///This is the name of the teamLeader
+  String from;
   bool accepted;
+  //Pending has to change to false once the
+  //lead acknowledges it
   bool pending;
   int date_sent;
-  TeamInvites();
+
+  TeamInvites(
+      {this.team_id,
+      this.invited_name,
+      this.team_name,
+      this.from,
+      this.accepted,
+      this.pending,
+      this.date_sent});
 
   factory TeamInvites.fromJson(Map<dynamic, dynamic> json) =>
       _$TeamInvitesFromJson(json);

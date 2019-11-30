@@ -1,23 +1,27 @@
 import 'package:bob_mobile/add_player_page.dart';
-import 'package:bob_mobile/auth.dart';
+import 'package:bob_mobile/modelData/auth.dart';
 import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/data_type/user.dart';
-import 'package:bob_mobile/mfirestore.dart';
+import 'package:bob_mobile/modelData/mfirestore.dart';
 import 'package:bob_mobile/hero_room_page.dart';
 import 'package:bob_mobile/modelData/battle_page_state_data.dart';
-import 'package:bob_mobile/provider.dart';
+import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/select_role_page.dart';
 import 'package:bob_mobile/team_hall_page.dart';
 import 'package:bob_mobile/widgets/loading_indicator_full_screen.dart';
+import 'package:bob_mobile/widgets/loading_indicator_message.dart';
+import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'add_book_page.dart';
 import 'dashboard_page.dart';
 import 'login_page.dart';
+import 'modelData/add_book_form_data.dart';
 import 'modelData/personality_test_state_data.dart';
 import 'modelData/team_formation_data.dart';
 import 'personality_test_page.dart';
@@ -40,6 +44,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           builder: (_) => TeamFormationData(),
         ),
+        ChangeNotifierProvider(
+          builder: (_) => AddBookFormData(),
+        )
       ],
       child: Quanda(
         child: FireProvider(
@@ -62,6 +69,7 @@ class MyApp extends StatelessWidget {
               '/team_hall': (BuildContext context) => TeamHallPage(),
               '/fight': (BuildContext context) => BattlePage(),
               '/add_player_to_team': (BuildContext context) => AddPlayerPage(),
+              '/add_read_book': (BuildContext context) => AddBookPage(),
             },
           ),
         ),
@@ -154,7 +162,10 @@ class _HomePageState extends State<HomePage> {
                       snapshot.data != null &&
                       snapshot.hasData)
                   ? userPlayReadyVerification(snapshot)
-                  : Container(child: CircularProgressIndicator());
+                  : Scaffold(
+                      body: LoadingIndicatorMessage(
+                      message: 'Loading user data',
+                    ));
         },
       );
     } else {
@@ -264,11 +275,15 @@ class _HomePageState extends State<HomePage> {
     switch (snapshot.connectionState) {
       case ConnectionState.waiting:
         print('SNAPSHOT Connection waiting');
-        return mLoadingIndicatorFullScreen(context, snapshot.connectionState);
+        return LoadingIndicatorMessage(
+          message: 'Checking user data...',
+        );
         break;
       case ConnectionState.none:
         print('SNAPSHOT Connection NONE');
-        return mLoadingIndicatorFullScreen(context, snapshot.connectionState);
+        return LoadingIndicatorMessage(
+          message: 'No connection try again later..',
+        );
         break;
       case ConnectionState.active:
         print('SNAPSHOT Connection Active');
@@ -278,7 +293,10 @@ class _HomePageState extends State<HomePage> {
         break;
       case ConnectionState.done:
         print('SNAPSHOT Connection done');
-        return mLoadingIndicatorFullScreen(context, snapshot.connectionState);
+        return LoadingIndicatorMessage(
+          message: 'Finished..',
+        );
+        ;
         // ignore: missing_return
         break;
       default:

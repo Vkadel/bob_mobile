@@ -37,12 +37,12 @@ class User {
   String email;
   String id;
   int status; //0:offline 1: online
-  int points;
-  int role; //0:Undertermined 1:Knight 2:Mage 3: Archer
+  int points = 0;
+  int role = 0; //0:Undertermined 1:Knight 2:Mage 3: Archer
   Map<dynamic, dynamic>
       personality; //Will store all values of personality calculated
-  String school_id;
-  String team_id;
+  String school_id = '';
+  String team_id = '';
   List<int> answers;
 
   /// A necessary factory constructor for creating a new User instance

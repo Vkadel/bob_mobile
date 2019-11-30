@@ -6,13 +6,13 @@ class Books {
   Books(
     this.id, //owner id
     this.status,
-    this.bookId, //book id see booksMaster
+    this.bookId, //book id see booksMaster a sequencial number in the system
     //0: not read  -  1:read 1/3 -  2:read 2/3    -  3: read all
   );
 
   String id;
   int status;
-  String bookId;
+  int bookId;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

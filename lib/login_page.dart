@@ -1,5 +1,5 @@
-import 'package:bob_mobile/provider.dart';
-import 'package:bob_mobile/validators.dart';
+import 'package:bob_mobile/modelData/provider.dart';
+import 'package:bob_mobile/helpers/validators.dart';
 import 'package:bob_mobile/widgets/google_signin_button.dart';
 import 'package:bob_mobile/widgets/rounded_edge_button.dart';
 import 'package:flutter/cupertino.dart';

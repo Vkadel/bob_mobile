@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 
-import '../constants.dart';
+import '../helpers/constants.dart';
 
 /// A class to keep the battle information
 ///

@@ -12,7 +12,9 @@ class BooksMaster {
       this.pages,
       this.bookTypesArray,
       this.isbn13,
-      this.by);
+      this.by,
+      this.keyword_name,
+      this.keywords_by);
 
   String id;
   int status;
@@ -23,6 +25,10 @@ class BooksMaster {
   String isbn13;
   String name;
   String by;
+  List<String>
+      keyword_name; //this will be used to perform a search for each book
+  List<String>
+      keywords_by; //this will be used to perform a search for each book
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

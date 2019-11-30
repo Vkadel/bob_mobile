@@ -2,7 +2,7 @@ import 'package:bob_mobile/data_type/player_points.dart';
 import 'package:bob_mobile/data_type/team_points.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_3.dart';
-import 'package:bob_mobile/provider.dart';
+import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/team_hall_page.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
@@ -13,7 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bob_mobile/widgets/scrollable_widget_window.dart';
 
-import 'constants.dart';
+import 'helpers/constants.dart';
 import 'widgets/text_formated_raking_label_1.dart';
 import 'hero_room_page.dart';
 

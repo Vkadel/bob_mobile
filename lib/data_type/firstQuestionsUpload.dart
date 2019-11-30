@@ -1,5 +1,5 @@
 import 'package:bob_mobile/data_type/book_question.dart';
-import 'package:bob_mobile/provider.dart';
+import 'package:bob_mobile/modelData/provider.dart';
 import 'package:flutter/cupertino.dart';
 
 class BookQuestionUpload {

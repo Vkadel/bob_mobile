@@ -10,7 +10,7 @@ Books _$BooksFromJson(Map<String, dynamic> json) {
   return Books(
     json['id'] as String,
     json['status'] as int,
-    json['bookId'] as String,
+    json['bookId'] as int,
   );
 }
 

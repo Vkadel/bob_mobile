@@ -30,13 +30,13 @@ class Team {
   String memberTwoName;
   String memberThreeName;
   int points;
-  int school_id;
-  bool invitationMemberOnePending;
-  bool invitationMemberTwoPending;
-  bool invitationMemberThreePending;
-  bool invitationMemberOneAccepted;
-  bool invitationMemberTwoAccepted;
-  bool invitationMemberThreeAccepted;
+  String school_id;
+  bool invitationMemberOnePending = false;
+  bool invitationMemberTwoPending = false;
+  bool invitationMemberThreePending = false;
+  bool invitationMemberOneAccepted = false;
+  bool invitationMemberTwoAccepted = false;
+  bool invitationMemberThreeAccepted = false;
   bool teamIsActive;
 
   Team();
@@ -50,4 +50,16 @@ class Team {
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$UserToJson`.
   Map<dynamic, dynamic> toJson() => _$TeamToJson(this);
+  //TODO: set up firestore rule to not allow for leadername change
+  Team formInitialTeamWithNameLeader(
+      String teamName, String teamLeader, String leaderId, String SchoolId) {
+    Team team = new Team();
+    team.team_name = teamName;
+    team.leaderName = teamLeader;
+    team.leader_id = leaderId;
+    team.teamIsActive = true;
+    team.school_id = SchoolId;
+    team.points = 0;
+    return team;
+  }
 }

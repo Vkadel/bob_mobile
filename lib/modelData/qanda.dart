@@ -5,6 +5,8 @@ import 'package:bob_mobile/data_type/books_master.dart';
 import 'package:bob_mobile/data_type/items.dart';
 import 'package:bob_mobile/data_type/items_master.dart';
 import 'package:bob_mobile/data_type/player_points.dart';
+import 'package:bob_mobile/data_type/team.dart';
+import 'package:bob_mobile/data_type/team_invites.dart';
 import 'package:bob_mobile/data_type/team_points.dart';
 import 'package:bob_mobile/data_type/user_data.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +17,11 @@ class Quanda extends InheritedModel with ChangeNotifier {
   List<PlayerPoints> playerRankings;
   List<TeamPoints> teamRankings;
   bool personal;
+  bool playeReadNoBooks = true;
   List<Question> list_of_questions;
   String my_text = '';
   User myUser;
+  Team myTeam;
   AvatarStats myAvatarStats;
   List<BookTypes> bookTypes;
   List<Items> myItems;
@@ -25,6 +29,7 @@ class Quanda extends InheritedModel with ChangeNotifier {
   UserData userData;
   List<AnsweredQuestions> allAnsweredQuestions;
   List<BooksMaster> listOfMasterBooks;
+  List<TeamInvites> pendingTeamInvites;
   PlayerPoints myPlayerPoints;
 
   Quanda(

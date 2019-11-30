@@ -25,11 +25,15 @@ part 'private.g.dart';
 class Private {
   Map<dynamic, dynamic> members;
 
+  ///This identification for each type of member cannot be changed
+  ///Since they are used in Firestore for the rules on team access.
+  static const String userOwnerid = "userOwnerid";
+  static const String memberid1 = "memberid1";
+  static const String memberid2 = "memberid2";
+  static const String memberid3 = "memberid3";
   Private();
 
-  /// A necessary factory constructor for creating a new User instance
-  /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
-  /// The constructor is named after the source class, in this case, User.
+  //Todo sticky: ensure the fromjson has a dynamic,dynamic
   factory Private.fromJson(Map<dynamic, dynamic> json) =>
       _$PrivateFromJson(json);
 

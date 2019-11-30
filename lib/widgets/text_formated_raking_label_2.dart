@@ -7,9 +7,9 @@ class TextFormattedLabelTwo extends StatelessWidget {
   Color newColor = Colors.white;
   Color _color = Colors.white;
   int question_id;
-
+  TextAlign mTextAlign = TextAlign.center;
   TextFormattedLabelTwo(@required this.text,
-      [this.new_font_size, this.newColor, this.question_id]);
+      [this.new_font_size, this.newColor, this.question_id, this.mTextAlign]);
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +21,13 @@ class TextFormattedLabelTwo extends StatelessWidget {
     if (newColor != Colors.white) {
       _color = newColor;
     }
+
     return Text(
       '$text',
+      softWrap: true,
       style: new TextStyle(
           color: _color, fontWeight: FontWeight.w300, fontSize: font_size),
-      textAlign: TextAlign.center,
+      textAlign: mTextAlign,
     );
   }
 }

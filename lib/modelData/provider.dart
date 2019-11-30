@@ -1,4 +1,4 @@
-import 'package:bob_mobile/auth.dart';
+import 'package:bob_mobile/modelData/auth.dart';
 import 'package:flutter/material.dart';
 
 import 'mfirestore.dart';
