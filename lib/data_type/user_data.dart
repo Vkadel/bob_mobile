@@ -31,7 +31,7 @@ class UserData {
     this.id,
   );
 
-  List<Books> list_of_read_books;
+  List<Books> list_of_read_books=List<Books>();
 
   ///TODO to keep: make sure to convert this to dynamic,dynamic
   List<Map<dynamic, dynamic>> answered_questions;

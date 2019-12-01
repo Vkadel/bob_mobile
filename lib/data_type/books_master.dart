@@ -16,7 +16,7 @@ class BooksMaster {
       this.keyword_name,
       this.keywords_by);
 
-  String id;
+  int id;
   int status;
   /*DocumentReference resource_image_ref;*/
   String online_picture_link;

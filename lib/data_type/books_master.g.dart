@@ -9,7 +9,7 @@ part of 'books_master.dart';
 BooksMaster _$BooksMasterFromJson(Map<String, dynamic> json) {
   return BooksMaster(
     json['name'] as String,
-    json['id'] as String,
+    json['id'] as int,
     json['status'] as int,
     json['online_picture_link'] as String,
     json['pages'] as int,
