@@ -44,21 +44,28 @@ class TeamHallScaffold extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          SliverAppBar(
-              expandedHeight: 150.0,
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text(Constants.team_hall_title),
-                collapseMode: CollapseMode.parallax,
-                background: Image(
-                  height: 150,
-                  width: 150,
-                  image:
-                      AssetImage(Constants.myAvatars.elementAt(0).asset_Large),
-                  color: ColorLogicbyPersonality(context),
-                ),
-              ),
-              actions: <Widget>[]),
+          FutureBuilder<Object>(
+              future: ColorLogicbyPersonality(context),
+              builder: (context, snapshot) {
+                return SliverAppBar(
+                    expandedHeight: 150.0,
+                    flexibleSpace: FlexibleSpaceBar(
+                      centerTitle: true,
+                      title: Text(Constants.team_hall_title),
+                      collapseMode: CollapseMode.parallax,
+                      background: Image(
+                        height: 150,
+                        width: 150,
+                        image: AssetImage(
+                            Constants.myAvatars.elementAt(0).asset_Large),
+                        color:
+                            snapshot.connectionState == ConnectionState.active
+                                ? snapshot.data
+                                : Theme.of(context).buttonColor,
+                      ),
+                    ),
+                    actions: <Widget>[]);
+              }),
           SliverList(
             delegate: SliverChildListDelegate(
                 [_buildHeaderTeamName(context), TeamNameField()]),
@@ -319,10 +326,16 @@ class _memberSearchWidgetState extends State<_memberSearchWidget> {
                         context, 3, teamFormData, controller3),
                   ],
                 ),
-                Container(
-                  height: MediaQuery.of(context).size.width,
-                  color: ColorLogicbyPersonality(context),
-                )
+                FutureBuilder<Object>(
+                    future: ColorLogicbyPersonality(context),
+                    builder: (context, snapshot) {
+                      return Container(
+                          height: MediaQuery.of(context).size.width,
+                          color:
+                              snapshot.connectionState == ConnectionState.active
+                                  ? snapshot.data
+                                  : Theme.of(context).buttonColor);
+                    })
               ],
             ),
           );
@@ -516,27 +529,33 @@ Widget _buildTeamMemberListItem(TeamFormationData teamdata, index) {
   return Builder(
     builder: (BuildContext context) {
       double radius = 10;
-      Color BColor = ColorLogicbyPersonality(context);
-      return Container(
-        margin: EdgeInsets.all(8),
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: BColor),
-            bottom: BorderSide(color: BColor),
-            right: BorderSide(color: BColor),
-            left: BorderSide(color: BColor),
-          ),
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(radius),
-              bottomRight: Radius.circular(radius * 2),
-              bottomLeft: Radius.circular(radius)),
-        ),
-        child: TextFormattedLabelTwo(
-            'Member ${index}: ${teamName}',
-            MediaQuery.of(context).size.width / 15,
-            ColorLogicbyPersonality(context)),
-      );
+      return FutureBuilder<Object>(
+          future: ColorLogicbyPersonality(context),
+          builder: (context, snapshot) {
+            Color BColor = snapshot.connectionState == ConnectionState.active
+                ? snapshot.data
+                : Theme.of(context).backgroundColor;
+            return Container(
+              margin: EdgeInsets.all(8),
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: BColor),
+                  bottom: BorderSide(color: BColor),
+                  right: BorderSide(color: BColor),
+                  left: BorderSide(color: BColor),
+                ),
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(radius),
+                    bottomRight: Radius.circular(radius * 2),
+                    bottomLeft: Radius.circular(radius)),
+              ),
+              child: TextFormattedLabelTwo(
+                  'Member ${index}: ${teamName}',
+                  MediaQuery.of(context).size.width / 15,
+                  ColorLogicbyPersonality(context)),
+            );
+          });
     },
   );
 }

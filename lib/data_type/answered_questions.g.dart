@@ -6,7 +6,7 @@ part of 'answered_questions.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AnsweredQuestions _$AnsweredQuestionsFromJson(Map<String, dynamic> json) {
+AnsweredQuestions _$AnsweredQuestionsFromJson(Map<dynamic, dynamic> json) {
   return AnsweredQuestions(
     json['question'] as int,
     json['status'] as int,

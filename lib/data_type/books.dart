@@ -10,17 +10,15 @@ class Books {
     //0: not read  -  1:read 1/3 -  2:read 2/3    -  3: read all
   );
 
-  String id;
-  int status;
-  int bookId;
+  String id; //String
+  int status; //int
+  int bookId; //int
 
-  /// A necessary factory constructor for creating a new User instance
-  /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
-  /// The constructor is named after the source class, in this case, User.
-  factory Books.fromJson(Map<String, dynamic> json) => _$BooksFromJson(json);
+  //Keep dynamic dynamic because this is a tier under user_data
+  //It will be rebuild wrong and will need to be fixed
+  factory Books.fromJson(Map<dynamic, dynamic> json) => _$BooksFromJson(json);
 
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$UserToJson`.
-  Map<String, dynamic> toJson() => _$BooksToJson(this);
+  //Keep dynamic dynamic because this is a tier under user_data
+  //It will be rebuild wrong and will need to be fixed
+  Map<dynamic, dynamic> toJson() => _$BooksToJson(this);
 }

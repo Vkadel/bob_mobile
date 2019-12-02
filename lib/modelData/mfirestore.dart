@@ -34,19 +34,19 @@ import '../data_type/books.dart';
 abstract class BoBFireBase {
   Stream<QuerySnapshot> get_userprofile(String uid);
   Future<void> UserExist(String uid);
+  Future<User> refreshUser(BuildContext context);
   Future<void> createUserProfile(
       String uid, String email, BuildContext context);
   Stream<QuerySnapshot> getQuestions();
   Future<void> setUpUserPersonality(FirebaseUser Firebaseuser, User user);
   Stream<QuerySnapshot> getPlayerRankings();
   Stream<QuerySnapshot> getTeamRankings();
-  Stream<DocumentSnapshot> getClassStats(BuildContext context);
+  Future<Stream<DocumentSnapshot>> getClassStats(BuildContext context);
   Future<void> getBookTypes(BuildContext context);
-  Stream<QuerySnapshot> getMyItems(BuildContext context);
+  Future<Stream<QuerySnapshot>> getMyItems(BuildContext context);
   Stream<QuerySnapshot> getMyProposedQuestions(BuildContext context);
   Stream<QuerySnapshot> getMyProposedBooks(BuildContext context);
   Stream<QuerySnapshot> getMyReadBooks(BuildContext context);
-  Stream<QuerySnapshot> getMyAnsweredQuestions(BuildContext context);
   Stream<QuerySnapshot> getMasterListOfItems(BuildContext context);
   Future<void> useItem(BuildContext context, Items itemType, int duration);
   Stream<DocumentSnapshot> getUserReadListOfBooks(User user);
@@ -68,6 +68,8 @@ abstract class BoBFireBase {
   Future<void> acceptTeamInvite(int indexOfinvite, BuildContext context);
   Future<void> deleteDenyMember(Team team, BuildContext context, int index);
   Stream<DocumentSnapshot> getUserData(BuildContext context);
+  Future<void> updateReadBooks(
+      BuildContext context, List<Books> theBooks, Null Function());
 }
 
 class MBobFireBase implements BoBFireBase {
@@ -89,6 +91,14 @@ class MBobFireBase implements BoBFireBase {
         .collection('users')
         .where('id', isEqualTo: uid)
         .snapshots());
+  }
+
+  Future<User> refreshUser(BuildContext context) async {
+    String userIdLogged = await FireProvider.of(context).auth.currentUser();
+    QuerySnapshot userProfileSnap = await get_userprofile(userIdLogged).first;
+    User userRefresh = User.fromJson(userProfileSnap.documents[0].data);
+    Quanda.of(context).myUser = userRefresh;
+    return userRefresh;
   }
 
   @override
@@ -322,8 +332,16 @@ class MBobFireBase implements BoBFireBase {
   }
 
   @override
-  Stream<DocumentSnapshot> getClassStats(BuildContext context) {
-    int roleId = Quanda.of(context).myUser.role;
+  Future<Stream<DocumentSnapshot>> getClassStats(BuildContext context) async {
+    int roleId;
+    if (Quanda.of(context).myUser != null &&
+        Quanda.of(context).myUser.role != null) {
+      roleId = Quanda.of(context).myUser.role;
+    } else {
+      //there is noUser
+      User userRefresh = await refreshUser(context);
+      roleId = userRefresh.role;
+    }
     return _firestore
         .collection('avatar_type_stats')
         .document(roleId.toString())
@@ -356,9 +374,13 @@ class MBobFireBase implements BoBFireBase {
   }
 
   @override
-  Stream<QuerySnapshot> getMyItems(BuildContext context) {
+  Future<Stream<QuerySnapshot>> getMyItems(BuildContext context) async {
     // Get items that are active and
     print('getting my items');
+    if (Quanda.of(context).myUser == null) {
+      //user need refresh
+      await refreshUser(context);
+    }
     return _firestore
         .collection('user_data')
         .document(Quanda.of(context).myUser.id)
@@ -991,5 +1013,26 @@ class MBobFireBase implements BoBFireBase {
         .collection('book_master')
         .where('name', arrayContains: book_name)
         .snapshots();
+  }
+
+  @override
+  Future<void> updateReadBooks(
+      BuildContext context, List<Books> theBooks, void Function() param2) {
+    _firestore.runTransaction((tran) async {
+      DocumentSnapshot snapUserData = await tran.get(_firestore
+          .collection('user_data')
+          .document(Quanda.of(context).myUser.id));
+      UserData userData = UserData.fromJson(snapUserData.data);
+      userData.list_of_read_books = theBooks;
+      tran.set(snapUserData.reference, userData.toJson());
+    }, timeout: Duration(seconds: 50)).whenComplete(
+      () {
+        print('Updated UserData');
+        param2();
+      },
+    ).catchError((e) {
+      print('error after user_data fireBase Update: $e');
+    });
+    return null;
   }
 }

@@ -113,44 +113,55 @@ class heroTab extends StatelessWidget {
           image:
               AssetImage(Constants.myAvatars.elementAt(location).asset_Large),
         ),
-        RaisedButton(
-          color: Constants.myAvatars.elementAt(location).color,
-          onPressed: () async {
-            print('Checking user name is ok');
-            bool nameDoesNotExist;
-            Quanda.of(context).myUser.role =
-                DefaultTabController.of(context).index + 1;
-            Quanda.of(context).myUser.name = userName;
-            if (_playerNameformKey.currentState.validate()) {
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Row(
-                  children: <Widget>[
-                    Text('Creating Hero'),
-                    CircularProgressIndicator()
-                  ],
+        FutureBuilder<Object>(
+            future: ColorLogicbyPersonality(context),
+            builder: (context, snapshot) {
+              return RaisedButton(
+                color: Constants.myAvatars.elementAt(location).color,
+                onPressed: () async {
+                  print('Checking user name is ok');
+                  bool nameDoesNotExist;
+                  Quanda.of(context).myUser.role =
+                      DefaultTabController.of(context).index + 1;
+                  Quanda.of(context).myUser.name = userName;
+                  if (_playerNameformKey.currentState.validate()) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Row(
+                        children: <Widget>[
+                          Text('Creating Hero'),
+                          CircularProgressIndicator()
+                        ],
+                      ),
+                      backgroundColor:
+                          snapshot.connectionState == ConnectionState.active
+                              ? snapshot.data
+                              : Theme.of(context).buttonColor,
+                    ));
+                    nameDoesNotExist =
+                        await myValidator.checkNameIsNotUsed(userName, context);
+                  } else {
+                    String mesage;
+                    nameDoesNotExist
+                        ? mesage = Constants.name_exist
+                        : mesage = mesage;
+                    !_playerNameformKey.currentState.validate()
+                        ? mesage = Constants.name_cannot_be_empty
+                        : mesage = mesage;
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text(mesage),
+                      backgroundColor:
+                          snapshot.connectionState == ConnectionState.active
+                              ? snapshot.data
+                              : Theme.of(context).buttonColor,
+                    ));
+                  }
+                },
+                child: Center(
+                  child: TextFormattedLabelTwo(
+                      '$contractText', 20, Future.value(Colors.white)),
                 ),
-                backgroundColor: ColorLogicbyPersonality(context),
-              ));
-              nameDoesNotExist =
-                  await myValidator.checkNameIsNotUsed(userName, context);
-            } else {
-              String mesage;
-              nameDoesNotExist
-                  ? mesage = Constants.name_exist
-                  : mesage = mesage;
-              !_playerNameformKey.currentState.validate()
-                  ? mesage = Constants.name_cannot_be_empty
-                  : mesage = mesage;
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(mesage),
-                backgroundColor: ColorLogicbyPersonality(context),
-              ));
-            }
-          },
-          child: Center(
-            child: TextFormattedLabelTwo('$contractText', 20, Colors.white),
-          ),
-        ),
+              );
+            }),
         Container(
             height: MediaQuery.of(context).size.height / 4,
             child: TextFormattedBody(

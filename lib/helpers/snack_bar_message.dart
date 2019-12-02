@@ -9,8 +9,16 @@ class SnackBarMessage {
     Scaffold.of(context).hideCurrentSnackBar();
     Scaffold.of(context).removeCurrentSnackBar();
     Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: ColorLogicbyRole(context),
+      content: FutureBuilder<Object>(
+          future: ColorLogicbyRole(context),
+          builder: (context, snapshot) {
+            return Container(
+              child: Text(message),
+              color: snapshot.connectionState == ConnectionState.active
+                  ? snapshot.data
+                  : null,
+            );
+          }),
     ));
   }
 }

@@ -1,13 +1,17 @@
 import 'package:bob_mobile/battle_page.dart';
+import 'package:bob_mobile/add_more_books_read.dart';
 import 'package:bob_mobile/dashboard_page.dart';
+import 'package:bob_mobile/data_type/books_master.dart';
 import 'package:bob_mobile/data_type/items_master.dart';
 import 'package:bob_mobile/data_type/team_invites.dart';
+import 'package:bob_mobile/data_type/user_data.dart';
 import 'package:bob_mobile/helpers/not_null_not_empty.dart';
 import 'package:bob_mobile/helpers/snack_bar_message.dart';
 import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_personality.dart';
 import 'package:bob_mobile/widgets/color_logic_backs_role.dart';
+import 'package:bob_mobile/widgets/loading_indicator_message.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:bob_mobile/widgets/text_formatted_room_label.dart';
 import 'package:bob_mobile/widgets/text_formatted_room_label_body.dart';
@@ -22,6 +26,7 @@ import 'helpers/constants.dart';
 import 'data_type/avatar_stats.dart';
 import 'data_type/items.dart';
 import 'helpers/date_millis_to_string.dart';
+import 'helpers/status_to_string.dart';
 
 class HeroRoomPage extends StatefulWidget {
   @override
@@ -43,17 +48,23 @@ class _HeroPageState extends State<HeroRoomPage> {
             SliverAppBar(
               pinned: true,
               floating: true,
-              backgroundColor: ColorLogicbyRole(context),
               expandedHeight: 150.0,
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
                 title: Text(Constants.hero_room_title),
                 titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 collapseMode: CollapseMode.parallax,
-                background: Image(
-                    image: AssetImage(Constants.myAvatars
-                        .elementAt(Quanda.of(context).myUser.role - 1)
-                        .asset_Large)),
+                background: FutureBuilder<Object>(
+                    future: ColorLogicbyRole(context),
+                    builder: (context, snapshot) {
+                      return Container(
+                        color: snapshot.data,
+                        child: Image(
+                            image: AssetImage(Constants.myAvatars
+                                .elementAt(Quanda.of(context).myUser.role - 1)
+                                .asset_Large)),
+                      );
+                    }),
               ),
             ),
             SliverToBoxAdapter(
@@ -66,21 +77,32 @@ class _HeroPageState extends State<HeroRoomPage> {
             _buildSpacerBox(context),
             _buildOutstandingTeamInvitations(context),
             SliverToBoxAdapter(
-              child: TabBar(
-                labelColor: ColorLogicbyPersonality(context),
-                unselectedLabelColor: ColorLogicbyRole(context),
-                indicatorColor: Constants.color_secondary,
-                tabs: <Widget>[
-                  Tab(
-                    icon: Icon(Icons.settings_input_composite),
-                    child: Text('Items'),
-                  ),
-                  Tab(icon: Icon(Icons.view_week), child: Text('library')),
-                  Tab(
-                      icon: Icon(Icons.question_answer),
-                      child: TextFormattedLabelTwo('Add Questions')),
-                ],
-              ),
+              child: FutureBuilder<Object>(
+                  future: ColorLogicbyRole(context),
+                  builder: (context, snapshotRole) {
+                    return FutureBuilder<Object>(
+                        future: ColorLogicbyPersonality(context),
+                        builder: (context, snapshotColorPersonality) {
+                          return TabBar(
+                            labelColor: snapshotColorPersonality.data,
+                            unselectedLabelColor: snapshotRole.data,
+                            indicatorColor: Constants.color_secondary,
+                            tabs: <Widget>[
+                              Tab(
+                                icon: Icon(Icons.settings_input_composite),
+                                child: Text('Items'),
+                              ),
+                              Tab(
+                                  icon: Icon(Icons.view_week),
+                                  child: Text('library')),
+                              Tab(
+                                  icon: Icon(Icons.question_answer),
+                                  child:
+                                      TextFormattedLabelTwo('Add Questions')),
+                            ],
+                          );
+                        });
+                  }),
             ),
             SliverToBoxAdapter(
               child: Container(
@@ -124,85 +146,141 @@ Widget _buildLibraryTab() {
 
   return Builder(
     builder: (context) {
-      (Quanda.of(context).userData == null ||
-              Quanda.of(context).userData.list_of_read_books == null)
-          ? listSize = 0
-          : listSize = Quanda.of(context).userData.list_of_read_books.length;
-      if ((Quanda.of(context).userData != null &&
-              Quanda.of(context).userData.list_of_read_books != null) ||
-          listSize > 0) {
-        print('Will show list of books');
-        return Container(
-          height: MediaQuery.of(context).size.width * 2,
-          color: ColorLogicbyRole(context),
-          child: ListView.builder(
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return Row(
-                  children: <Widget>[TextFormattedLabelTwo('Add Books')],
+      print('Will show list of books');
+      return StreamBuilder(
+          stream: FireProvider.of(context).fireBase.getUserData(context),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.active &&
+                snapshot.hasData &&
+                !snapshot.hasError) {
+              DocumentSnapshot theData = snapshot.data;
+              //Check if user profile
+              UserData mUserData = UserData.fromJson(theData.data);
+              Quanda.of(context).userData = mUserData;
+              listSize = mUserData.list_of_read_books.length;
+              if (listSize > 0) {
+                //user has books I should display them
+                return Container(
+                  height: MediaQuery.of(context).size.width * 2,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return TextFormattedLabelTwo(
+                            'You have read the following books: ');
+                      } else {
+                        if (index <= listSize) {
+                          //These are books
+                          return _buildBookTile(index - 1);
+                        }
+                        if (index > listSize) {
+                          //This is the last element to add more books
+                          return addMoreBooksButton(context);
+                        }
+                      }
+                    },
+                    itemCount: listSize + 2,
+                  ),
                 );
               } else {
-                return TextFormattedLabelTwo('item container');
+                //Ask to add books
+                return AddMoreBooksReadTab();
               }
-            },
-            itemCount: listSize + 1,
-          ),
-        );
-      } else {
-        print('Player has read no books');
-        return Container(
-          color: ColorLogicbyRole(context),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  TextFormattedLabelTwo(
-                      'Add some books you have read into your library',
-                      MediaQuery.of(context).size.width / 20,
-                      Colors.white,
-                      null,
-                      TextAlign.center),
-                  FlatButton.icon(
-                      shape: Border.all(color: Colors.white, width: 2),
-                      onPressed: () {
-                        print('I will launch add book screen');
-                        Navigator.of(context).pushNamed('/add_read_book');
-                      },
-                      icon: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                      ),
-                      label: TextFormattedLabelTwo(
-                          'Add Read Books',
-                          MediaQuery.of(context).size.width / 20,
-                          Colors.white,
-                          null,
-                          TextAlign.center)),
-                ],
-              ),
-            ),
-          ),
-        );
-      }
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return LoadingIndicatorMessage(
+                message: 'Loading the books online',
+              );
+            } else {
+              return Text('Oh No there is an error');
+            }
+          } //Builder Stream
+          );
     },
   );
+}
+
+Widget addMoreBooksButton(BuildContext context) {
+  return FutureBuilder<Object>(
+      future: ColorLogicbyRole(context),
+      builder: (context, snapshotColor) {
+        Color color = snapshotColor.data;
+        if (color != null) {
+          return FlatButton.icon(
+              shape: Border.all(color: color, width: 2),
+              onPressed: () {
+                print('I will launch add book screen');
+                Navigator.of(context).pushNamed('/add_read_book');
+              },
+              icon: Icon(
+                Icons.add,
+                color: color,
+              ),
+              label: TextFormattedLabelTwo(
+                  'Add Read Books',
+                  MediaQuery.of(context).size.width / 20,
+                  Future.value(snapshotColor.data),
+                  null,
+                  TextAlign.center));
+        } else {
+          return Container();
+        }
+      });
 }
 
 Widget _buildBookTile(int index) {
   return (Builder(
     builder: (context) {
-      return ListTile(
-        title: TextFormattedLabelTwo(Quanda.of(context)
-            .listOfMasterBooks
-            .elementAt(Quanda.of(context)
-                .userData
-                .list_of_read_books
-                .elementAt(index)
-                .bookId)
-            .name),
-      );
+      return StreamBuilder(
+          stream: FireProvider.of(context).fireBase.getMasterListofBooks(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasData &&
+                snapshot.connectionState == ConnectionState.active) {
+              var databack = snapshot.data;
+              List<BooksMaster> myMasterBooks = databack.documents
+                  .toList()
+                  .map((item) => BooksMaster.fromJson(item.data))
+                  .toList();
+              Quanda.of(context).listOfMasterBooks = myMasterBooks;
+              int indexForThisBookInMaster = Quanda.of(context)
+                  .listOfMasterBooks
+                  .indexWhere((item) =>
+                      item.id ==
+                      Quanda.of(context)
+                          .userData
+                          .list_of_read_books
+                          .elementAt(index)
+                          .bookId);
+              String bookName = Quanda.of(context)
+                  .listOfMasterBooks
+                  .elementAt(indexForThisBookInMaster)
+                  .name;
+              String status = StatusToString(Quanda.of(context)
+                      .userData
+                      .list_of_read_books
+                      .elementAt(index))
+                  .getStatus();
+              return FutureBuilder<Object>(
+                  future: ColorLogicbyRole(context),
+                  builder: (context, snapshotColor) {
+                    return Card(
+                      color: snapshotColor.data,
+                      child: ListTile(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            TextFormattedLabelTwo(bookName),
+                            TextFormattedLabelTwo(status),
+                          ],
+                        ),
+                      ),
+                    );
+                  });
+            } else {
+              return LoadingIndicatorMessage(
+                message: 'loading item: ${index}',
+              );
+            }
+          });
     },
   ));
 }
@@ -270,11 +348,8 @@ Widget _buildOutstandingTeamInvitations(context) {
             //Have a loading if the
             return SliverToBoxAdapter(
               child: Container(
-                child: Stack(
-                  children: <Widget>[
-                    Text('Checking for team invites'),
-                    CircularProgressIndicator()
-                  ],
+                child: LoadingIndicatorMessage(
+                  message: 'Checking for team invites',
                 ),
               ),
             );
@@ -426,69 +501,89 @@ Widget CreateLargeButtonWithSVGOverlap(
     bool enabled) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
-    child: RaisedButton(
-      elevation: enabled ? 16 : 0,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: topLeft,
-              topRight: topRight,
-              bottomLeft: bottomLeft,
-              bottomRight: bottomRight),
-          side: BorderSide(color: ColorLogicbyRole(context), width: 0)),
-      color: enabled ? ColorLogicbyPersonality(context) : Colors.grey,
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Container(
-            child: SvgPicture.asset(
-              svgPath,
-              color: Colors.white,
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, 16),
-            child: TextFormattedLabelTwo(text, 18, Colors.white),
-            alignment: Alignment.bottomCenter,
-          ),
-        ],
-      ),
-      onPressed: () {
-        myAction(context);
-      },
-    ),
+    child: FutureBuilder<Object>(
+        future: ColorLogicbyRole(context),
+        builder: (context, snapshotByRole) {
+          return FutureBuilder<Object>(
+              future: ColorLogicbyPersonality(context),
+              builder: (context, snapshotPersonality) {
+                return RaisedButton(
+                  elevation: enabled ? 16 : 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                          topLeft: topLeft,
+                          topRight: topRight,
+                          bottomLeft: bottomLeft,
+                          bottomRight: bottomRight),
+                      side: BorderSide(
+                          color: snapshotPersonality.data != null
+                              ? snapshotPersonality.data
+                              : Theme.of(context).buttonColor,
+                          width: 0)),
+                  color: enabled ? snapshotByRole.data : Colors.grey,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      Container(
+                        child: SvgPicture.asset(
+                          svgPath,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0, 0, 0, 16),
+                        child: TextFormattedLabelTwo(text, 18),
+                        alignment: Alignment.bottomCenter,
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    myAction(context);
+                  },
+                );
+              });
+        }),
   );
 }
 
 Widget _buildListofItems(BuildContext context) {
-  return StreamBuilder(
-      stream: FireProvider.of(context).fireBase.getMyItems(context),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        //Refresh Items if this list has already been loaded
-        if (!snapshot.hasError &&
-            snapshot.connectionState == ConnectionState.active &&
-            snapshot.hasData &&
-            snapshot.data != null &&
-            snapshot.data.documentChanges != null) {
-          print('I have document changes and will rebuild');
-          if (Quanda.of(context).masterListOfItems != null &&
-              Quanda.of(context).masterListOfItems.length > 0) {
-            return _refreshList(snapshot, context);
-          }
-        }
-        //Load items the first time and initialize masters
-        if (!snapshot.hasError &&
-            snapshot.connectionState == ConnectionState.active &&
-            snapshot.hasData &&
-            snapshot.data != null) {
-          print('Rebuilding List for the first time');
-          return _buildListForFirstTime(snapshot, context);
-        } else {
-          return _youDontHaveItems(context, snapshot);
-        }
-      });
+  return FutureBuilder(
+    future: FireProvider.of(context).fireBase.getMyItems(context),
+    builder: (BuildContext context, AsyncSnapshot snapshotStream) {
+      return StreamBuilder(
+          stream: snapshotStream.data,
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                  child: LoadingIndicatorMessage(
+                message: 'Loading Items',
+              ));
+            }
+            //Refresh Items if this list has already been loaded
+            if (!snapshot.hasError &&
+                snapshot.connectionState == ConnectionState.active &&
+                snapshot.hasData &&
+                snapshot.data != null &&
+                snapshot.data.documentChanges != null) {
+              print('I have document changes and will rebuild');
+              if (Quanda.of(context).masterListOfItems != null &&
+                  Quanda.of(context).masterListOfItems.length > 0) {
+                return _refreshList(snapshot, context);
+              }
+            }
+            //Load items the first time and initialize masters
+            if (!snapshot.hasError &&
+                snapshot.connectionState == ConnectionState.active &&
+                snapshot.hasData &&
+                snapshot.data != null) {
+              print('Rebuilding List for the first time');
+              return _buildListForFirstTime(snapshot, context);
+            } else {
+              return _youDontHaveItems(context, snapshot);
+            }
+          });
+    },
+  );
 }
 
 Widget _refreshList(
@@ -580,26 +675,25 @@ Widget _cardForItemInUse(int index, BuildContext context) {
     child: ListTile(
       dense: true,
       title: TextFormattedLabelTwo(
-          '${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).name}',
-          MediaQuery.of(context).size.width / 15,
-          Colors.white),
+        '${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).name}',
+        MediaQuery.of(context).size.width / 15,
+      ),
       subtitle: Container(
         alignment: Alignment.topLeft,
         child: Column(
           children: <Widget>[
             TextFormattedLabelTwo(
                 '+ ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).addition} to questions gains',
-                15,
-                Colors.white),
+                15),
             TextFormattedLabelTwo(
-                '- ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).subtraction} to questions loses',
-                15,
-                Colors.white)
+              '- ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).subtraction} to questions loses',
+              15,
+            )
           ],
         ),
       ),
       trailing: TextFormattedLabelTwo('Expires: ${formatter.format(date)}',
-          MediaQuery.of(context).size.width / 30, Colors.white),
+          MediaQuery.of(context).size.width / 30),
     ),
   );
 }
@@ -614,21 +708,21 @@ Widget _cardForItemCanBeUsed(int index, BuildContext context) {
     child: ListTile(
       dense: true,
       title: TextFormattedLabelTwo(
-          '${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).name}',
-          MediaQuery.of(context).size.width / 15,
-          Colors.white),
+        '${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).name}',
+        MediaQuery.of(context).size.width / 15,
+      ),
       subtitle: Container(
         alignment: Alignment.topLeft,
         child: Column(
           children: <Widget>[
             TextFormattedLabelTwo(
-                '+ ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).addition} to questions gains',
-                MediaQuery.of(context).size.width / 30,
-                Colors.white),
+              '+ ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).addition} to questions gains',
+              MediaQuery.of(context).size.width / 30,
+            ),
             TextFormattedLabelTwo(
-                '- ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).subtraction} to questions loses',
-                MediaQuery.of(context).size.width / 30,
-                Colors.white)
+              '- ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).subtraction} to questions loses',
+              MediaQuery.of(context).size.width / 30,
+            )
           ],
         ),
       ),
@@ -644,7 +738,7 @@ Widget _cardForItemCanBeUsed(int index, BuildContext context) {
                   .duration_days);
           return CircularProgressIndicator();
         },
-        child: TextFormattedLabelTwo('use', 15, Colors.white),
+        child: TextFormattedLabelTwo('use', 15),
       ),
     ),
   );
@@ -661,60 +755,78 @@ Widget _youDontHaveItems(context, AsyncSnapshot<QuerySnapshot> snapshot) {
           child: Column(
             children: <Widget>[
               TextFormattedLabelTwo(Constants.you_dont_have_items,
-                  MediaQuery.of(context).size.width / 19, Colors.white),
+                  MediaQuery.of(context).size.width / 19),
             ],
           ),
         ));
   }
 }
 
-void _initStream(Stream<DocumentSnapshot> stream, BuildContext context) {
-  stream = FireProvider.of(context).fireBase.getClassStats(context);
+void _initStream(Stream<DocumentSnapshot> stream, BuildContext context) async {
+  stream = await FireProvider.of(context).fireBase.getClassStats(context);
 }
 
 Widget _buildStats(BuildContext context, Stream<DocumentSnapshot> stream) {
-  stream = FireProvider.of(context).fireBase.getClassStats(context);
-  return StreamBuilder(
-    stream: stream,
-    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-      if (!snapshot.hasError &&
-          snapshot.connectionState == ConnectionState.active &&
-          snapshot.hasData &&
-          snapshot.data != null) {
-        Quanda.of(context).myAvatarStats =
-            AvatarStats.fromJson(snapshot.data.data);
-        return SliverGrid(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1, childAspectRatio: 10, mainAxisSpacing: 0),
-          delegate: SliverChildBuilderDelegate((context, index) {
-            return Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    alignment: Alignment.centerLeft,
-                    color: Colors.green,
-                    child: _buildAdditionsTile(context,
-                        Quanda.of(context).myAvatarStats.additions, index),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    color: Colors.red,
-                    child: _buildSubstractionsTile(context,
-                        Quanda.of(context).myAvatarStats.substractions, index),
-                  )
-                ],
-              ),
-            );
-          }, childCount: Quanda.of(context).myAvatarStats.additions.length),
+  return FutureBuilder(
+    future: FireProvider.of(context).fireBase.getClassStats(context),
+    builder: (BuildContext context, AsyncSnapshot snapshotStream) {
+      if (snapshotStream.hasData) {
+        return StreamBuilder(
+          stream: snapshotStream.data,
+          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (!snapshot.hasError &&
+                snapshot.connectionState == ConnectionState.active &&
+                snapshot.hasData &&
+                snapshot.data != null) {
+              Quanda.of(context).myAvatarStats =
+                  AvatarStats.fromJson(snapshot.data.data);
+              return SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    childAspectRatio: 10,
+                    mainAxisSpacing: 0),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  return Container(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: MediaQuery.of(context).size.width / 2,
+                          alignment: Alignment.centerLeft,
+                          color: Colors.green,
+                          child: _buildAdditionsTile(
+                              context,
+                              Quanda.of(context).myAvatarStats.additions,
+                              index),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 2,
+                          color: Colors.red,
+                          child: _buildSubstractionsTile(
+                              context,
+                              Quanda.of(context).myAvatarStats.substractions,
+                              index),
+                        )
+                      ],
+                    ),
+                  );
+                },
+                    childCount:
+                        Quanda.of(context).myAvatarStats.additions.length),
+              );
+            } else {
+              return SliverFillRemaining(
+                child: LoadingIndicatorMessage(
+                  message: 'Loading Stream stats...',
+                ),
+              );
+            }
+          },
         );
       } else {
         return SliverFillRemaining(
-          child: Center(
-            child: Text('Loading.....'),
-          ),
-        );
+            child:
+                LoadingIndicatorMessage(message: 'Loading future stats ...'));
       }
     },
   );
@@ -728,8 +840,7 @@ _buildAdditionsTile(
       child: TextFormattedLabelTwo(
           '+ ${additions.values.toList().elementAt(index)} to '
           '${Quanda.of(context).bookTypes.elementAt(int.parse(additions.keys.toList().elementAt(index))).type}',
-          20,
-          Colors.white),
+          20),
     ),
   );
 }
@@ -742,8 +853,7 @@ _buildSubstractionsTile(
       child: TextFormattedLabelTwo(
           '- ${subtractions.values.toList().elementAt(index)} to '
           '${Quanda.of(context).bookTypes.elementAt(int.parse(subtractions.keys.toList().elementAt(index))).type}',
-          20,
-          Colors.white),
+          20),
     ),
   );
 }

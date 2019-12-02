@@ -9,10 +9,18 @@ class SnackBarWithSpin {
     Scaffold.of(context).hideCurrentSnackBar();
     Scaffold.of(context).removeCurrentSnackBar();
     Scaffold.of(context).showSnackBar(SnackBar(
-      content: Row(
-        children: <Widget>[Text(message), CircularProgressIndicator()],
-      ),
-      backgroundColor: ColorLogicbyRole(context),
+      content: FutureBuilder<Object>(
+          future: ColorLogicbyRole(context),
+          builder: (context, snapshot) {
+            return Container(
+              color: snapshot.connectionState == ConnectionState.active
+                  ? snapshot.data
+                  : null,
+              child: Row(
+                children: <Widget>[Text(message), CircularProgressIndicator()],
+              ),
+            );
+          }),
     ));
   }
 }

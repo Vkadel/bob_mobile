@@ -4,7 +4,7 @@ class TextFormattedLabelTwo extends StatelessWidget {
   String text;
   double font_size;
   double new_font_size;
-  Color newColor = Colors.white;
+  Future<Color> newColor;
   Color _color = Colors.white;
   int question_id;
   TextAlign mTextAlign = TextAlign.center;
@@ -18,16 +18,22 @@ class TextFormattedLabelTwo extends StatelessWidget {
     } else {
       font_size = 25;
     }
-    if (newColor != Colors.white) {
-      _color = newColor;
-    }
 
-    return Text(
-      '$text',
-      softWrap: true,
-      style: new TextStyle(
-          color: _color, fontWeight: FontWeight.w300, fontSize: font_size),
-      textAlign: mTextAlign,
-    );
+    return FutureBuilder<Object>(
+        future: newColor,
+        builder: (context, newColorSnap) {
+          if (newColor != null) {
+            _color = newColorSnap.data;
+          }
+          return Text(
+            '$text',
+            softWrap: true,
+            style: new TextStyle(
+                color: _color,
+                fontWeight: FontWeight.w300,
+                fontSize: font_size),
+            textAlign: mTextAlign,
+          );
+        });
   }
 }

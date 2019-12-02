@@ -6,7 +6,7 @@ part of 'user_data.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserData _$UserDataFromJson(Map<String, dynamic> json) {
+UserData _$UserDataFromJson(Map<dynamic, dynamic> json) {
   return UserData(
     (json['list_of_read_books'] as List)
         ?.map((e) =>

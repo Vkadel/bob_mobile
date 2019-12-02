@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class LoadingIndicatorMessage extends StatelessWidget {
   final String message;
+
   const LoadingIndicatorMessage({Key key, this.message}) : super(key: key);
 
   @override
@@ -12,7 +13,8 @@ class LoadingIndicatorMessage extends StatelessWidget {
         child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        TextFormattedLabelTwo(message, MediaQuery.of(context).size.width / 20),
+        TextFormattedLabelTwo(message, MediaQuery.of(context).size.width / 20,
+            Future.value(Colors.black)),
         Center(
           child: CircularProgressIndicator(),
         )

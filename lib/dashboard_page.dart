@@ -33,7 +33,15 @@ class _DashBoardPageState extends State<DashBoardPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(Constants().user_dashboard_title),
-          backgroundColor: ColorLogicbyRole(context),
+          flexibleSpace: FutureBuilder<Color>(
+              future: ColorLogicbyRole(context),
+              builder: (context, snapshotColor) {
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: Constants.height_extended_bars,
+                  color: snapshotColor.data,
+                );
+              }),
         ),
         body: Container(
           child: build_body(context),
@@ -56,27 +64,35 @@ build_body(BuildContext context) {
                 20,
                 ColorLogicbyPersonality(context)),
           ),
-          Container(
-            color: ColorLogicbyPersonality(context),
-            margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
-            alignment: Alignment.center,
-            padding: EdgeInsets.fromLTRB(16, 10, 16, 15),
-            height: Constants.height_extended_bars,
-            child: PlayerRankings(context),
-          ),
+          FutureBuilder<Object>(
+              future: ColorLogicbyPersonality(context),
+              builder: (context, snapshot) {
+                return Container(
+                  color: snapshot.data,
+                  margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.fromLTRB(16, 10, 16, 15),
+                  height: Constants.height_extended_bars,
+                  child: PlayerRankings(context),
+                );
+              }),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormattedLabelTwo('${Constants.team_rankings_label}', 20,
                 ColorLogicbyPersonality(context)),
           ),
-          Container(
-            color: ColorLogicbyPersonality(context),
-            margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
-            alignment: Alignment.center,
-            padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
-            height: Constants.height_extended_bars,
-            child: TeamRankings(context),
-          ),
+          FutureBuilder<Color>(
+              future: ColorLogicbyPersonality(context),
+              builder: (context, snapshot) {
+                return Container(
+                  color: snapshot.data,
+                  margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
+                  height: Constants.height_extended_bars,
+                  child: TeamRankings(context),
+                );
+              }),
           Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -185,32 +201,38 @@ _listofIndividualRankings(
 _buildListItem(BuildContext context, DocumentSnapshot item, int index) {
   PlayerPoints playerPoint = PlayerPoints.fromJson(item.data);
   String player_name = playerPoint.player_name;
-  return Container(
-    alignment: Alignment.center,
-    color: ColorLogicbyPersonality(context),
-    child: Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            TextFormattedLabelOne('${index + 1}. '),
-            TextFormattedLabelTwo('$player_name',
-                MediaQuery.of(context).size.height / 35, Colors.white),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            TextFormattedLabelTwo('${playerPoint.player_points} ',
-                MediaQuery.of(context).size.height / 35, Colors.white),
-            TextFormattedLabelThree('${Constants.unit_points}'),
-          ],
-        ),
-        Divider(
-          color: Colors.white,
-        )
-      ],
-    ),
-  );
+  Future<Color> white;
+
+  return FutureBuilder<Color>(
+      future: ColorLogicbyPersonality(context),
+      builder: (context, snapshotColor) {
+        return Container(
+          alignment: Alignment.center,
+          color: snapshotColor.data,
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  TextFormattedLabelOne('${index + 1}. '),
+                  TextFormattedLabelTwo(
+                      '$player_name', MediaQuery.of(context).size.height / 35),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  TextFormattedLabelTwo('${playerPoint.player_points} ',
+                      MediaQuery.of(context).size.height / 35),
+                  TextFormattedLabelThree('${Constants.unit_points}'),
+                ],
+              ),
+              Divider(
+                color: Colors.white,
+              )
+            ],
+          ),
+        );
+      });
 }
 
 _listofTeamRankings(
@@ -228,30 +250,34 @@ _listofTeamRankings(
 _buildListTeamItem(BuildContext context, DocumentSnapshot item, int index) {
   TeamPoints teamPoint = TeamPoints.fromJson(item.data);
   String team_name = teamPoint.team_name;
-  return Container(
-    alignment: Alignment.center,
-    color: ColorLogicbyPersonality(context),
-    child: Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            TextFormattedLabelOne('${index + 1}. '),
-            TextFormattedLabelTwo('$team_name',
-                MediaQuery.of(context).size.height / 35, Colors.white),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            TextFormattedLabelTwo('${teamPoint.team_points} ',
-                MediaQuery.of(context).size.height / 35, Colors.white),
-            TextFormattedLabelThree('${Constants.unit_points}'),
-          ],
-        ),
-        Divider(
-          color: Colors.white,
-        )
-      ],
-    ),
-  );
+  return FutureBuilder<Object>(
+      future: ColorLogicbyPersonality(context),
+      builder: (context, snapshot) {
+        return Container(
+          alignment: Alignment.center,
+          color: snapshot.data,
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  TextFormattedLabelOne('${index + 1}. '),
+                  TextFormattedLabelTwo(
+                      '$team_name', MediaQuery.of(context).size.height / 35),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  TextFormattedLabelTwo('${teamPoint.team_points} ',
+                      MediaQuery.of(context).size.height / 35),
+                  TextFormattedLabelThree('${Constants.unit_points}'),
+                ],
+              ),
+              Divider(
+                color: Colors.white,
+              )
+            ],
+          ),
+        );
+      });
 }

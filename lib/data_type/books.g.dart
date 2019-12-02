@@ -6,7 +6,7 @@ part of 'books.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Books _$BooksFromJson(Map<String, dynamic> json) {
+Books _$BooksFromJson(Map<dynamic, dynamic> json) {
   return Books(
     json['id'] as String,
     json['status'] as int,
@@ -14,7 +14,7 @@ Books _$BooksFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$BooksToJson(Books instance) => <String, dynamic>{
+Map<dynamic, dynamic> _$BooksToJson(Books instance) => <dynamic, dynamic>{
       'id': instance.id,
       'status': instance.status,
       'bookId': instance.bookId,

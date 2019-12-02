@@ -31,19 +31,17 @@ class UserData {
     this.id,
   );
 
-  List<Books> list_of_read_books=List<Books>();
+  List<Books> list_of_read_books = List<Books>();
 
-  ///TODO to keep: make sure to convert this to dynamic,dynamic
+  ///TODO sticky: make sure to convert this to dynamic,dynamic
   List<Map<dynamic, dynamic>> answered_questions;
   String id;
 
-  ///TODO to keep: make sure the helper method is also
+  ///TODO sticky: make sure the helper method is also
   ///dynamic, dynamic the builder changes it to String,dynamic
   factory UserData.fromJson(Map<dynamic, dynamic> json) =>
       _$UserDataFromJson(json);
 
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$UserToJson`.
+  /// converted the
   Map<String, dynamic> toJson() => _$UserDataToJson(this);
 }

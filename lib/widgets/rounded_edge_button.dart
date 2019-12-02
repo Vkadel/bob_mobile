@@ -18,29 +18,33 @@ class FormattedRoundedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-      child: RaisedButton(
-        elevation: 8,
-        splashColor: Colors.orangeAccent,
-        color: ColorLogicbyPersonality(context),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40),
-        ),
-        highlightElevation: 2,
-        onPressed: () {
-          question_id == null
-              ? _myFunction(context)
-              : _myFunction(context, question_id);
-        },
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-          child: Text(
-            _label,
-            style: new TextStyle(color: Colors.white, fontSize: textSize),
-            softWrap: true,
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
+      child: FutureBuilder<Color>(
+          future: ColorLogicbyPersonality(context),
+          builder: (context, snapshotColor) {
+            return RaisedButton(
+              elevation: 8,
+              splashColor: Colors.orangeAccent,
+              color: snapshotColor.data,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
+              ),
+              highlightElevation: 2,
+              onPressed: () {
+                question_id == null
+                    ? _myFunction(context)
+                    : _myFunction(context, question_id);
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                child: Text(
+                  _label,
+                  style: new TextStyle(color: Colors.white, fontSize: textSize),
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }),
     );
   }
 }

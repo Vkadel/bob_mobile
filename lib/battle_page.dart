@@ -132,20 +132,24 @@ Widget _buildPage(BuildContext context, QuestionEngine questionEngine,
       body: SafeArea(
         child: CustomScrollView(
           slivers: <Widget>[
-            SliverAppBar(
-              leading: null,
-              backgroundColor: ColorLogicbyRole(context),
-              forceElevated: true,
-              pinned: true,
-              snap: true,
-              floating: true,
-              expandedHeight: Constants.height_extended_bars,
-              flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.parallax,
-                centerTitle: true,
-                background: _buildBackgroundForAppBar(context),
-              ),
-            ),
+            FutureBuilder<Color>(
+                future: ColorLogicbyRole(context),
+                builder: (context, snapshotcolor) {
+                  return SliverAppBar(
+                    leading: null,
+                    backgroundColor: snapshotcolor.data,
+                    forceElevated: true,
+                    pinned: true,
+                    snap: true,
+                    floating: true,
+                    expandedHeight: Constants.height_extended_bars,
+                    flexibleSpace: FlexibleSpaceBar(
+                      collapseMode: CollapseMode.parallax,
+                      centerTitle: true,
+                      background: _buildBackgroundForAppBar(context),
+                    ),
+                  );
+                }),
             _buildQuestions(context, battlePageState.widget, questionEngine),
             _buildPossibleAnwers(
                 context, battlePageState.widget, questionEngine),
@@ -238,11 +242,15 @@ Widget _buildLifeBar(
         width: MediaQuery.of(context).size.width / 15,
         color: Constants.color_main,
       ),
-      Container(
-        height: heightOflife,
-        width: MediaQuery.of(context).size.width / 15,
-        color: ColorLogicbyRole(context),
-      ),
+      FutureBuilder<Object>(
+          future: ColorLogicbyRole(context),
+          builder: (context, snapshotColor) {
+            return Container(
+              height: heightOflife,
+              width: MediaQuery.of(context).size.width / 15,
+              color: snapshotColor.data,
+            );
+          }),
     ],
   );
 }
@@ -461,7 +469,9 @@ Widget _buildBuff(
 
 Widget returnEmpty() {
   return SliverToBoxAdapter(
-    child: Container(),
+    child: Container(
+      child: Text(' '),
+    ),
   );
 }
 

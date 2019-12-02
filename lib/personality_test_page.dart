@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bob_mobile/data_type/question.dart';
 import 'package:bob_mobile/data_type/user.dart';
 import 'package:bob_mobile/widgets/rounded_edge_button_survey.dart';
@@ -77,6 +79,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
 
   Widget _buildScaffoldQuestion(
       PersonalityTestStateData personalityTestStateData) {
+    Future<Color> mColor = Future.value(Colors.deepOrange);
     return Scaffold(
       body: Center(
         child: Column(
@@ -91,7 +94,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                     .elementAt(personalityTestStateData.progress)
                     .question,
                 35,
-                Colors.deepOrange,
+                mColor,
               ),
             ),
             MyRoundedButtonForSurvey(
