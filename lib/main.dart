@@ -8,6 +8,7 @@ import 'package:bob_mobile/modelData/battle_page_state_data.dart';
 import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
 import 'package:bob_mobile/select_role_page.dart';
+import 'package:bob_mobile/shop_page.dart';
 import 'package:bob_mobile/team_hall_page.dart';
 import 'package:bob_mobile/widgets/loading_indicator_full_screen.dart';
 import 'package:bob_mobile/widgets/loading_indicator_message.dart';
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
               '/fight': (BuildContext context) => BattlePage(),
               '/add_player_to_team': (BuildContext context) => AddPlayerPage(),
               '/add_read_book': (BuildContext context) => AddBookPage(),
+              '/shop_page': (BuildContext context) => ShopPage(),
             },
           ),
         ),

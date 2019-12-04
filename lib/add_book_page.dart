@@ -97,23 +97,42 @@ class _AddBookPageState extends State<AddBookPage> {
     if (Provider.of<AddBookFormData>(context, listen: false).formChanged) {
       return showDialog<bool>(
         context: this.context,
-        builder: (context) => AlertDialog(
-          title:
-              Text('Do you want to leave this page without saving your book?'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('No'),
-              onPressed: () => {Navigator.pop(context, false)},
-            ),
-            FlatButton(
-              child: Text('Yes'),
-              onPressed: () => {Navigator.pop(context, true)},
-            ),
-          ],
-        ),
+        builder: (context) => FutureBuilder<Object>(
+            future: ColorLogicbyPersonality(context),
+            builder: (context, color) {
+              return AlertDialog(
+                title: Text(
+                    'Do you want to leave your library without saving? If so all your changes will be lost'),
+                actions: <Widget>[
+                  FlatButton(
+                    shape: CircleBorder(side: BorderSide(color: color.data)),
+                    child: Text(
+                      'stay',
+                      style: TextStyle(color: color.data),
+                    ),
+                    onPressed: () => {Navigator.pop(context, false)},
+                  ),
+                  FlatButton(
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: color.data)),
+                    child: Text(
+                      'leave',
+                      style: TextStyle(color: Colors.redAccent),
+                    ),
+                    onPressed: okToLeave,
+                  ),
+                ],
+              );
+            }),
         barrierDismissible: false,
       );
     }
+    Navigator.pop(context, true);
+  }
+
+  void okToLeave() {
+    Provider.of<AddBookFormData>(context, listen: false)
+        .initDataOnline(context);
     Navigator.pop(context, true);
   }
 

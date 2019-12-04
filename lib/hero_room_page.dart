@@ -1,4 +1,5 @@
 import 'package:bob_mobile/battle_page.dart';
+import 'package:bob_mobile/add_more.dart';
 import 'package:bob_mobile/add_more_books_read.dart';
 import 'package:bob_mobile/dashboard_page.dart';
 import 'package:bob_mobile/data_type/books_master.dart';
@@ -200,31 +201,17 @@ Widget _buildLibraryTab() {
 }
 
 Widget addMoreBooksButton(BuildContext context) {
-  return FutureBuilder<Object>(
-      future: ColorLogicbyRole(context),
-      builder: (context, snapshotColor) {
-        Color color = snapshotColor.data;
-        if (color != null) {
-          return FlatButton.icon(
-              shape: Border.all(color: color, width: 2),
-              onPressed: () {
-                print('I will launch add book screen');
-                Navigator.of(context).pushNamed('/add_read_book');
-              },
-              icon: Icon(
-                Icons.add,
-                color: color,
-              ),
-              label: TextFormattedLabelTwo(
-                  'Add Read Books',
-                  MediaQuery.of(context).size.width / 20,
-                  Future.value(snapshotColor.data),
-                  null,
-                  TextAlign.center));
-        } else {
-          return Container();
-        }
-      });
+  return addMoreButton('Add Read Books', () {
+    print('I will launch add book screen');
+    Navigator.of(context).pushNamed('/add_read_book');
+  });
+}
+
+Widget addMoreItemsButton(BuildContext context) {
+  return addMoreButton('Add More Items', () {
+    print('I will launch add items screen');
+    Navigator.of(context).pushNamed('/shop_page');
+  });
 }
 
 Widget _buildBookTile(int index) {
@@ -643,18 +630,22 @@ Widget _createFinalListOfItems(BuildContext context) {
       padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
       shrinkWrap: true,
       itemBuilder: (context, index) => _creatTileForItem(index, context),
-      itemCount: Quanda.of(context).myItems.length,
+      itemCount: Quanda.of(context).myItems.length + 1,
     ),
   );
 }
 
 Widget _creatTileForItem(int index, BuildContext context) {
   //TODO: Remove Expired Items, don't Trust the system
-
-  if (!Quanda.of(context).myItems.elementAt(index).inuse) {
-    return _cardForItemCanBeUsed(index, context);
-  } else if (Quanda.of(context).myItems.elementAt(index).inuse) {
-    return _cardForItemInUse(index, context);
+  if (index == Quanda.of(context).myItems.length + 1) {
+    //Create button to go to shop
+    return addMoreItemsButton(context);
+  } else {
+    if (!Quanda.of(context).myItems.elementAt(index).inuse) {
+      return _cardForItemCanBeUsed(index, context);
+    } else if (Quanda.of(context).myItems.elementAt(index).inuse) {
+      return _cardForItemInUse(index, context);
+    }
   }
 }
 

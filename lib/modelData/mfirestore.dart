@@ -320,6 +320,16 @@ class MBobFireBase implements BoBFireBase {
         .snapshots());
   }
 
+  @override
+  Stream<QuerySnapshot> getPlayerRanking(BuildContext context) {
+    print('Queried lists of rankings single user....');
+    return (_firestore
+        .collection('player_rankings')
+        .where('id', isEqualTo: Quanda.of(context).myUser.id)
+        .orderBy('player_points', descending: true)
+        .snapshots());
+  }
+
   ///This will provide the list of suggestions for Team name
   ///it most always remain sync to avoid name repetition
   @override
@@ -1017,7 +1027,7 @@ class MBobFireBase implements BoBFireBase {
 
   @override
   Future<void> updateReadBooks(
-      BuildContext context, List<Books> theBooks, void Function() param2) {
+      BuildContext context, List<Books> theBooks, void Function() onComplete) {
     _firestore.runTransaction((tran) async {
       DocumentSnapshot snapUserData = await tran.get(_firestore
           .collection('user_data')
@@ -1028,7 +1038,7 @@ class MBobFireBase implements BoBFireBase {
     }, timeout: Duration(seconds: 50)).whenComplete(
       () {
         print('Updated UserData');
-        param2();
+        onComplete();
       },
     ).catchError((e) {
       print('error after user_data fireBase Update: $e');
