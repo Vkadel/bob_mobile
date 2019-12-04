@@ -7,6 +7,7 @@ import 'package:bob_mobile/hero_room_page.dart';
 import 'package:bob_mobile/modelData/battle_page_state_data.dart';
 import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/modelData/qanda.dart';
+import 'package:bob_mobile/modelData/shop_purchase_data.dart';
 import 'package:bob_mobile/select_role_page.dart';
 import 'package:bob_mobile/shop_page.dart';
 import 'package:bob_mobile/team_hall_page.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           builder: (_) => AddBookFormData(),
+        ),
+        ChangeNotifierProvider(
+          builder: (_) => ShopPurchaseData(),
         )
       ],
       child: Quanda(

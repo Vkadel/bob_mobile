@@ -14,6 +14,7 @@ ItemsMaster _$ItemsMasterFromJson(Map<String, dynamic> json) {
     json['multiplier'] as int,
     json['cost'] as int,
     json['duration_days'] as int,
+    json['id'] as int,
   )..status = json['status'] as int;
 }
 
@@ -26,4 +27,5 @@ Map<String, dynamic> _$ItemsMasterToJson(ItemsMaster instance) =>
       'cost': instance.cost,
       'duration_days': instance.duration_days,
       'status': instance.status,
+      'id': instance.id,
     };

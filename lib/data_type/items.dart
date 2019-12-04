@@ -5,9 +5,9 @@ part 'items.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Items {
   Items(
-      this.item, //Item id
+      this.item, //Item id from items_master
       this.status, //0: used 1-oo:available
-      this.id,
+      this.id, //userId
       this.endDate, //make null until activated
       this.inuse);
   String id; //This is the owners id
@@ -35,5 +35,11 @@ class Items {
     item.endDate = timestamp.millisecondsSinceEpoch + (3600000 * 24 * 365);
     item.id = uid;
     return item;
+  }
+
+  void purchaseNow(Timestamp timestamp) {
+    this.endDate =
+        endDate = timestamp.millisecondsSinceEpoch + (3600000 * 24 * 365);
+    this.status = 1;
   }
 }

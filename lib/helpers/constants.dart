@@ -15,6 +15,8 @@ class Constants {
   static final double height_lists_hero_page = 230;
   static final double height_raking_items = 76;
   static final double card_elevation = 8;
+  static final String buff_gain = 'point per question gains';
+  static final String buff_loss = 'point per question loses';
   static final String team_member_is_on_your_team =
       'That team Member is already in your team try someone else';
   static final String form_or_join_a_team = "Form or join a team";

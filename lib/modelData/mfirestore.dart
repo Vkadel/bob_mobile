@@ -40,6 +40,7 @@ abstract class BoBFireBase {
   Stream<QuerySnapshot> getQuestions();
   Future<void> setUpUserPersonality(FirebaseUser Firebaseuser, User user);
   Stream<QuerySnapshot> getPlayerRankings();
+  Stream<DocumentSnapshot> getPlayerRankingPoints(BuildContext context);
   Stream<QuerySnapshot> getTeamRankings();
   Future<Stream<DocumentSnapshot>> getClassStats(BuildContext context);
   Future<void> getBookTypes(BuildContext context);
@@ -322,7 +323,7 @@ class MBobFireBase implements BoBFireBase {
 
   @override
   Stream<QuerySnapshot> getPlayerRanking(BuildContext context) {
-    print('Queried lists of rankings single user....');
+    /*print('Queried lists of rankings single user....');*/
     return (_firestore
         .collection('player_rankings')
         .where('id', isEqualTo: Quanda.of(context).myUser.id)
@@ -442,6 +443,7 @@ class MBobFireBase implements BoBFireBase {
     });
   }
 
+  //This method will only load items for sale that are active
   @override
   Stream<QuerySnapshot> getMasterListOfItems(context) {
     print('Fetching master list of items');
@@ -1044,5 +1046,46 @@ class MBobFireBase implements BoBFireBase {
       print('error after user_data fireBase Update: $e');
     });
     return null;
+  }
+
+  @override
+  Stream<DocumentSnapshot> getPlayerRankingPoints(BuildContext context) {
+    return _firestore
+        .collection('player_rankings')
+        .document(Quanda.of(context).myUser.id)
+        .snapshots();
+  }
+
+  Future<void> buyItem(ItemsMaster item, BuildContext context) async {
+    _firestore.runTransaction((tran) async {
+      DocumentSnapshot playerRankingPoints = await tran.get(_firestore
+          .collection('player_rankings')
+          .document(Quanda.of(context).myUser.id));
+      if (playerRankingPoints.exists) {
+        //buy item
+        print('Updating player points');
+        PlayerPoints playerPoints =
+            PlayerPoints.fromJson(playerRankingPoints.data);
+        playerPoints.player_points = playerPoints.player_points - item.cost;
+        Items purchasedItem =
+            Items(item.id, 1, Quanda.of(context).myUser.id, null, false);
+        purchasedItem.purchaseNow(Timestamp.now());
+        //Todo cost: may want to make rankings the sole location for points
+        print('updating player points in the user profile');
+        tran.update(
+            _firestore
+                .collection('users')
+                .document(Quanda.of(context).myUser.id),
+            {'points': playerPoints.player_points});
+        tran.set(playerRankingPoints.reference, playerPoints.toJson());
+        tran.set(
+            _firestore
+                .collection('user_data')
+                .document(Quanda.of(context).myUser.id)
+                .collection('list_of_items')
+                .document(),
+            purchasedItem.toJson());
+      }
+    });
   }
 }

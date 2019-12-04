@@ -204,14 +204,14 @@ Widget addMoreBooksButton(BuildContext context) {
   return addMoreButton('Add Read Books', () {
     print('I will launch add book screen');
     Navigator.of(context).pushNamed('/add_read_book');
-  });
+  }, false);
 }
 
 Widget addMoreItemsButton(BuildContext context) {
   return addMoreButton('Add More Items', () {
     print('I will launch add items screen');
     Navigator.of(context).pushNamed('/shop_page');
-  });
+  }, true);
 }
 
 Widget _buildBookTile(int index) {
@@ -613,8 +613,10 @@ Widget _buildListofMasterItems(BuildContext context) {
             snapshot.hasData &&
             snapshot.data != null) {
           List<ItemsMaster> items = new List();
-          snapshot.data.documents
-              .forEach((f) => items.add(ItemsMaster.fromJson(f.data)));
+          items = snapshot.data.documents
+              .toList()
+              .map((f) => ItemsMaster.fromJson(f.data))
+              .toList();
           Quanda.of(context).masterListOfItems = items;
           return _createFinalListOfItems(context);
         } else {
@@ -637,7 +639,7 @@ Widget _createFinalListOfItems(BuildContext context) {
 
 Widget _creatTileForItem(int index, BuildContext context) {
   //TODO: Remove Expired Items, don't Trust the system
-  if (index == Quanda.of(context).myItems.length + 1) {
+  if (index == Quanda.of(context).myItems.length) {
     //Create button to go to shop
     return addMoreItemsButton(context);
   } else {
@@ -674,10 +676,10 @@ Widget _cardForItemInUse(int index, BuildContext context) {
         child: Column(
           children: <Widget>[
             TextFormattedLabelTwo(
-                '+ ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).addition} to questions gains',
+                '+ ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).addition} ${Constants.buff_gain}',
                 15),
             TextFormattedLabelTwo(
-              '- ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).subtraction} to questions loses',
+              '- ${Quanda.of(context).masterListOfItems.elementAt(Quanda.of(context).myItems.elementAt(index).item).subtraction} ${Constants.buff_loss}',
               15,
             )
           ],
