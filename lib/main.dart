@@ -1,4 +1,5 @@
 import 'package:bob_mobile/add_player_page.dart';
+import 'package:bob_mobile/sign_out_button.dart';
 import 'package:bob_mobile/modelData/auth.dart';
 import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/data_type/user.dart';
@@ -20,7 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'add_book_page.dart';
+import 'library_page.dart';
 import 'dashboard_page.dart';
 import 'login_page.dart';
 import 'modelData/add_book_form_data.dart';
@@ -37,21 +38,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          builder: (_) => PersonalityTestStateData(),
+        ChangeNotifierProvider<AddBookFormData>(
+          create: (_) => AddBookFormData(),
         ),
-        ChangeNotifierProvider(
-          builder: (_) => BattlePageStateData(),
+        ChangeNotifierProvider<BattlePageStateData>(
+          create: (_) => BattlePageStateData(),
         ),
-        ChangeNotifierProvider(
-          builder: (_) => TeamFormationData(),
-        ),
-        ChangeNotifierProvider(
-          builder: (_) => AddBookFormData(),
-        ),
-        ChangeNotifierProvider(
-          builder: (_) => ShopPurchaseData(),
-        )
+        ChangeNotifierProvider<PersonalityTestStateData>(
+            create: (_) => PersonalityTestStateData()),
+        ChangeNotifierProvider<ShopPurchaseData>(
+            create: (_) => ShopPurchaseData()),
+        ChangeNotifierProvider<TeamFormationData>(
+            create: (_) => TeamFormationData())
       ],
       child: Quanda(
         child: FireProvider(
@@ -74,7 +72,7 @@ class MyApp extends StatelessWidget {
               '/team_hall': (BuildContext context) => TeamHallPage(),
               '/fight': (BuildContext context) => BattlePage(),
               '/add_player_to_team': (BuildContext context) => AddPlayerPage(),
-              '/add_read_book': (BuildContext context) => AddBookPage(),
+              '/add_read_book': (BuildContext context) => LibraryPage(),
               '/shop_page': (BuildContext context) => ShopPage(),
             },
           ),
@@ -99,35 +97,40 @@ class _EntryPageState extends State<EntryPage> {
   @override
   Widget build(BuildContext context) {
     final Auth auth = FireProvider.of(context).auth;
-
-    return StreamBuilder<FirebaseUser>(
-      stream: auth.onAuthStateChanged,
-      builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {
-        print(snapshot.connectionState);
-        if (snapshot.connectionState == ConnectionState.active) {
-          print("connection state: Connection is active");
-          String userid;
-          String userEmail;
-          if (snapshot.data != null) {
-            userid = snapshot.data.uid;
-            userEmail = snapshot.data.email;
-            print('SNAPSHOT Connection id: $userid');
-            final bool loggedIn = snapshot.hasData;
-            return (loggedIn && snapshot.data != null)
-                ? HomePage(
-                    email: userEmail,
-                    uid: userid,
-                    title: 'my Home Page',
-                  )
-                : LoginPage();
+    if (Quanda.of(context).myUser == null) {
+      return StreamBuilder<FirebaseUser>(
+        stream: auth.onAuthStateChanged,
+        builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {
+          print(snapshot.connectionState);
+          if (snapshot.connectionState == ConnectionState.active) {
+            print("connection state: Connection is active");
+            String userid;
+            String userEmail;
+            if (snapshot.data != null) {
+              userid = snapshot.data.uid;
+              userEmail = snapshot.data.email;
+              print('SNAPSHOT Connection id: $userid');
+              final bool loggedIn = snapshot.hasData;
+              return (loggedIn && snapshot.data != null)
+                  ? HomePage(
+                      email: userEmail,
+                      uid: userid,
+                      title: 'my Home Page',
+                    )
+                  : LoginPage();
+            } else {
+              return LoginPage();
+            }
           } else {
-            return LoginPage();
-          }
-        } else {
-          return mLoadingIndicatorFullScreen(context, snapshot.connectionState);
-        } //Condition to check when data comes back from the Auth//Condition to load when waiting for data to return
-      },
-    );
+            return mLoadingIndicatorFullScreen(
+                context, snapshot.connectionState);
+          } //Condition to check when data comes back from the Auth//Condition to load when waiting for data to return
+        },
+      );
+    } else {
+      print('there is a user');
+      return DashBoardPage();
+    }
   }
 }
 
@@ -155,9 +158,7 @@ class _HomePageState extends State<HomePage> {
 
       return StreamBuilder<QuerySnapshot>(
         stream: mBobFireBase.get_userprofile(widget.uid),
-        builder:
-            // ignore: missing_return
-            (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           print('SNAPSHOT Connection STARTED');
 
           return snapshot.hasError
@@ -178,18 +179,7 @@ class _HomePageState extends State<HomePage> {
       return Scaffold(
         appBar: AppBar(
           title: Text('The Home Page'),
-          actions: <Widget>[
-            FlatButton(
-                onPressed: () async {
-                  try {
-                    Auth auth = FireProvider.of(context).auth;
-                    await auth.signOut();
-                  } catch (e) {
-                    print(e);
-                  }
-                },
-                child: Text('Sign outs'))
-          ],
+          actions: <Widget>[SignOutButton()],
         ),
         body: Text('Welcome'),
       );
@@ -302,8 +292,6 @@ class _HomePageState extends State<HomePage> {
         return LoadingIndicatorMessage(
           message: 'Finished..',
         );
-        ;
-        // ignore: missing_return
         break;
       default:
         return new Container(width: 0.0, height: 0.0);

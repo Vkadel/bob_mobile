@@ -47,7 +47,7 @@ abstract class BoBFireBase {
   Future<Stream<QuerySnapshot>> getMyItems(BuildContext context);
   Stream<QuerySnapshot> getMyProposedQuestions(BuildContext context);
   Stream<QuerySnapshot> getMyProposedBooks(BuildContext context);
-  Stream<QuerySnapshot> getMyReadBooks(BuildContext context);
+  /*Stream<QuerySnapshot> getMyReadBooks(BuildContext context);*/
   Stream<QuerySnapshot> getMasterListOfItems(BuildContext context);
   Future<void> useItem(BuildContext context, Items itemType, int duration);
   Stream<DocumentSnapshot> getUserReadListOfBooks(User user);
@@ -68,7 +68,7 @@ abstract class BoBFireBase {
   Stream<QuerySnapshot> getOutstandingTeamInvitations(BuildContext context);
   Future<void> acceptTeamInvite(int indexOfinvite, BuildContext context);
   Future<void> deleteDenyMember(Team team, BuildContext context, int index);
-  Stream<DocumentSnapshot> getUserData(BuildContext context);
+  Future<Stream<DocumentSnapshot>> getUserData(BuildContext context);
   Future<void> updateReadBooks(
       BuildContext context, List<Books> theBooks, Null Function());
 }
@@ -466,12 +466,6 @@ class MBobFireBase implements BoBFireBase {
   }
 
   @override
-  Stream<QuerySnapshot> getMyReadBooks(BuildContext context) {
-    // TODO: implement getMyReadBooks
-    return null;
-  }
-
-  @override
   Stream<DocumentSnapshot> getUserReadListOfBooks(User user) {
     return _firestore
         .collection('user_data')
@@ -492,6 +486,8 @@ class MBobFireBase implements BoBFireBase {
     return _firestore.collection('book_master').snapshots();
   }
 
+  ///This query has a composite field in firestore the field is designated
+  ///based on the section and the book id
   @override
   Stream<QuerySnapshot> getQuestionsForMasterBook(
       int bookid, int book_section) {
@@ -1013,11 +1009,24 @@ class MBobFireBase implements BoBFireBase {
     });
   }
 
-  Stream<DocumentSnapshot> getUserData(BuildContext context) {
-    return _firestore
-        .collection('user_data')
-        .document(Quanda.of(context).myUser.id)
-        .snapshots();
+  Future<Stream<DocumentSnapshot>> getUserData(BuildContext context) async {
+    if (Quanda.of(context).myUser != null) {
+      return await _firestore
+          .collection('user_data')
+          .document(Quanda.of(context).myUser.id)
+          .snapshots();
+    } else {
+      print('Getting user id and updating quanda');
+      await get_userprofile(await FireProvider.of(context).auth.currentUser())
+          .listen((onData) {
+        Quanda.of(context).myUser =
+            User.fromJson(onData.documents.elementAt(0).data);
+      });
+      return _firestore
+          .collection('user_data')
+          .document(await FireProvider.of(context).auth.currentUser())
+          .snapshots();
+    }
   }
 
   Stream<QuerySnapshot> searchForBook(String book_name) {

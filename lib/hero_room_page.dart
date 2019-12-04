@@ -1,6 +1,6 @@
 import 'package:bob_mobile/battle_page.dart';
 import 'package:bob_mobile/add_more.dart';
-import 'package:bob_mobile/add_more_books_read.dart';
+import 'package:bob_mobile/library_tab.dart';
 import 'package:bob_mobile/dashboard_page.dart';
 import 'package:bob_mobile/data_type/books_master.dart';
 import 'package:bob_mobile/data_type/items_master.dart';
@@ -40,99 +40,98 @@ class _HeroPageState extends State<HeroRoomPage> {
   Stream<DocumentSnapshot> stream;
   @override
   Widget build(BuildContext context) {
-    _initStream(stream, context);
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        body: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              pinned: true,
-              floating: true,
-              expandedHeight: 150.0,
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text(Constants.hero_room_title),
-                titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                collapseMode: CollapseMode.parallax,
-                background: FutureBuilder<Object>(
-                    future: ColorLogicbyRole(context),
-                    builder: (context, snapshot) {
-                      return Container(
-                        color: snapshot.data,
-                        child: Image(
-                            image: AssetImage(Constants.myAvatars
-                                .elementAt(Quanda.of(context).myUser.role - 1)
-                                .asset_Large)),
-                      );
-                    }),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Center(
-                child:
-                    TextFormattedRoomLabel(Constants.hero_stats_label, context),
-              ),
-            ),
-            _buildStats(context, stream),
-            _buildSpacerBox(context),
-            _buildOutstandingTeamInvitations(context),
-            SliverToBoxAdapter(
-              child: FutureBuilder<Object>(
-                  future: ColorLogicbyRole(context),
-                  builder: (context, snapshotRole) {
-                    return FutureBuilder<Object>(
-                        future: ColorLogicbyPersonality(context),
-                        builder: (context, snapshotColorPersonality) {
-                          return TabBar(
-                            labelColor: snapshotColorPersonality.data,
-                            unselectedLabelColor: snapshotRole.data,
-                            indicatorColor: Constants.color_secondary,
-                            tabs: <Widget>[
-                              Tab(
-                                icon: Icon(Icons.settings_input_composite),
-                                child: Text('Items'),
-                              ),
-                              Tab(
-                                  icon: Icon(Icons.view_week),
-                                  child: Text('library')),
-                              Tab(
-                                  icon: Icon(Icons.question_answer),
-                                  child:
-                                      TextFormattedLabelTwo('Add Questions')),
-                            ],
-                          );
-                        });
-                  }),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                height: Constants.height_lists_hero_page,
-                child: TabBarView(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.width * 2,
-                      child: _buildListofItems(context),
-                    ),
-                    _buildLibraryTab(),
-                    Icon(Icons.directions_bike),
-                  ],
+    /* _initStream(stream, context);*/
+    return WillPopScope(
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          body: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                pinned: true,
+                floating: true,
+                expandedHeight: 150.0,
+                flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  title: Text(Constants.hero_room_title),
+                  titlePadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  collapseMode: CollapseMode.parallax,
+                  background: FutureBuilder<Object>(
+                      future: ColorLogicbyRole(context),
+                      builder: (context, snapshot) {
+                        return Container(
+                          color: snapshot.data,
+                          child: Image(
+                              image: AssetImage(Constants.myAvatars
+                                  .elementAt(Quanda.of(context).myUser.role - 1)
+                                  .asset_Large)),
+                        );
+                      }),
                 ),
               ),
-            ),
-            _buildSpacerBox(context),
-            _buildButtonsForBattle(context),
-            _buildSpacerBox(context)
-          ],
+              SliverToBoxAdapter(
+                child: Center(
+                  child: TextFormattedRoomLabel(
+                      Constants.hero_stats_label, context),
+                ),
+              ),
+              _buildStats(context, stream),
+              _buildSpacerBox(context),
+              _buildOutstandingTeamInvitations(context),
+              SliverToBoxAdapter(
+                child: FutureBuilder<Object>(
+                    future: ColorLogicbyRole(context),
+                    builder: (context, snapshotRole) {
+                      return FutureBuilder<Object>(
+                          future: ColorLogicbyPersonality(context),
+                          builder: (context, snapshotColorPersonality) {
+                            return TabBar(
+                              labelColor: snapshotColorPersonality.data,
+                              unselectedLabelColor: snapshotRole.data,
+                              indicatorColor: Constants.color_secondary,
+                              tabs: <Widget>[
+                                Tab(
+                                  icon: Icon(Icons.settings_input_composite),
+                                  child: Text('Items'),
+                                ),
+                                Tab(
+                                    icon: Icon(Icons.view_week),
+                                    child: Text('library')),
+                                Tab(
+                                    icon: Icon(Icons.question_answer),
+                                    child:
+                                        TextFormattedLabelTwo('Add Questions')),
+                              ],
+                            );
+                          });
+                    }),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: Constants.height_lists_hero_page,
+                  child: TabBarView(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.width * 2,
+                        child: _buildListofItems(context),
+                      ),
+                      _buildLibraryTab(),
+                      Icon(Icons.directions_bike),
+                    ],
+                  ),
+                ),
+              ),
+              _buildSpacerBox(context),
+              _prepareButtonsForBattle(context),
+              _buildSpacerBox(context)
+            ],
+          ),
         ),
       ),
+      onWillPop: () {
+        Navigator.pop(context, true);
+      },
     );
-  }
-
-  @override
-  void dispose() {
-    stream = null;
-    super.dispose();
   }
 
   void showSnackBarOnHeroRoom(String text) {
@@ -148,54 +147,64 @@ Widget _buildLibraryTab() {
   return Builder(
     builder: (context) {
       print('Will show list of books');
-      return StreamBuilder(
-          stream: FireProvider.of(context).fireBase.getUserData(context),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active &&
-                snapshot.hasData &&
-                !snapshot.hasError) {
-              DocumentSnapshot theData = snapshot.data;
-              //Check if user profile
-              UserData mUserData = UserData.fromJson(theData.data);
-              Quanda.of(context).userData = mUserData;
-              listSize = mUserData.list_of_read_books.length;
-              if (listSize > 0) {
-                //user has books I should display them
-                return Container(
-                  height: MediaQuery.of(context).size.width * 2,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: ListView.builder(
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return TextFormattedLabelTwo(
-                            'You have read the following books: ');
-                      } else {
-                        if (index <= listSize) {
-                          //These are books
-                          return _buildBookTile(index - 1);
-                        }
-                        if (index > listSize) {
-                          //This is the last element to add more books
-                          return addMoreBooksButton(context);
-                        }
-                      }
-                    },
-                    itemCount: listSize + 2,
-                  ),
+      return FutureBuilder(
+        future: FireProvider.of(context).fireBase.getUserData(context),
+        builder: (BuildContext context, AsyncSnapshot snapshotStream) {
+          if (snapshotStream.hasData) {
+            return StreamBuilder(
+                stream: snapshotStream.data,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active &&
+                      snapshot.hasData &&
+                      !snapshot.hasError) {
+                    DocumentSnapshot theData = snapshot.data;
+                    //Check if user profile
+                    UserData mUserData = UserData.fromJson(theData.data);
+                    Quanda.of(context).userData = mUserData;
+                    listSize = mUserData.list_of_read_books.length;
+                    if (listSize > 0) {
+                      //user has books I should display them
+                      return Container(
+                        height: MediaQuery.of(context).size.width * 2,
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: ListView.builder(
+                          itemBuilder: (context, index) {
+                            if (index == 0) {
+                              return TextFormattedLabelTwo(
+                                  'You have read the following books: ');
+                            } else {
+                              if (index <= listSize) {
+                                //These are books
+                                return _buildBookTile(index - 1);
+                              }
+                              if (index > listSize) {
+                                //This is the last element to add more books
+                                return addMoreBooksButton(context);
+                              }
+                            }
+                          },
+                          itemCount: listSize + 2,
+                        ),
+                      );
+                    } else {
+                      //Ask to add books
+                      return AddMoreBooksReadTab();
+                    }
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return LoadingIndicatorMessage(
+                      message: 'Loading the books online',
+                    );
+                  } else {
+                    return Text('Oh No there is an error');
+                  }
+                } //Builder Stream
                 );
-              } else {
-                //Ask to add books
-                return AddMoreBooksReadTab();
-              }
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return LoadingIndicatorMessage(
-                message: 'Loading the books online',
-              );
-            } else {
-              return Text('Oh No there is an error');
-            }
-          } //Builder Stream
-          );
+          } else {
+            return Container();
+          }
+        },
+      );
     },
   );
 }
@@ -391,38 +400,103 @@ Widget _pendingInvitationChildItem(
   );
 }
 
-Widget _buildButtonsForBattle(BuildContext context) {
-  return Builder(
-    builder: (BuildContext context) {
-      return SliverGrid.count(
-        crossAxisCount: 2,
-        children: <Widget>[
-          CreateLargeButtonWithSVGOverlap(
-              'Fight for Yourself',
-              'assets/fight_for_yourself.svg',
-              context,
-              Radius.circular(20),
-              Radius.circular(0),
-              Radius.circular(20),
-              Radius.circular(0),
-              startFightForYourself,
-              true),
-          CreateLargeButtonWithSVGOverlap(
-              'Fight for the Team',
-              'assets/fight_for_your_team.svg',
-              context,
-              Radius.circular(0),
-              Radius.circular(20),
-              Radius.circular(0),
-              Radius.circular(20),
-              startFightForTheTeam,
-              NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot()
-                  ? false
-                  : true),
-        ],
-      );
-    },
-  );
+Widget _prepareButtonsForBattle(BuildContext context) {
+  return FutureBuilder(
+      future: FireProvider.of(context).fireBase.getUserData(context),
+      builder: (BuildContext context, AsyncSnapshot snapshotStream) {
+        switch (snapshotStream.connectionState) {
+          case ConnectionState.none:
+            return SliverToBoxAdapter(
+              child: TextFormattedLabelTwo(
+                'There is no connection check again later....',
+              ),
+            );
+            break;
+          case ConnectionState.waiting:
+            return SliverToBoxAdapter(
+              child: LoadingIndicatorMessage(
+                message: 'Getting the books from your future library online',
+              ),
+            );
+            break;
+          case ConnectionState.active:
+            return snapshotStream.hasData
+                ? _createButtonsForBattle(snapshotStream)
+                : returnEmpty();
+            break;
+          case ConnectionState.done:
+            return snapshotStream.hasData
+                ? _createButtonsForBattle(snapshotStream)
+                : returnEmpty();
+            break;
+        }
+      });
+}
+
+Widget _createButtonsForBattle(snapshotStream) {
+  return StreamBuilder<DocumentSnapshot>(
+      stream: snapshotStream.data,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return SliverToBoxAdapter(
+              child: TextFormattedLabelTwo(
+                'There is no connection check again later....',
+              ),
+            );
+            break;
+          case ConnectionState.waiting:
+            print('Connection status waiting');
+            return SliverToBoxAdapter(
+              child: LoadingIndicatorMessage(
+                message: 'Getting the books from your library online',
+              ),
+            );
+            break;
+          case ConnectionState.active:
+            if (snapshot.hasData) {
+              UserData user_data = UserData.fromJson(snapshot.data.data);
+              Quanda.of(context).userData = user_data;
+              Quanda.of(context).playeReadNoBooks = false;
+              print('I got books back I will build list');
+              return Builder(
+                builder: (BuildContext context) {
+                  return SliverGrid.count(
+                    crossAxisCount: 2,
+                    children: <Widget>[
+                      CreateLargeButtonWithSVGOverlap(
+                          'Fight for Yourself',
+                          'assets/fight_for_yourself.svg',
+                          context,
+                          Radius.circular(20),
+                          Radius.circular(0),
+                          Radius.circular(20),
+                          Radius.circular(0),
+                          startFightForYourself,
+                          true),
+                      CreateLargeButtonWithSVGOverlap(
+                          'Fight for the Team',
+                          'assets/fight_for_your_team.svg',
+                          context,
+                          Radius.circular(0),
+                          Radius.circular(20),
+                          Radius.circular(0),
+                          Radius.circular(20),
+                          startFightForTheTeam,
+                          NotNullNotEmpty(Quanda.of(context).myUser.team_id)
+                                  .isnot()
+                              ? false
+                              : true),
+                    ],
+                  );
+                },
+              );
+            }
+            break;
+          case ConnectionState.done:
+            break;
+        }
+      });
 }
 
 void startFightForYourself(BuildContext context) {
@@ -755,9 +829,9 @@ Widget _youDontHaveItems(context, AsyncSnapshot<QuerySnapshot> snapshot) {
   }
 }
 
-void _initStream(Stream<DocumentSnapshot> stream, BuildContext context) async {
+/*void _initStream(Stream<DocumentSnapshot> stream, BuildContext context) async {
   stream = await FireProvider.of(context).fireBase.getClassStats(context);
-}
+}*/
 
 Widget _buildStats(BuildContext context, Stream<DocumentSnapshot> stream) {
   return FutureBuilder(

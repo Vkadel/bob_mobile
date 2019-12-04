@@ -13,7 +13,7 @@ class LoadingIndicatorMessage extends StatelessWidget {
         child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        TextFormattedLabelTwo(message, MediaQuery.of(context).size.width / 20,
+        TextFormattedLabelTwo(message, MediaQuery.of(context).size.width / 25,
             Future.value(Colors.black)),
         Center(
           child: CircularProgressIndicator(),

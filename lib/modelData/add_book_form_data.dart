@@ -42,12 +42,14 @@ class AddBookFormData with ChangeNotifier {
         .fireBase
         .getMasterListofBooks()
         .listen((onData) => _tryUpdateMasters(onData, context));
-    var userDataSnap =
-        await FireProvider.of(context).fireBase.getUserData(context).first;
-    userData = UserData.fromJson(userDataSnap.data);
-    list_of_read_books = userData.list_of_read_books;
-    Quanda.of(context).userData = userData;
-    masterListIsUpdating = false;
+    Stream<DocumentSnapshot> userDataStream =
+        await FireProvider.of(context).fireBase.getUserData(context);
+    userDataStream.listen((onData) {
+      userData = UserData.fromJson(onData.data);
+      list_of_read_books = userData.list_of_read_books;
+      Quanda.of(context).userData = userData;
+      masterListIsUpdating = false;
+    });
   }
 
   BooksMaster itemConversion(DocumentSnapshot item) {
@@ -158,12 +160,4 @@ class AddBookFormData with ChangeNotifier {
     }
   }*/
 
-  Future<void> getUserData(BuildContext context) async {
-    DocumentSnapshot userDataSnapShot = await FireProvider.of(context)
-        .fireBase
-        .getUserData(context)
-        .forEach((data) {
-      this.userData = Quanda.of(context).userData;
-    });
-  }
 }

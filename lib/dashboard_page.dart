@@ -1,5 +1,6 @@
 import 'package:bob_mobile/data_type/player_points.dart';
 import 'package:bob_mobile/data_type/team_points.dart';
+import 'package:bob_mobile/sign_out_button.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_3.dart';
 import 'package:bob_mobile/modelData/provider.dart';
@@ -29,24 +30,49 @@ class _DashBoardPageState extends State<DashBoardPage> {
   int _location_at_team_rankings;
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(Constants().user_dashboard_title),
-          flexibleSpace: FutureBuilder<Color>(
-              future: ColorLogicbyRole(context),
-              builder: (context, snapshotColor) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: Constants.height_extended_bars,
-                  color: snapshotColor.data,
-                );
-              }),
-        ),
-        body: Container(
-          child: build_body(context),
+    return WillPopScope(
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[SignOutButton()],
+            title: Text(Constants().user_dashboard_title),
+            flexibleSpace: FutureBuilder<Color>(
+                future: ColorLogicbyRole(context),
+                builder: (context, snapshotColor) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: Constants.height_extended_bars,
+                    color: snapshotColor.data,
+                  );
+                }),
+          ),
+          body: Container(
+            child: build_body(context),
+          ),
         ),
       ),
+      onWillPop: _onBackPressed,
+    );
+  }
+
+  Future<bool> _onBackPressed() {
+    print('Do you want to end the battle');
+    return showDialog<bool>(
+      context: this.context,
+      builder: (context) => AlertDialog(
+        title: Text('Do you want to leave the app?'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('No'),
+            onPressed: () => {Navigator.pop(context, false)},
+          ),
+          FlatButton(
+            child: Text('Yes'),
+            onPressed: () => {Navigator.pop(context), true},
+          ),
+        ],
+      ),
+      barrierDismissible: false,
     );
   }
 }

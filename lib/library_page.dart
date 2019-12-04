@@ -27,14 +27,14 @@ import 'data_type/books.dart';
 import 'helpers/status_to_string.dart';
 import 'modelData/add_book_form_data.dart';
 
-class AddBookPage extends StatefulWidget {
-  AddBookPage({Key key}) : super(key: key);
+class LibraryPage extends StatefulWidget {
+  LibraryPage({Key key}) : super(key: key);
 
   @override
-  _AddBookPageState createState() => _AddBookPageState();
+  _LibraryPageState createState() => _LibraryPageState();
 }
 
-class _AddBookPageState extends State<AddBookPage> {
+class _LibraryPageState extends State<LibraryPage> {
   @override
   Widget build(BuildContext context) {
     if (Provider.of<AddBookFormData>(context, listen: false)

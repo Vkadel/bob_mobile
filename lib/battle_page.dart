@@ -84,7 +84,8 @@ class BattlePageState extends State<BattlePage> {
                     padding: const EdgeInsets.all(16.0),
                     child: TextFormattedLabelTwo(
                         'The battle is over and you got ${Provider.of<BattlePageStateData>(context).total_points_if_correct} Points',
-                        30),
+                        30,
+                        Future.value(Colors.black)),
                   ),
                   FormattedRoundedButton(
                       'Go to Hero Room ', _resetBattleGoBackToRoom, context),

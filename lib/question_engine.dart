@@ -57,6 +57,10 @@ class QuestionEngine {
   }
 
   void selectBookRandom(BuildContext context) {
+    Quanda.of(mcontext)
+        .userData
+        .list_of_read_books
+        .retainWhere((item) => item.status > 0);
     int listSize = Quanda.of(mcontext).userData.list_of_read_books.length;
     //Todo:Make sure user has books before going into the questions
     if (listSize == 0) {
