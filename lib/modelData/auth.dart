@@ -7,7 +7,7 @@ abstract class BaseAuth {
   Future<String> createUserWithEmailAndPassword(String email, String password);
   Future<String> currentUser();
   Future<String> currentUserEmail();
-  Future<String> signOut();
+  Future<void> signOut();
   Future<String> singInWithGoogle();
   Future<void> passwordReset(String email);
   FirebaseUser getLastUserLoged();
@@ -52,8 +52,9 @@ class Auth implements BaseAuth {
   }
 
   @override
-  Future<String> signOut() {
+  Future<void> signOut() {
     //TODO: update online status will need to get user and change the status
+
     return (_firebaseAuth.signOut());
   }
 

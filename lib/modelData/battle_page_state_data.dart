@@ -157,12 +157,6 @@ class BattlePageStateData with ChangeNotifier {
   }
 
   hitMob() {
-    print(
-        'going to hit the mob with multiplier of: ${_blows_required_to_kill_mob}');
-
-    _blows_required_to_kill_mob =
-        new Random().nextInt(Constants.blows_ceiling_to_kill_mob);
-
     double ammountToLifeToTake = (100 / _blows_required_to_kill_mob);
     monster_life - ammountToLifeToTake.round() <= 0
         ? finishBattle()
@@ -170,6 +164,7 @@ class BattlePageStateData with ChangeNotifier {
   }
 
   void hitHero() {
+    //TODO: Might want to implement levels in the hero
     double ammountToLifeToTake = (100 / _blows_required_to_kill_mob);
     hero_life - ammountToLifeToTake.round() <= 0
         ? finishBattle()
@@ -177,8 +172,15 @@ class BattlePageStateData with ChangeNotifier {
   }
 
   void finishBattle() {
+    checkIfHeroLost();
     _continue_fighting = false;
     notifyListeners();
+  }
+
+  void checkIfHeroLost() {
+    hero_life - (100 / _blows_required_to_kill_mob) <= 0
+        ? _total_points_if_correct = 0
+        : null;
   }
 
   void resetWithoutUpdate() {

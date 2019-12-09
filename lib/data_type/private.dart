@@ -40,5 +40,5 @@ class Private {
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$UserToJson`.
-  Map<dynamic, dynamic> toJson() => _$PrivateToJson(this);
+  Map<String, dynamic> toJson() => _$PrivateToJson(this);
 }

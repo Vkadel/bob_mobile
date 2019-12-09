@@ -350,11 +350,16 @@ Widget _buildBookTile(int index) {
 }
 
 double _heighForBookPic(BuildContext context) {
-  return ((MediaQuery.of(context).size.width - 20) / 2);
+  print('Adjusting pic size ${MediaQuery.of(context).devicePixelRatio}');
+  return ((MediaQuery.of(context).size.width - 20) /
+      MediaQuery.of(context).devicePixelRatio *
+      1.24);
 }
 
 double _widthForBookPic(BuildContext context) {
-  return ((MediaQuery.of(context).size.width - 20) / 3);
+  return ((MediaQuery.of(context).size.width - 20) /
+      MediaQuery.of(context).devicePixelRatio *
+      1.1);
 }
 
 void _increaseStatus(int indexOnReadBooks, BuildContext context) {

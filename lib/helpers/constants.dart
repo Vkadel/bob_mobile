@@ -12,6 +12,7 @@ class Constants {
   static final int item_availble = 1;
   static final int item_unavailable = 0;
   static final double height_extended_bars = 150;
+  static final double border_thickness_two = 2;
   static final double height_lists_hero_page = 230;
   static final double height_raking_items = 76;
   static final double card_elevation = 8;

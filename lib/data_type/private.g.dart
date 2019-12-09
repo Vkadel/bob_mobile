@@ -7,7 +7,7 @@ part of 'private.dart';
 // **************************************************************************
 
 Private _$PrivateFromJson(Map<String, dynamic> json) {
-  return Private()..members = json['members'] as Map<String, dynamic>;
+  return Private()..members = json['members'] as Map<dynamic, dynamic>;
 }
 
 Map<String, dynamic> _$PrivateToJson(Private instance) => <String, dynamic>{

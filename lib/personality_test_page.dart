@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:bob_mobile/data_type/question.dart';
 import 'package:bob_mobile/data_type/user.dart';
+import 'package:bob_mobile/sign_out_button.dart';
+import 'package:bob_mobile/widgets/loading_indicator_message.dart';
 import 'package:bob_mobile/widgets/rounded_edge_button_survey.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_1.dart';
 import 'package:bob_mobile/widgets/text_formated_raking_label_2.dart';
@@ -36,34 +38,39 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
   @override
   Widget build(BuildContext context) {
     //get questions
-    return StreamBuilder(
-      stream: FireProvider.of(context).fireBase.getQuestions(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          try {
-            if (snapshot.data != null) {
-              _list_of_questions = snapshot.data.documents
-                  .toList()
-                  .map((DocumentSnapshot doc) => Question.fromJson(doc.data))
-                  .toList();
-              /*   var question = _list_of_questions
-                  .elementAt(Quanda.of(context).progress)
-                  .option_a;*/
-
-              return BuildSurveyQuestion(context);
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          actions: <Widget>[SignOutButton()],
+        ),
+        body: StreamBuilder(
+          stream: FireProvider.of(context).fireBase.getQuestions(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.active) {
+              try {
+                if (snapshot.data != null) {
+                  _list_of_questions = snapshot.data.documents
+                      .toList()
+                      .map(
+                          (DocumentSnapshot doc) => Question.fromJson(doc.data))
+                      .toList();
+                  return BuildSurveyQuestion(context);
+                }
+              } catch (e) {
+                print(e);
+                return Text('Sorry We are missing some nuts and bolts here');
+              }
+            } else {
+              return Container(
+                //Connection is not Active yet
+                child: CircularProgressIndicator(),
+              );
             }
-          } catch (e) {
-            print(e);
-            return Text('Sorry We are missing some nuts and bolts here');
-          }
-        } else {
-          return Container(
-            //Connection is not Active yet
-            child: CircularProgressIndicator(),
-          );
-        }
-        ;
-      },
+            ;
+          },
+        ),
+      ),
     );
   }
 
@@ -126,7 +133,6 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                       },
                     ),
                   ),
-                  Text('$_mytext'),
                   FlatButton(
                     child: Text('Next'),
                     onPressed: () {
@@ -147,7 +153,9 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     return Scaffold(
       body: Container(
         child: Center(
-          child: CircularProgressIndicator(),
+          child: LoadingIndicatorMessage(
+            message: 'Personality is being calculated..',
+          ),
         ),
       ),
     );
@@ -188,9 +196,6 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     clearButs(personalityTestStateData);
     if (personalityTestStateData.progress == 0) {
       //Will not allow users to go back from the first question
-      //Todo: dissable in this case
-      /*personalityTestStateData
-          .updateProgress(Constants().number_of_questions_personality_test - 1);*/
     } else {
       if (personalityTestStateData.progress > 0) {
         print('Trying to change state');
@@ -233,7 +238,6 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
 
   void press_b(PersonalityTestStateData personalityTestStateData) {
     print('setting state to B');
-
     Question question =
         _list_of_questions.elementAt(personalityTestStateData.progress);
     bool nonewerepressed = !(personalityTestStateData.a_pressed ||
@@ -290,13 +294,13 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
   void calculate_intro_extro_perso(
       PersonalityTestStateData personalityTestStateData) {
     personalityTestStateData.is_calculating_personality = true;
-    //Calculate E and I;
+
     Set<int> checking_set_e_i = ({1, 5, 9, 13, 17});
     Set<int> checking_set_s_n = ({2, 6, 10, 14, 18});
     Set<int> checking_set_t_f = ({3, 7, 11, 15, 19});
     Set<int> checking_set_j_p = ({4, 8, 12, 16, 19});
     int i = 0;
-
+    print('Calculate E....');
     for (i = 0; i <= checking_set_e_i.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_e'] =
           Quanda.of(context).myUser.personality['value_e'] +
@@ -305,7 +309,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   .first
                   .selection_a;
     }
-
+    print('Calculate I....');
     for (i = 0; i <= checking_set_e_i.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_i'] =
           Quanda.of(context).myUser.personality['value_i'] +
@@ -314,7 +318,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   .first
                   .selection_b;
     }
-
+    print('Calculate S....');
     for (i = 0; i <= checking_set_s_n.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_s'] =
           Quanda.of(context).myUser.personality['value_s'] +
@@ -323,7 +327,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   .first
                   .selection_a;
     }
-
+    print('Calculate N....');
     for (i = 0; i <= checking_set_s_n.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_n'] =
           Quanda.of(context).myUser.personality['value_n'] +
@@ -332,7 +336,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   .first
                   .selection_b;
     }
-
+    print('Calculate T....');
     for (i = 0; i <= checking_set_t_f.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_t'] =
           Quanda.of(context).myUser.personality['value_t'] +
@@ -341,7 +345,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   .first
                   .selection_a;
     }
-
+    print('Calculate F....');
     for (i = 0; i <= checking_set_t_f.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_f'] =
           Quanda.of(context).myUser.personality['value_f'] +
@@ -350,7 +354,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   .first
                   .selection_b;
     }
-
+    print('Calculate J....');
     for (i = 0; i <= checking_set_j_p.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_j'] =
           Quanda.of(context).myUser.personality['value_j'] +
@@ -359,7 +363,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   .first
                   .selection_a;
     }
-
+    print('Calculate P....');
     for (i = 0; i <= checking_set_j_p.length - 1; i++) {
       Quanda.of(context).myUser.personality['value_p'] =
           Quanda.of(context).myUser.personality['value_p'] +
@@ -368,7 +372,7 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
                   .first
                   .selection_b;
     }
-    //TODO: Upload Personality to server
+
     int intro = Quanda.of(context).myUser.personality['value_i'];
     int extro = Quanda.of(context).myUser.personality['value_e'];
     int S = Quanda.of(context).myUser.personality['value_s'];
@@ -381,8 +385,13 @@ class _PersonalitySurveyState extends State<PersonalitySurveyPage> {
     print('Personality Values: E:$extro I:$intro S:'
         '$S N:$N T:$T F:$F J:$J P:$P');
 
-    FireProvider.of(context).fireBase.setUpUserPersonality(
-        FireProvider.of(context).auth.getLastUserLoged(),
-        Quanda.of(context).myUser);
+    print('Updating personality to db');
+    FireProvider.of(context)
+        .fireBase
+        .setUpUserPersonality(FireProvider.of(context).auth.getLastUserLoged(),
+            Quanda.of(context).myUser)
+        .whenComplete(() {
+      personalityTestStateData.is_calculating_personality = false;
+    });
   }
 }

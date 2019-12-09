@@ -47,7 +47,7 @@ class Quanda extends InheritedModel with ChangeNotifier {
         );
 
   static Quanda of(BuildContext context) =>
-      (context.inheritFromWidgetOfExactType(Quanda) as Quanda);
+      (context.dependOnInheritedWidgetOfExactType<Quanda>() as Quanda);
 
   @override
   bool updateShouldNotify(Quanda oldWidget) {

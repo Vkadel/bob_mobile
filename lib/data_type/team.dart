@@ -31,12 +31,12 @@ class Team {
   String memberThreeName;
   int points;
   String school_id;
-  bool invitationMemberOnePending = false;
-  bool invitationMemberTwoPending = false;
-  bool invitationMemberThreePending = false;
-  bool invitationMemberOneAccepted = false;
-  bool invitationMemberTwoAccepted = false;
-  bool invitationMemberThreeAccepted = false;
+  bool invitationMemberOnePending = true;
+  bool invitationMemberTwoPending = true;
+  bool invitationMemberThreePending = true;
+  bool invitationMemberOneAccepted = true;
+  bool invitationMemberTwoAccepted = true;
+  bool invitationMemberThreeAccepted = true;
   bool teamIsActive;
 
   Team();

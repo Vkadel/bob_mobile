@@ -116,11 +116,12 @@ class heroTab extends StatelessWidget {
         FutureBuilder<Object>(
             future: ColorLogicbyPersonality(context),
             builder: (context, snapshot) {
+              String mesage;
               return RaisedButton(
                 color: Constants.myAvatars.elementAt(location).color,
                 onPressed: () async {
                   print('Checking user name is ok');
-                  bool nameDoesNotExist;
+                  bool nameDoesNotExist = true;
                   Quanda.of(context).myUser.role =
                       DefaultTabController.of(context).index + 1;
                   Quanda.of(context).myUser.name = userName;
@@ -137,22 +138,23 @@ class heroTab extends StatelessWidget {
                               ? snapshot.data
                               : Theme.of(context).buttonColor,
                     ));
-                    nameDoesNotExist =
-                        await myValidator.checkNameIsNotUsed(userName, context);
-                  } else {
-                    String mesage;
+                    nameDoesNotExist = await myValidator.checkNameIsNotUsed(
+                        userName.trim().toLowerCase(), context);
+                    print('Name exist: ${nameDoesNotExist}');
                     nameDoesNotExist
                         ? mesage = Constants.name_exist
                         : mesage = mesage;
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text(mesage),
+                      backgroundColor: snapshot.data,
+                    ));
+                  } else {
                     !_playerNameformKey.currentState.validate()
                         ? mesage = Constants.name_cannot_be_empty
                         : mesage = mesage;
                     Scaffold.of(context).showSnackBar(SnackBar(
                       content: Text(mesage),
-                      backgroundColor:
-                          snapshot.connectionState == ConnectionState.active
-                              ? snapshot.data
-                              : Theme.of(context).buttonColor,
+                      backgroundColor: snapshot.data,
                     ));
                   }
                 },
@@ -171,6 +173,7 @@ class heroTab extends StatelessWidget {
           child: Form(
             key: _playerNameformKey,
             child: TextFormField(
+              textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
                   hintText: Constants.hint_text_for_hero_name,
                   icon: SvgPicture.asset(

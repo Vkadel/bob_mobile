@@ -56,6 +56,7 @@ class MyApp extends StatelessWidget {
           auth: Auth(),
           fireBase: MBobFireBase(),
           child: MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Battle of the books',
             theme: new ThemeData(
               secondaryHeaderColor: Colors.blueAccent,
@@ -65,9 +66,12 @@ class MyApp extends StatelessWidget {
             ),
             home: EntryPage(title: 'Battle of the Books'),
             routes: <String, WidgetBuilder>{
+              '/main': (BuildContext context) =>
+                  EntryPage(title: 'Please Login'),
               '/home': (BuildContext context) => HomePage(title: 'Home Page'),
               '/personality_test': (BuildContext context) =>
                   PersonalitySurveyPage(title: 'Tell your tale'),
+              '/login': (BuildContext context) => LoginPage(),
               '/hero_room': (BuildContext context) => HeroRoomPage(),
               '/team_hall': (BuildContext context) => TeamHallPage(),
               '/fight': (BuildContext context) => BattlePage(),
@@ -119,6 +123,7 @@ class _EntryPageState extends State<EntryPage> {
                     )
                   : LoginPage();
             } else {
+              print('Loading login page....');
               return LoginPage();
             }
           } else {
@@ -128,7 +133,7 @@ class _EntryPageState extends State<EntryPage> {
         },
       );
     } else {
-      print('there is a user');
+      print('there is a user, going to dashboard....');
       return DashBoardPage();
     }
   }
@@ -152,7 +157,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final Auth auth = FireProvider.of(context).auth;
     final MBobFireBase mBobFireBase = FireProvider.of(context).fireBase;
-
+    print('Building Home page....');
     if (widget.uid != null) {
       print('This is the widget INFO: $widget.uid ');
 
@@ -160,7 +165,6 @@ class _HomePageState extends State<HomePage> {
         stream: mBobFireBase.get_userprofile(widget.uid),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           print('SNAPSHOT Connection STARTED');
-
           return snapshot.hasError
               ? Container(
                   child: Text('Snapshot from user profile has errors'),
@@ -176,6 +180,7 @@ class _HomePageState extends State<HomePage> {
         },
       );
     } else {
+      print('Widget.uid is null');
       return Scaffold(
         appBar: AppBar(
           title: Text('The Home Page'),
@@ -187,6 +192,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool UserIsIntro() {
+    print('Checking is Intro....');
     bool intro;
     if (Quanda.of(context).myUser.personality['value_i'] != 0 ||
         Quanda.of(context).myUser.personality['value_e'] != 0) {
@@ -203,6 +209,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool UserIsExtro() {
+    print('Checking is Extro....');
     bool isExtro;
     if (Quanda.of(context).myUser.personality['value_i'] != 0 ||
         Quanda.of(context).myUser.personality['value_e'] != 0) {
@@ -219,6 +226,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool user_has_personality() {
+    print('Checking if user has personality....');
     if (UserIsExtro() || UserIsIntro()) {
       return true;
     } else {
@@ -228,6 +236,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget createUserProfile() {
     print('SNAPSHOT Connection Returned Empty');
+    print('Generating user profile....');
     FireProvider.of(context)
         .fireBase
         .createUserProfile(widget.uid, widget.email, context);
@@ -237,6 +246,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool userHasRole() {
+    print('Checking user has role....');
     if (Quanda.of(context).myUser.role == 0) {
       return false;
     } else {
@@ -245,6 +255,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget userProfileWorkflow(AsyncSnapshot<QuerySnapshot> userProfileSnapShot) {
+    print('User Profile Workflow....');
     //User has user Profile
     int lenght = userProfileSnapShot.data.documents.length;
     print('SNAPSHOT Connection Returned $lenght');
@@ -299,6 +310,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildUserHasUID(MBobFireBase mBobFireBase) {
+    print('buildUserHasUID....');
     return Scaffold(
         appBar: AppBar(
           title: Text('The Home Page'),
@@ -312,7 +324,7 @@ class _HomePageState extends State<HomePage> {
                     print(e);
                   }
                 },
-                child: Text('Sign out'))
+                child: SignOutButton())
           ],
         ),
         body: StreamBuilder<QuerySnapshot>(
@@ -321,7 +333,7 @@ class _HomePageState extends State<HomePage> {
               // ignore: missing_return
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             print('SNAPSHOT Connection STARTED');
-            return snapshot.hasError
+            return (snapshot.hasError)
                 ? new Container(
                     child: Text('Error getting data from database'),
                   )
@@ -331,6 +343,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildUserHasNOId() {
+    print('Building user has not id');
+
     return Scaffold(
       appBar: AppBar(
         title: Text('The Home Page'),

@@ -372,7 +372,7 @@ void _reportRightAnswer(BuildContext context, int questionId) async {
       .reportAnswer(context, questionId, true);
   Quanda.of(context).personal
       ? _sendPointToPersonal(context)
-      : _sendPointToTeam();
+      : _sendPointToTeam(context);
 }
 
 void _sendPointToPersonal(BuildContext context) {
@@ -389,7 +389,19 @@ void _sendPointToPersonal(BuildContext context) {
   }
 }
 
-void _sendPointToTeam() {}
+void _sendPointToTeam(BuildContext context) {
+  if (Provider.of<BattlePageStateData>(context, listen: false)
+      .battlePageData
+      .continue_fighting) {
+    print(
+        'So far we got:${Provider.of<BattlePageStateData>(context, listen: false).total_points_if_correct}points');
+  } else {
+    int points = Provider.of<BattlePageStateData>(context, listen: false)
+        .battlePageData
+        .total_points_if_correct;
+    FireProvider.of(context).fireBase.reportPointTeam(context, points);
+  }
+}
 
 int _calculateItemGains(BuildContext context) {
   int pointsToAdd = 0;

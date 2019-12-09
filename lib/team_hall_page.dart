@@ -84,7 +84,7 @@ Widget _buildHeaderTeamName(context) {
         builder: (context, teamdata, _) {
           if (NotNullNotEmpty(Quanda.of(context).myUser.team_id).isnot()) {
             return TextFormattedLabelTwo(teamdata.theTeam.team_name, 30,
-                ColorLogicbyPersonality(context));
+                ColorLogicbyPersonality(context), null, TextAlign.center);
           } else {
             return Container(
               //TODO: empty this container
@@ -95,7 +95,8 @@ Widget _buildHeaderTeamName(context) {
                         "You don't have a team yet. "
                         "If you want to form one start by giving it a name. "
                         "A team is a permanent choice be wise finding members....",
-                        MediaQuery.of(context).size.width / 15)),
+                        MediaQuery.of(context).size.width / 15,
+                        Future.value(Colors.black))),
               ),
             );
           }
@@ -365,8 +366,9 @@ Widget _buildInvitationStatus(context, int indexStatus,
       message = 'Waiting';
       iconData = Icons.hourglass_empty;
     }
-    //If pending=false => send_invite
-    if (!teamFormData.theTeam.invitationMemberOnePending &&
+    //If pending=true acccepted=true => ready to_invite
+    if (teamFormData.theTeam.invitationMemberOnePending &&
+        teamFormData.theTeam.invitationMemberOneAccepted &&
         NotNullNotEmpty(controller.text).isnot()) {
       message = 'Send invite';
       iconData = Icons.mail_outline;
@@ -379,6 +381,7 @@ Widget _buildInvitationStatus(context, int indexStatus,
     }
     //Invitations not null/accepted and name is entered=> No action member is setup
     if (teamFormData.theTeam.invitationMemberOneAccepted &&
+        !teamFormData.theTeam.invitationMemberOnePending &&
         NotNullNotEmpty(controller.text).isnot()) {
       message = 'This team member accepted';
       iconData = Icons.check;
@@ -410,7 +413,8 @@ Widget _buildInvitationStatus(context, int indexStatus,
       iconData = Icons.hourglass_empty;
     }
     //Invitations are null and name is entered=> send_invite
-    if (!teamFormData.theTeam.invitationMemberTwoPending &&
+    if (teamFormData.theTeam.invitationMemberTwoPending &&
+        teamFormData.theTeam.invitationMemberTwoAccepted &&
         NotNullNotEmpty(controller.text).isnot()) {
       message = 'Send invite';
       iconData = Icons.mail_outline;
@@ -421,7 +425,8 @@ Widget _buildInvitationStatus(context, int indexStatus,
       };
     }
     //No invitation sent/Invitations not accepted/name is entered=> No action member is setup
-    if (teamFormData.theTeam.invitationMemberTwoAccepted &&
+    if (!teamFormData.theTeam.invitationMemberTwoPending &&
+        teamFormData.theTeam.invitationMemberTwoAccepted &&
         NotNullNotEmpty(controller.text).isnot()) {
       message = 'This team member accepted';
       iconData = Icons.check;
@@ -454,7 +459,8 @@ Widget _buildInvitationStatus(context, int indexStatus,
       iconData = Icons.hourglass_empty;
     }
     //If pending=false then no invitation has been sent
-    if (!teamFormData.theTeam.invitationMemberThreeAccepted &&
+    if (teamFormData.theTeam.invitationMemberThreePending &&
+        teamFormData.theTeam.invitationMemberThreeAccepted &&
         NotNullNotEmpty(controller.text).isnot()) {
       message = 'Send invite';
       iconData = Icons.mail_outline;
@@ -465,7 +471,8 @@ Widget _buildInvitationStatus(context, int indexStatus,
       };
     }
     //No invitation sent/Invitations not accepted/name is entered=> No action member is setup
-    if (teamFormData.theTeam.invitationMemberThreeAccepted &&
+    if (!teamFormData.theTeam.invitationMemberThreePending &&
+        teamFormData.theTeam.invitationMemberThreeAccepted &&
         NotNullNotEmpty(controller.text).isnot()) {
       message = 'This team member accepted';
       iconData = Icons.check;
@@ -506,10 +513,13 @@ Widget _buildteamManagement() {
       return Consumer<TeamFormationData>(builder: (context, teamdata, _) {
         return SliverList(
           delegate: SliverChildListDelegate([
-            TextFormattedLabelTwo(
-                'Members:',
-                MediaQuery.of(context).size.width / 10,
-                ColorLogicbyRole(context)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormattedLabelTwo(
+                  'Members:',
+                  MediaQuery.of(context).size.width / 10,
+                  ColorLogicbyRole(context)),
+            ),
             _buildTeamMemberListItem(teamdata, 1),
             _buildTeamMemberListItem(teamdata, 2),
             _buildTeamMemberListItem(teamdata, 3),

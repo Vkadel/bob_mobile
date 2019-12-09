@@ -1,5 +1,6 @@
 import 'package:bob_mobile/modelData/provider.dart';
 import 'package:bob_mobile/helpers/validators.dart';
+import 'package:bob_mobile/widgets/email_signin_button.dart';
 import 'package:bob_mobile/widgets/google_signin_button.dart';
 import 'package:bob_mobile/widgets/rounded_edge_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,10 +23,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    print('Building ');
     return Scaffold(
       appBar: AppBar(
-        //TODO: Consolidate Strings
         title: _tittle_login,
       ),
       body: Form(
@@ -63,6 +63,7 @@ class _LoginPageState extends State<LoginPage> {
           String userid =
               await auth.signInWithEmailAndPassword(_email.trim(), _password);
           print('signed in $userid');
+          if (userid != null) {}
         } else {
           String userid = await auth.createUserWithEmailAndPassword(
               _email.trim(), _password);
@@ -116,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_formtype == FormType.login) {
       return [
         //TODO: String
-        FormattedRoundedButton('Login with email', submit, context),
+        EmailSignInButton('Login with email', submit, context),
         //TODO: String
         GoogleSingInButton('Log in with Google', FireProvider.of(context).auth),
         FlatButton(
@@ -138,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
       //Register
       return [
         //TODO: String
-        FormattedRoundedButton('Create Account with email', submit, context),
+        EmailSignInButton('Register with email', submit, context),
         //TODO: String
         GoogleSingInButton(
             'Register with your Google Account', FireProvider.of(context).auth),

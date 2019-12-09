@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:js';
 
 import 'package:bob_mobile/battle_page.dart';
+import 'package:bob_mobile/dashboard_page.dart';
 import 'package:bob_mobile/data_type/private.dart';
 import 'package:bob_mobile/data_type/team.dart';
 import 'package:bob_mobile/data_type/team_invites.dart';
@@ -62,6 +64,7 @@ abstract class BoBFireBase {
   Future<void> reportAnswer(
       BuildContext context, int questionId, bool answeredCorrectly);
   Future<void> reportPointPersonal(BuildContext context, int pointsToAdd);
+  Future<void> reportPointTeam(BuildContext context, int pointsToAdd);
   Future<void> resetQuestionsForAbook(BuildContext context, int bookId);
   Future<bool> createTeam(BuildContext context, String teamName);
   Future<void> getTeam(BuildContext context, String teamName);
@@ -124,18 +127,6 @@ class MBobFireBase implements BoBFireBase {
         },
         0);
 
-    /*//Proposed_questions_Test_creation
-    _proposed_question_test_creationg(uid);
-
-    //Items_test_creation
-    _items_list_test_generation(uid);
-
-    //Proposed_books_test_creation(uid);
-    _proposed_books_test_creation(uid);
-
-    _read_books_test_creation(uid);
-    _answered_questions_check(uid);*/
-
     Quanda.of(context).myUser = user;
     _firestore.collection('users').document(uid).setData(user.toJson());
 
@@ -146,8 +137,8 @@ class MBobFireBase implements BoBFireBase {
     _firestore.collection('user_data').document(uid).setData(userData.toJson());
 
     print('Creating Player ranking');
-    PlayerPoints playerPoints = new PlayerPoints(
-        Constants.initial_point_value, uid, Quanda.of(context).myUser.name);
+    PlayerPoints playerPoints = new PlayerPoints(Constants.initial_point_value,
+        uid, Quanda.of(context).myUser.name.toLowerCase());
 
     print('Updating Firestore with User_data');
     _firestore
@@ -235,7 +226,6 @@ class MBobFireBase implements BoBFireBase {
 
   @override
   Stream<QuerySnapshot> getQuestions() {
-    // TODO: String
     return _firestore.collection('personality_survey_q').snapshots();
   }
 
@@ -252,9 +242,6 @@ class MBobFireBase implements BoBFireBase {
               DocumentSnapshot freshSnapShot =
                   await transaction.get(data.documents.elementAt(0).reference);
               if (freshSnapShot.exists) {
-                /*String documentPath = freshSnapShot.reference.path.toString();
-                final DocumentReference postRef =
-                    Firestore.instance.document('$documentPath/personality');*/
                 User freshUser = User.fromJson(freshSnapShot.data);
                 freshUser.personality = user.personality;
                 await transaction.update(
@@ -277,8 +264,8 @@ class MBobFireBase implements BoBFireBase {
               if (freshSnapShot.exists) {
                 User freshUser = User.fromJson(freshSnapShot.data);
                 freshUser.role = user.role;
-                freshUser.name = user.name;
-                freshUser.team_id = user.team_id;
+                freshUser.name = user.name.toLowerCase();
+                freshUser.team_id = user.team_id.toLowerCase();
                 await transaction.update(
                     freshSnapShot.reference, freshUser.toJson());
                 //TODO:Set up all the other lists for items and proposedbooks for the first time
@@ -491,10 +478,12 @@ class MBobFireBase implements BoBFireBase {
   @override
   Stream<QuerySnapshot> getQuestionsForMasterBook(
       int bookid, int book_section) {
+    print(
+        'At Firestore checking for questions for book: ${bookid} and section ${book_section}');
     return _firestore
         .collection('question')
         .where('id', isEqualTo: bookid)
-        .where('book_section', isLessThanOrEqualTo: book_section)
+        /* .where('book_section', isLessThan: book_section + 1)*/
         .snapshots();
   }
 
@@ -534,59 +523,61 @@ class MBobFireBase implements BoBFireBase {
         .document(Quanda.of(context).myUser.id);
     //Start transaction to get the item first and lock it
     _firestore.runTransaction((transaction) async {
-      transaction.get(reference).then((data) {
-        UserData userData = UserData.fromJson(data.data);
-        List<AnsweredQuestions> answeredQuestionsList = new List();
-        try {
-          //Try to create a list of answeredQuestions for searching.
-          answeredQuestionsList = userData.answered_questions
-              .toList()
-              .map((item) => AnsweredQuestions.fromJson(item))
-              .toList();
-        } catch (e) {
-          print('e');
-        }
+      transaction.get(reference).then(
+        (data) {
+          UserData userData = UserData.fromJson(data.data);
+          List<AnsweredQuestions> answeredQuestionsList = new List();
+          try {
+            //Try to create a list of answeredQuestions for searching.
+            answeredQuestionsList = userData.answered_questions
+                .toList()
+                .map((item) => AnsweredQuestions.fromJson(item))
+                .toList();
+          } catch (e) {
+            print('e');
+          }
+          int thisQuestionIndex = -1;
+          //identify where this item is located in the list
 
-        int thisQuestionIndex = -1;
-        //identify where this item is located in the list
+          thisQuestionIndex =
+              answeredQuestionsList.indexWhere((a) => a.question == questionId);
 
-        thisQuestionIndex =
-            answeredQuestionsList.indexWhere((a) => a.question == questionId);
+          //if question doesn't exist add it,
+          // but if it does replace it and update status
+          if (thisQuestionIndex == -1) {
+            answeredQuestionsList.add(new AnsweredQuestions(
+                questionId, answeredCorrectly ? 0 : 1, 0));
+          } else {
+            answeredCorrectly
+                ? answeredQuestionsList.elementAt(thisQuestionIndex).status = 0
+                : answeredQuestionsList.elementAt(thisQuestionIndex).status =
+                    answeredQuestionsList.elementAt(thisQuestionIndex).status +
+                        1;
+          }
+          //Replace the value of answeredquestions with updated one on firestore
+          var map;
+          try {
+            map = answeredQuestionsList.map((item) => item.toJson()).toList();
+            userData.answered_questions = map;
+          } catch (e) {
+            print(e);
+          }
 
-        //if question doesn't exist add it,
-        // but if it does replace it and update status
-        if (thisQuestionIndex == -1) {
-          answeredQuestionsList.add(
-              new AnsweredQuestions(questionId, answeredCorrectly ? 0 : 1, 0));
-        } else {
-          answeredCorrectly
-              ? answeredQuestionsList.elementAt(thisQuestionIndex).status = 0
-              : answeredQuestionsList.elementAt(thisQuestionIndex).status =
-                  answeredQuestionsList.elementAt(thisQuestionIndex).status + 1;
-        }
-        //Replace the value of answeredquestions with updated one on firestore
-        var map;
-        try {
-          map = answeredQuestionsList.map((item) => item.toJson()).toList();
-          userData.answered_questions = map;
-        } catch (e) {
-          print(e);
-        }
-
-        print('I will write the questions answered');
-        try {
-          _firestore.runTransaction((transa) async {
-            await transa.update(reference, userData.toJson());
-          });
-        } catch (e) {
-          print(e);
-        }
-      });
-    });
+          print('I will write the questions answered');
+          try {
+            _firestore.runTransaction((transa) async {
+              await transa.update(reference, userData.toJson());
+            });
+          } catch (e) {
+            print(e);
+          }
+        },
+      );
+    }, timeout: Duration(seconds: 30));
   }
 
   Future<void> resetQuestionsForAbook(BuildContext context, int bookId) async {
-    await getQuestionsForMasterBook(bookId, 3).forEach((item) {
+    await getQuestionsForMasterBook(bookId, 4).forEach((item) {
       List<BookQuestion> bookQuestions;
       List<AnsweredQuestions> answeredQuestionsList;
       try {
@@ -644,7 +635,7 @@ class MBobFireBase implements BoBFireBase {
           .collection('player_rankings')
           .document(Quanda.of(context).myUser.id)
           .setData(new PlayerPoints(pointsToAdd, Quanda.of(context).myUser.id,
-                  Quanda.of(context).myUser.name)
+                  Quanda.of(context).myUser.name.toLowerCase())
               .toJson());
     } else {
       _firestore.runTransaction((transa) async {
@@ -660,8 +651,27 @@ class MBobFireBase implements BoBFireBase {
     }
   }
 
+  @override
+  Future<void> reportPointTeam(BuildContext context, int pointsToAdd) async {
+    var teamPointsDocument = await _firestore
+        .collection('team_ratings')
+        .document(Quanda.of(context).myUser.team_id)
+        .get();
+
+    _firestore.runTransaction((transa) async {
+      DocumentSnapshot playerPointdata =
+          await transa.get(teamPointsDocument.reference);
+      TeamPoints teamPoints = TeamPoints.fromJson(playerPointdata.data);
+      teamPoints.team_points = teamPoints.team_points + pointsToAdd;
+      transa
+          .set(teamPointsDocument.reference, teamPoints.toJson())
+          .catchError((e) => print('Error trying to give point to team: ${e}'));
+    }, timeout: Duration(seconds: 30));
+  }
+
   Future<bool> checkIfNameExistAndCreateRanking(
       BuildContext context, String name) async {
+    name = name.toLowerCase();
     bool nameExist;
     PlayerPoints playerPoints =
         new PlayerPoints(0, Quanda.of(context).myUser.id, name);
@@ -688,12 +698,13 @@ class MBobFireBase implements BoBFireBase {
   @override
   Future<bool> createTeam(BuildContext context, String teamName) async {
     //Prepare the documents
+    teamName = teamName.toLowerCase();
     Transaction transaction;
     TeamPoints teamPoints = new TeamPoints(0, null, teamName);
     teamPoints.addUserIdToLeader(Quanda.of(context).myUser.id);
     Team team = new Team().formInitialTeamWithNameLeader(
         teamName,
-        Quanda.of(context).myUser.name,
+        Quanda.of(context).myUser.name.toLowerCase(),
         Quanda.of(context).myUser.id,
         Quanda.of(context).myUser.school_id);
     Private private = new Private();
@@ -702,7 +713,7 @@ class MBobFireBase implements BoBFireBase {
 
     QuerySnapshot querySnapShot = await _firestore
         .collection('team_ratings')
-        .where('team_name', isEqualTo: teamName)
+        .where('team_name', isEqualTo: teamName.toLowerCase())
         .snapshots()
         .first;
     //Document exist return false
@@ -712,30 +723,46 @@ class MBobFireBase implements BoBFireBase {
       //Document does not exist we can create it
       WriteBatch teamCreationWrite = _firestore.batch();
       teamCreationWrite.setData(
-          _firestore.collection('team_ratings').document(teamName),
+          _firestore
+              .collection('team_ratings')
+              .document(teamName.toLowerCase()),
           teamPoints.toJson());
       teamCreationWrite.setData(
-          _firestore.collection('team').document(teamName), team.toJson());
+          _firestore.collection('team').document(teamName.toLowerCase()),
+          team.toJson());
       teamCreationWrite.setData(
           _firestore
               .collection('team')
-              .document(teamName)
+              .document(teamName.toLowerCase())
               .collection('private_data')
               .document('private'),
           private.toJson());
       try {
         teamCreationWrite.commit().then((item) {
           SnackBarMessage(
-              'Team: ${teamName} was formed, add some members now', context);
-          print(
-              'I was able to write I will update all the items internally to move on to add members');
+              'Team: ${teamName.toLowerCase()} was formed, add some members now',
+              context);
+          print('I was able to write I will update all the items internally '
+              'to move on to add members');
           User transitionUser = Quanda.of(context).myUser;
-          transitionUser.team_id = teamName;
-          setUpHero(
-              FireProvider.of(context).auth.getLastUserLoged(), transitionUser);
-          Provider.of<TeamFormationData>(context, listen: false)
-              .updateteamGenerated(true);
-        }).catchError(() {
+          transitionUser.team_id = teamName.toLowerCase();
+          _firestore.runTransaction((tran) async {
+            print('updating user after team was created');
+            DocumentSnapshot snap = await tran.get(
+                _firestore.collection('users').document(transitionUser.id));
+            if (snap.exists) {
+              print('user exist after team was created');
+              User freshUser = User.fromJson(snap.data);
+              freshUser.team_id = teamName.toLowerCase();
+              await tran
+                  .set(snap.reference, freshUser.toJson())
+                  .whenComplete(() {
+                Provider.of<TeamFormationData>(context, listen: false)
+                    .updateteamGenerated(true);
+              });
+            }
+          });
+        }).catchError((e) {
           SnackBarMessage(
               'Not able to create a team try again, perhaps with other name',
               context);
@@ -749,6 +776,7 @@ class MBobFireBase implements BoBFireBase {
 
   //This method keeps the data information cache updated
   Future<void> getTeam(BuildContext context, String teamName) async {
+    teamName = teamName.toLowerCase();
     await _firestore
         .collection('team')
         .document(teamName)
@@ -763,12 +791,15 @@ class MBobFireBase implements BoBFireBase {
   //This method keeps the data information cache updated
   Stream<DocumentSnapshot> getTeamStream(
       BuildContext context, String teamName) {
+    teamName = teamName.toLowerCase();
     return _firestore.collection('team').document(teamName).snapshots();
   }
 
   Future<void> sendInviteToMember(String invitedName, String teamId,
       BuildContext context, int index) async {
     TeamInvites invitation = new TeamInvites();
+    invitedName = invitedName.toLowerCase();
+    teamId = teamId.toLowerCase();
     invitation.team_name = teamId;
     invitation.team_id = teamId;
     invitation.pending = true;
@@ -781,7 +812,7 @@ class MBobFireBase implements BoBFireBase {
     Team transicionTeam = Quanda.of(context).myTeam;
     String privateAggreDesignation;
 
-    _firestore.runTransaction((tran) async {
+    await _firestore.runTransaction((tran) async {
       DocumentSnapshot teamSnapShot =
           await tran.get(_firestore.collection('team').document(teamId));
 
@@ -792,26 +823,35 @@ class MBobFireBase implements BoBFireBase {
         if (index == 1) {
           transicionTeam.memberOneName = invitedName;
           transicionTeam.invitationMemberOnePending = true;
+          transicionTeam.invitationMemberOneAccepted = false;
           privateAggreDesignation = Private.memberid1;
         }
         if (index == 2) {
           transicionTeam.memberTwoName = invitedName;
           transicionTeam.invitationMemberTwoPending = true;
+          transicionTeam.invitationMemberTwoAccepted = false;
           privateAggreDesignation = Private.memberid2;
         }
         if (index == 3) {
           transicionTeam.memberThreeName = invitedName;
           transicionTeam.invitationMemberThreePending = true;
+          transicionTeam.invitationMemberThreeAccepted = false;
           privateAggreDesignation = Private.memberid3;
         }
 
         await tran.set(teamSnapShot.reference, transicionTeam.toJson());
-        await tran.set(
-            _firestore.collection('team_invites').document(invitationId),
-            invitation.toJson());
+        await tran
+            .set(_firestore.collection('team_invites').document(invitationId),
+                invitation.toJson())
+            .whenComplete(() {
+          print('Updating team formation for index $index');
+          Provider.of<TeamFormationData>(context)
+              .updateInvitationStatusAfterInvite(index);
+        });
       }
     }, timeout: Duration(seconds: 30));
 
+    //TOdo: move this inside the previous transaction
     _firestore.runTransaction((trans2) async {
       DocumentSnapshot privateSnapshot = await trans2.get(_firestore
           .collection('team')
@@ -819,31 +859,58 @@ class MBobFireBase implements BoBFireBase {
           .collection('private_data')
           .document('private'));
       if (privateSnapshot.exists) {
-        Private private = Private.fromJson(privateSnapshot.data);
-        private.members[privateAggreDesignation] = invitedName;
-        await trans2.set(privateSnapshot.reference, private.toJson());
-        print('Updated the privates');
+        try {
+          Private private = Private.fromJson(privateSnapshot.data);
+          private.members[privateAggreDesignation] = invitedName;
+          await trans2.set(privateSnapshot.reference, private.toJson());
+          print('Updated the private');
+        } catch (e) {
+          print(e);
+          print('Error: Could not add users rights to team');
+        }
       }
-    }, timeout: Duration(seconds: 20));
+    }, timeout: Duration(seconds: 50));
   }
 
-  Future<void> makeTeamActive(String teamId) async {
+  Future<void> makeTeamActive(String teamId, BuildContext context) async {
+    bool changeTook = false;
+    teamId = teamId.toLowerCase();
     _firestore.runTransaction((tran) async {
       DocumentSnapshot fresh =
           await tran.get(_firestore.collection('team').document(teamId));
       if (fresh.exists) {
         Team team = Team.fromJson(fresh.data);
-        team.teamIsActive = true;
-        tran.set(fresh.reference, team.toJson());
+        if (team.invitationMemberThreeAccepted &&
+            team.invitationMemberTwoAccepted &&
+            team.invitationMemberOneAccepted &&
+            !team.invitationMemberOnePending &&
+            !team.invitationMemberTwoPending &&
+            !team.invitationMemberTwoPending &&
+            NotNullNotEmpty(team.memberOneName).isnot() &&
+            NotNullNotEmpty(team.memberTwoName).isnot() &&
+            NotNullNotEmpty(team.memberThreeName).isnot()) {
+          print(
+              'All invitations are accepted and they are not pending anymore');
+          team.teamIsActive = true;
+          changeTook = true;
+          await tran.set(fresh.reference, team.toJson()).whenComplete(() {
+            /*Provider.of<TeamFormationData>(context,listen: false).allAccepted;*/
+          });
+        } else {
+          print(
+              'Will not update team to active not all the players show ready online');
+          team.teamIsActive = false;
+        }
       }
     });
   }
 
   Stream<QuerySnapshot> getOutstandingTeamInvitations(BuildContext context) {
+    String invitedName = Quanda.of(context).myUser.name.trim().toLowerCase();
     return _firestore
         .collection('team_invites')
-        .where('invited_name', isEqualTo: Quanda.of(context).myUser.name)
-        .orderBy('date_sent', descending: true)
+        .where('invited_name', isEqualTo: invitedName)
+        .where('pending', isEqualTo: true)
         .snapshots();
   }
 
@@ -855,7 +922,8 @@ class MBobFireBase implements BoBFireBase {
     _firestore.runTransaction((tran) async {
       DocumentSnapshot freshSnapShot = await tran.get(_firestore
           .collection('team_invites')
-          .document('${team.team_id}-${Quanda.of(context).myUser.name}'));
+          .document(
+              '${team.team_id.toLowerCase()}-${Quanda.of(context).myUser.name.toLowerCase()}'));
       if (freshSnapShot.exists) {
         TeamInvites freshInvite =
             await TeamInvites.fromJson(freshSnapShot.data);
@@ -883,21 +951,25 @@ class MBobFireBase implements BoBFireBase {
         print('updating team info with accepted response');
 
         _firestore.runTransaction((myTeamAcceptanceTransaction) async {
-          DocumentSnapshot freshTeamAccepted = await myTeamAcceptanceTransaction
-              .get(_firestore.collection('team').document(freshInvite.team_id));
+          DocumentSnapshot freshTeamAccepted =
+              await myTeamAcceptanceTransaction.get(_firestore
+                  .collection('team')
+                  .document(freshInvite.team_id.toLowerCase()));
           if (freshTeamAccepted.exists) {
             print('Will let team know I accepted');
             Team acceptedTeam = Team.fromJson(freshTeamAccepted.data);
-            if (acceptedTeam.memberOneName == Quanda.of(context).myUser.name) {
+            if (acceptedTeam.memberOneName.toLowerCase() ==
+                Quanda.of(context).myUser.name.toLowerCase()) {
               acceptedTeam.invitationMemberOnePending = false;
               acceptedTeam.invitationMemberOneAccepted = true;
             }
-            if (acceptedTeam.memberTwoName == Quanda.of(context).myUser.name) {
+            if (acceptedTeam.memberTwoName.toLowerCase() ==
+                Quanda.of(context).myUser.name.toLowerCase()) {
               acceptedTeam.invitationMemberTwoPending = false;
               acceptedTeam.invitationMemberTwoAccepted = true;
             }
-            if (acceptedTeam.memberThreeName ==
-                Quanda.of(context).myUser.name) {
+            if (acceptedTeam.memberThreeName.toLowerCase() ==
+                Quanda.of(context).myUser.name.toLowerCase()) {
               acceptedTeam.invitationMemberThreePending = false;
               acceptedTeam.invitationMemberThreeAccepted = true;
             }
@@ -914,38 +986,39 @@ class MBobFireBase implements BoBFireBase {
           onSnapshot.documents.forEach((document) async {
             TeamInvites teamInvites = TeamInvites.fromJson(document.data);
             teamInvites.pending = false;
-            if (teamInvites.team_id != team.team_id) {
+            if (teamInvites.team_id.toLowerCase() !=
+                team.team_id.toLowerCase()) {
               mybatch.setData(document.reference, teamInvites.toJson());
               await _firestore.runTransaction((transactionTeamDeny) async {
                 DocumentSnapshot freshTeamSnapShot =
                     await transactionTeamDeny.get(_firestore
                         .collection('team')
-                        .document(teamInvites.team_id));
+                        .document(teamInvites.team_id.toLowerCase()));
                 if (freshTeamSnapShot.exists) {
                   Team deniedTeam = Team.fromJson(freshTeamSnapShot.data);
-                  if (deniedTeam.memberOneName ==
-                      Quanda.of(context).myUser.name) {
+                  if (deniedTeam.memberOneName.toLowerCase() ==
+                      Quanda.of(context).myUser.name.toLowerCase()) {
                     deniedTeam.invitationMemberOnePending = false;
                     deniedTeam.invitationMemberOneAccepted = false;
                     mybatch.updateData(
                         _firestore
                             .collection('team')
-                            .document(teamInvites.team_id)
+                            .document(teamInvites.team_id.toLowerCase())
                             .collection('private_data')
                             .document('private'),
-                        {'${Private.memberid1}': ''});
+                        {'${Private.memberid1.toLowerCase()}': ''});
                   }
-                  if (deniedTeam.memberTwoName ==
-                      Quanda.of(context).myUser.name) {
+                  if (deniedTeam.memberTwoName.toLowerCase() ==
+                      Quanda.of(context).myUser.name.toLowerCase()) {
                     deniedTeam.invitationMemberTwoPending = false;
                     deniedTeam.invitationMemberTwoAccepted = false;
                     mybatch.updateData(
                         _firestore
                             .collection('team')
-                            .document(teamInvites.team_id)
+                            .document(teamInvites.team_id.toLowerCase())
                             .collection('private_data')
                             .document('private'),
-                        {'${Private.memberid2}': ''});
+                        {'${Private.memberid2.toLowerCase()}': ''});
                   }
                   if (deniedTeam.memberThreeName ==
                       Quanda.of(context).myUser.name) {
@@ -954,10 +1027,10 @@ class MBobFireBase implements BoBFireBase {
                     mybatch.updateData(
                         _firestore
                             .collection('team')
-                            .document(teamInvites.team_id)
+                            .document(teamInvites.team_id.toLowerCase())
                             .collection('private_data')
                             .document('private'),
-                        {'${Private.memberid3}': ''});
+                        {'${Private.memberid3.toLowerCase()}': ''});
                   }
 
                   mybatch.updateData(
@@ -977,31 +1050,37 @@ class MBobFireBase implements BoBFireBase {
   Future<void> deleteDenyMember(
       Team team, BuildContext context, int index) async {
     String member_to_delete;
-    index == 1 ? member_to_delete = team.memberOneName : null;
-    index == 2 ? member_to_delete = team.memberTwoName : null;
-    index == 3 ? member_to_delete = team.memberThreeName : null;
+    (index == 1 && NotNullNotEmpty(team.memberOneName).isnot())
+        ? member_to_delete = team.memberOneName.toLowerCase()
+        : null;
+    (index == 2 && NotNullNotEmpty(team.memberTwoName).isnot())
+        ? member_to_delete = team.memberTwoName.toLowerCase()
+        : null;
+    (index == 3 && NotNullNotEmpty(team.memberThreeName).isnot())
+        ? member_to_delete = team.memberThreeName.toLowerCase()
+        : null;
     SnackBarMessage(
         'Will delete ${member_to_delete}, so you can add someone else',
         context);
     _firestore.runTransaction((deleteMeanyTran) async {
-      DocumentSnapshot documentSnapshot = await deleteMeanyTran
-          .get(_firestore.collection('team').document(team.team_name));
+      DocumentSnapshot documentSnapshot = await deleteMeanyTran.get(
+          _firestore.collection('team').document(team.team_name.toLowerCase()));
       if (documentSnapshot.exists) {
         Team freshteam = Team.fromJson(documentSnapshot.data);
         if (index == 1) {
           freshteam.memberOneName = "";
-          freshteam.invitationMemberOnePending = false;
-          freshteam.invitationMemberOneAccepted = false;
+          freshteam.invitationMemberOnePending = true;
+          freshteam.invitationMemberOneAccepted = true;
         }
         if (index == 2) {
           freshteam.memberTwoName = "";
-          freshteam.invitationMemberTwoPending = false;
-          freshteam.invitationMemberTwoAccepted = false;
+          freshteam.invitationMemberTwoPending = true;
+          freshteam.invitationMemberTwoAccepted = true;
         }
         if (index == 3) {
           freshteam.memberThreeName = "";
-          freshteam.invitationMemberThreePending = false;
-          freshteam.invitationMemberThreeAccepted = false;
+          freshteam.invitationMemberThreePending = true;
+          freshteam.invitationMemberThreeAccepted = true;
         }
 
         deleteMeanyTran.set(documentSnapshot.reference, freshteam.toJson());

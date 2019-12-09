@@ -72,7 +72,7 @@ class TeamFormationData with ChangeNotifier {
     if (this.allAccepted != newallAccepted) {
       this._allAccepted = newallAccepted;
       if (!theTeam.teamIsActive) {
-        FireProvider.of(context).fireBase.makeTeamActive(theTeam.team_name);
+        FireProvider.of(context).fireBase.makeTeamActive(theTeam.team_name,context);
       }
       notifyListeners();
     }
@@ -130,9 +130,7 @@ class TeamFormationData with ChangeNotifier {
     if (index == 3) memberName = _theTeam.memberThreeName;
     try {
       if (NotNullNotEmpty(text).isnot())
-        SnackBarWithSpin(
-            'Sending invitation please to: $text wait for transaction to complete',
-            context);
+        SnackBarWithSpin('Sending invitation to: $text please wait', context);
       await FireProvider.of(context)
           .fireBase
           .sendInviteToMember(text, _theTeam.team_name, context, index)
@@ -223,11 +221,37 @@ class TeamFormationData with ChangeNotifier {
     }
   }
 
-  bool checkAllAccepted(Team team, BuildContext context) {
+  Future<bool> checkAllAccepted(Team team, BuildContext context) async {
+    await FireProvider.of(context).fireBase.getTeam(context, team.team_name);
     (team.invitationMemberOneAccepted &&
+            !team.invitationMemberOnePending &&
             theTeam.invitationMemberTwoAccepted &&
-            team.invitationMemberThreeAccepted)
+            !team.invitationMemberTwoPending &&
+            team.invitationMemberThreeAccepted &&
+            !team.invitationMemberThreePending &&
+            NotNullNotEmpty(team.memberOneName).isnot() &&
+            NotNullNotEmpty(team.memberTwoName).isnot() &&
+            NotNullNotEmpty(team.memberThreeName).isnot())
         ? updateallAccepted(true, context)
         : null;
+  }
+
+  void updateInvitationStatusAfterInvite(int index) {
+    if (index == 1) {
+      print('updating status for member $index');
+      theTeam.invitationMemberOnePending = true;
+      theTeam.invitationMemberOneAccepted = false;
+    }
+    if (index == 2) {
+      print('updating status for member $index');
+      theTeam.invitationMemberTwoPending = true;
+      theTeam.invitationMemberTwoAccepted = false;
+    }
+    if (index == 3) {
+      print('updating status for member $index');
+      theTeam.invitationMemberThreePending = true;
+      theTeam.invitationMemberThreeAccepted = false;
+    }
+    notifyListeners();
   }
 }

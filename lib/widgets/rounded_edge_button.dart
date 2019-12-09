@@ -1,3 +1,4 @@
+import 'package:bob_mobile/helpers/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,9 @@ class FormattedRoundedButton extends StatelessWidget {
               splashColor: Colors.orangeAccent,
               color: snapshotColor.data,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                    color: Colors.white, width: Constants.border_thickness_two),
               ),
               highlightElevation: 2,
               onPressed: () {

@@ -90,11 +90,11 @@ build_body(BuildContext context) {
                 20,
                 ColorLogicbyPersonality(context)),
           ),
-          FutureBuilder<Object>(
+          FutureBuilder<Color>(
               future: ColorLogicbyPersonality(context),
               builder: (context, snapshot) {
                 return Container(
-                  color: snapshot.data,
+                  decoration: decorationForRanking(snapshot),
                   margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
                   alignment: Alignment.center,
                   padding: EdgeInsets.fromLTRB(16, 10, 16, 15),
@@ -111,7 +111,7 @@ build_body(BuildContext context) {
               future: ColorLogicbyPersonality(context),
               builder: (context, snapshot) {
                 return Container(
-                  color: snapshot.data,
+                  decoration: decorationForRanking(snapshot),
                   margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
                   alignment: Alignment.center,
                   padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
@@ -131,6 +131,19 @@ build_body(BuildContext context) {
           ),
         ],
       ));
+}
+
+BoxDecoration decorationForRanking(AsyncSnapshot<Color> snapshot) {
+  Color shadeColor = Color.fromRGBO(10, 10, 10, 0);
+  if (snapshot.hasData) {
+    shadeColor = snapshot.data;
+  }
+  return BoxDecoration(
+      color: snapshot.data,
+      border: Border.all(
+          color: Colors.white, width: Constants.border_thickness_two),
+      borderRadius: BorderRadius.circular(10),
+      boxShadow: [BoxShadow(color: shadeColor, blurRadius: 5)]);
 }
 
 Widget HeaderDashboard(BuildContext context) {
