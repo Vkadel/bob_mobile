@@ -72,7 +72,9 @@ class TeamFormationData with ChangeNotifier {
     if (this.allAccepted != newallAccepted) {
       this._allAccepted = newallAccepted;
       if (!theTeam.teamIsActive) {
-        FireProvider.of(context).fireBase.makeTeamActive(theTeam.team_name,context);
+        FireProvider.of(context)
+            .fireBase
+            .makeTeamActive(theTeam.team_name, context);
       }
       notifyListeners();
     }

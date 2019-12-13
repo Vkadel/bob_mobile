@@ -1,8 +1,3 @@
-import 'dart:convert';
-import 'dart:js';
-
-import 'package:bob_mobile/battle_page.dart';
-import 'package:bob_mobile/dashboard_page.dart';
 import 'package:bob_mobile/data_type/private.dart';
 import 'package:bob_mobile/data_type/team.dart';
 import 'package:bob_mobile/data_type/team_invites.dart';
@@ -166,8 +161,6 @@ class MBobFireBase implements BoBFireBase {
         .collection('list_of_proposed_questions')
         .document()
         .setData(propQ.toJson()));
-
-    //Todo: Create
   }
 
   void _items_list_test_generation(String uid) {
